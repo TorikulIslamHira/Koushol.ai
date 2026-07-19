@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from '@/app/providers/AuthProvider'
 import { Layout } from '@/app/Layout'
 import { RequireAuth } from '@/features/auth/components/RequireAuth'
+import { RequireTeacher } from '@/features/auth/components/RequireTeacher'
 import { HomePage } from '@/pages/HomePage'
 import { LoginPage } from '@/pages/LoginPage'
 import { SignupPage } from '@/pages/SignupPage'
@@ -9,8 +10,13 @@ import { CoursesPage } from '@/pages/CoursesPage'
 import { CourseDetailPage } from '@/pages/CourseDetailPage'
 import { ChapterPage } from '@/pages/ChapterPage'
 import { DashboardPage } from '@/pages/DashboardPage'
+import { TeacherDashboardPage } from '@/pages/TeacherDashboardPage'
+import { NewCoursePage } from '@/pages/NewCoursePage'
+import { CourseEditorPage } from '@/pages/CourseEditorPage'
+import { TeacherChapterEditorPage } from '@/pages/TeacherChapterEditorPage'
+import { CourseAnalyticsPage } from '@/pages/CourseAnalyticsPage'
 
-/** Root component: wires up auth context and Phase 1 routes (see PROJECT.md Section 8). */
+/** Root component: wires up auth context and Phase 1+2 routes (see PROJECT.md Section 8). */
 export function App() {
   return (
     <BrowserRouter>
@@ -34,6 +40,46 @@ export function App() {
                 <RequireAuth>
                   <DashboardPage />
                 </RequireAuth>
+              }
+            />
+            <Route
+              path="/teach"
+              element={
+                <RequireTeacher>
+                  <TeacherDashboardPage />
+                </RequireTeacher>
+              }
+            />
+            <Route
+              path="/teach/courses/new"
+              element={
+                <RequireTeacher>
+                  <NewCoursePage />
+                </RequireTeacher>
+              }
+            />
+            <Route
+              path="/teach/courses/:courseId"
+              element={
+                <RequireTeacher>
+                  <CourseEditorPage />
+                </RequireTeacher>
+              }
+            />
+            <Route
+              path="/teach/courses/:courseId/chapters/:chapterId"
+              element={
+                <RequireTeacher>
+                  <TeacherChapterEditorPage />
+                </RequireTeacher>
+              }
+            />
+            <Route
+              path="/teach/courses/:courseId/analytics"
+              element={
+                <RequireTeacher>
+                  <CourseAnalyticsPage />
+                </RequireTeacher>
               }
             />
           </Route>

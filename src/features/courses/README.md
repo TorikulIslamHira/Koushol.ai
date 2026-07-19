@@ -1,5 +1,7 @@
 # features/courses/
 
-Browsing/reading course data: `useCourses` (published catalog), `useCourse` (one course + its chapters), and the `CourseCard`/`CourseList` display components.
+Student-facing (read-only): `useCourses` (published catalog), `useCourse` (one course + its chapters), and the `CourseCard`/`CourseList` display components.
 
-Enrolling into a course lives in `features/enrollment/`, not here — this folder is read-only course data.
+Teacher-facing (authoring, RLS owner/admin-only): `useMyCourses` (own courses, any status), `useCourseMutations` (create/update/delete/publish), `useCourseAnalytics` (enrollment count + per-chapter stats), and the `CourseForm` component.
+
+Enrolling into a course lives in `features/enrollment/`, not here.

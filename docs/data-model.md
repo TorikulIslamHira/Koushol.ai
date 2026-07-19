@@ -41,6 +41,8 @@ RLS: own row select/update; admin select/update all; no client insert/delete.
 
 RLS: anyone (incl. anonymous) can select `status = 'published'`; owning teacher or admin can select/insert/update/delete regardless of status.
 
+**Known Phase 2 simplification**: `PROJECT.md` Section 3 lists teacher publish as "needs admin approval", but the admin approval UI is Phase 5 and doesn't exist yet. `src/features/courses/hooks/useCourseMutations.ts` lets a teacher publish/unpublish their own course directly (RLS already allows this — the owner/admin update policy doesn't distinguish which columns changed). Revisit once Phase 5 lands.
+
 ## `chapters`
 
 | Column | Type | Notes |
