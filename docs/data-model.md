@@ -133,15 +133,19 @@ RLS: student/teacher/admin can select relevant rows; only admin (or a future ser
 
 ## AI course generation (Phase 3)
 
-`supabase/functions/generate-course/index.ts` is a Supabase Edge Function (Deno) — the only place `ANTHROPIC_API_KEY` is used. It must never be called with the key from the browser; the frontend (`src/features/courses/hooks/useGenerateCourse.ts`) calls it via `supabase.functions.invoke`, which forwards the signed-in user's JWT instead.
+`supabase/functions/generate-course/index.ts` is a Supabase Edge Function (Deno) — the only place `GROQ_API_KEY` is used. It must never be called with the key from the browser; the frontend (`src/features/courses/hooks/useGenerateCourse.ts`) calls it via `supabase.functions.invoke`, which forwards the signed-in user's JWT instead.
+
+Provider is Groq (`api.groq.com`, OpenAI-compatible chat completions), not Anthropic — see `PROJECT.md` Section 2 for why. Model defaults to `llama-3.3-70b-versatile`, overridable with a `GROQ_MODEL` secret if that model is deprecated (Groq's lineup changes faster than most providers').
 
 **Auth model**: the function builds a Supabase client from the caller's own JWT (not the service role) and does a plain `select` on `courses` — the existing owner/admin RLS policy is what actually enforces "must be this course's teacher or an admin." No separate authorization check was written; it would just duplicate what RLS already guarantees.
 
 **Contract**: `POST { courseId, rawNotes }` → `{ chapters: [{ title, content, questions: [{ question, options, correct_index }] }] }`. Nothing is written to the DB inside the function — the frontend shows the proposal for review, and only writes it via `useApplyGeneratedChapters` (`src/features/courses/hooks/`) if the teacher clicks "Add to course." Applied chapters get `is_ai_generated = true` and are appended after the course's existing chapters (`order_index` starts at the current chapter count, kept contiguous — same rule as `useChapterMutations`).
 
-**Cost guardrail** (`PROJECT.md` Section 9): one Claude call per invocation, `rawNotes` capped at 20,000 characters, and every call logs estimated token usage + cost (`console.log` in the function, visible via `supabase functions logs generate-course`). See `docs/decisions/cost-notes.md` for the budget this should stay inside.
+**CORS**: `Deno.serve` doesn't add CORS headers by default, and the browser's preflight `OPTIONS` request will fail silently (shows as a generic "Failed to send a request to the Edge Function" in the Supabase JS client, not a helpful error) without them. Any new Edge Function called from the browser needs the same `CORS_HEADERS` + `OPTIONS` early-return pattern this function uses — copy it rather than rediscovering this.
 
-**Deployment**: this function is not applied via `supabase/migrations/` — it's deployed separately with `supabase functions deploy generate-course`, and `ANTHROPIC_API_KEY` is set with `supabase secrets set ANTHROPIC_API_KEY=...` (dashboard: Edge Functions → generate-course → Secrets). The GitHub↔Supabase integration deploying migrations does not deploy functions.
+**Cost guardrail** (`PROJECT.md` Section 9): one Groq call per invocation, `rawNotes` capped at 20,000 characters, and every call logs token usage (`console.log` in the function, visible via `supabase functions logs generate-course`). Groq's free tier has no real dollar cost, but usage is still logged so a runaway loop would show up before hitting rate limits. See `docs/decisions/cost-notes.md`.
+
+**Deployment**: this function is not applied via `supabase/migrations/` — it's deployed separately with `supabase functions deploy generate-course`, and `GROQ_API_KEY` is set with `supabase secrets set GROQ_API_KEY=...` (dashboard: Edge Functions → generate-course → Secrets). The GitHub↔Supabase integration deploying migrations does not deploy functions.
 
 ## Seed data
 

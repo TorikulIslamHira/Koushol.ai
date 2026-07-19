@@ -9,7 +9,7 @@ export interface GeneratedChapter {
 }
 
 /**
- * Calls the generate-course Edge Function (Claude API, server-side — see
+ * Calls the generate-course Edge Function (Groq API, server-side — see
  * supabase/functions/generate-course/index.ts) to turn raw notes into draft chapters +
  * quizzes. Returns them for review; nothing is written to the DB here — see
  * AIGenerateCourse's "Add to course" step for that.

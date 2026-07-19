@@ -7,7 +7,7 @@ import { useCourseMutations } from '@/features/courses/hooks/useCourseMutations'
 
 /**
  * "Generate with AI" panel on the course editor: teacher pastes raw notes, reviews the
- * proposed chapters/quizzes (Claude output, not yet saved), then either adds them all or
+ * proposed chapters/quizzes (Groq output, not yet saved), then either adds them all or
  * discards. Per-chapter edits happen afterward on the normal chapter/quiz editors — this
  * panel intentionally doesn't support inline editing of the proposal (keeps the review
  * step simple; revisit if teachers want to tweak before committing).
@@ -46,7 +46,7 @@ export function AIGenerateCourse({
     <Card className="flex flex-col gap-4">
       <h2 className="font-display text-lg font-semibold">Generate with AI</h2>
       <p className="text-xs text-black/50">
-        Paste your raw topic notes below. Claude will propose chapters and quizzes appended
+        Paste your raw topic notes below. AI will propose chapters and quizzes appended
         after your existing chapters — review before adding.
       </p>
 
