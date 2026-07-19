@@ -1,6 +1,6 @@
 # Koushol — Interactive Learning Platform
 
-Project Spec & Engineering Rules — v1.7
+Project Spec & Engineering Rules — v1.8
 Status: Phases 1-5 done — see Section 8
 Last updated: 2026-07-19
 
@@ -149,7 +149,7 @@ All tables get RLS enabled from the first migration — never ship a table witho
 | 7 | PWA packaging + mobile installability | Planned |
 | 8 | Full system language toggle (English/Bangla UI, not just content) | Noted 2026-07-19 — explicitly deferred by the user ("do this when needed, later"), not scheduled yet. Distinct from the Bengali *font* fix in the redesign below, which only makes existing Bangla content render correctly — this phase would translate the UI chrome itself (nav, buttons, forms, error messages). |
 
-Cross-cutting, not numbered as a phase: **UI/UX redesign** (started 2026-07-19, using the `ui-ux-pro-max` skill) — foundation (colors, Bengali font fix, primitives) is done; public pages, student flow, teacher flow, and admin flow are in progress. See `docs/design-system.md`.
+Cross-cutting, not numbered as a phase: **UI/UX redesign** (2026-07-19, using the `ui-ux-pro-max` skill) — ✅ done across all five sub-phases (foundation, public pages, student flow, teacher flow, admin flow), verified visually via Playwright at each step. See `docs/design-system.md`.
 
 Do not start a later phase's UI/logic before the current phase is functionally complete and reflected as "done" in this table.
 
