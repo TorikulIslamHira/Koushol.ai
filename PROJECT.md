@@ -1,7 +1,7 @@
 # Koushol — Interactive Learning Platform
 
-Project Spec & Engineering Rules — v1.1
-Status: Phase 1 scaffolded (student flow) — see Section 8
+Project Spec & Engineering Rules — v1.2
+Status: Phase 1 done, Phase 2 (teacher flow) in progress — see Section 8
 Last updated: 2026-07-19
 
 This document is the single source of truth for architecture, folder structure, coding rules, data model, and roadmap. Any AI agent or developer working on this repo must read this file first and follow it strictly. If a decision here needs to change, update this file in the same commit — never let the code and this document drift apart.
@@ -134,8 +134,8 @@ All tables get RLS enabled from the first migration — never ship a table witho
 
 | Phase | Scope | Status |
 |---|---|---|
-| 1 | Student flow: browse, enroll, chapters, quiz, manual course content, Supabase auth+DB | 🚧 Code scaffolded — needs a real Supabase project (URL + anon key in `.env.local`) and a manual smoke test before calling it done |
-| 2 | Teacher flow: create/edit courses manually, publish, own-course analytics | Planned |
+| 1 | Student flow: browse, enroll, chapters, quiz, manual course content, Supabase auth+DB | ✅ Done — migrations + seed applied to the live Supabase project, verified end-to-end locally (signup, browse, enroll, chapter, quiz, unlock) on 2026-07-19 |
+| 2 | Teacher flow: create/edit courses manually, publish, own-course analytics | 🚧 In progress |
 | 3 | AI course generation: teacher notes → Claude → structured chapters + quiz | Planned |
 | 4 | TTS audio player (Sarvam AI) for chapter content | Planned |
 | 5 | Master/Admin dashboard: platform-wide analytics, sales, user management | Planned |
