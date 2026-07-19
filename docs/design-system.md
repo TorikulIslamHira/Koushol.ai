@@ -35,7 +35,13 @@ All three families are loaded via Google Fonts `<link>` tags in `index.html`. If
 
 ## Components
 
-Generic, brand-styled primitives live in `src/components/ui/`: `Button` (primary/secondary/ghost variants), `Card`, `Badge` (green/gold/neutral/danger tones), `Spinner`, `ProgressBar`, `Input`, `Select`, `EmptyState`. Extend these rather than one-off styling a business component — see `PROJECT.md` Section 4 for the `ui/` vs `features/` split.
+Generic, brand-styled primitives live in `src/components/ui/`: `Button` (primary/secondary/ghost/danger variants), `Card`, `Badge` (green/gold/neutral/danger tones), `Spinner`, `ProgressBar`, `Input`, `Textarea`, `Select`, `EmptyState`, `StatTile`, `LanguageSwitcher`. Extend these rather than one-off styling a business component — see `PROJECT.md` Section 4 for the `ui/` vs `features/` split.
+
+## Language
+
+Full UI is bilingual (English/Bangla) via `react-i18next` — see `src/i18n/` and `PROJECT.md` Section 8 Phase 8. **Bangla is the default** for a first-time visitor (decided 2026-07-19); the choice persists in `localStorage` once a visitor toggles it via `LanguageSwitcher` in the nav. `<html lang>` is kept in sync with the active language (`src/app/App.tsx`).
+
+When adding any new user-facing string: put it in both `src/i18n/locales/en.json` and `locales/bn.json` under a key namespaced by page/feature (e.g. `courses.emptyState`), and read it with `useTranslation()` — never hardcode English text directly in a component, even "temporarily." Backend/Supabase error messages (auth errors, RLS rejection text) are a known exception — they arrive in English from the API and are not yet mapped to translations; that's an intentionally separate follow-up, not an oversight.
 
 ## Not yet decided
 

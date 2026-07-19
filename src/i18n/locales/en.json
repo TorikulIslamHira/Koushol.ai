@@ -1,0 +1,20 @@
+{
+  "nav": {
+    "courses": "Courses",
+    "teach": "Teach",
+    "admin": "Admin",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "signOut": "Sign out"
+  },
+  "footer": {
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "copyright": "© {{year}} Koushol"
+  },
+  "common": {
+    "loading": "Loading…",
+    "backToHome": "Back to home",
+    "notFound": "Not found."
+  }
+}

@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { AuthProvider } from '@/app/providers/AuthProvider'
 import { Layout } from '@/app/Layout'
 import { RequireAuth } from '@/features/auth/components/RequireAuth'
@@ -23,8 +25,16 @@ import { TermsPage } from '@/pages/TermsPage'
 import { PrivacyPage } from '@/pages/PrivacyPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
-/** Root component: wires up auth context and Phase 1-5 routes (see PROJECT.md Section 8). */
+/** Root component: wires up auth context, i18n, and Phase 1-5 routes (see PROJECT.md Section 8). */
 export function App() {
+  const { i18n } = useTranslation()
+
+  // Keeps <html lang> in sync with the selected UI language — matters for accessibility
+  // (screen readers picking pronunciation) and gives the browser a correct script hint.
+  useEffect(() => {
+    document.documentElement.lang = i18n.language
+  }, [i18n.language])
+
   return (
     <BrowserRouter>
       <AuthProvider>

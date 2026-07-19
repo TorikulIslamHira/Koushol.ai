@@ -101,6 +101,7 @@ Koushol.ai/
     │       └── hooks/
     ├── pages/                      ← one file per route, matches the URL it renders
     ├── lib/                        ← supabase client, constants, utils
+    ├── i18n/                       ← react-i18next config + locales/en.json, locales/bn.json (Phase 8)
     ├── types/                      ← shared TS types (database row shapes)
     └── styles/                     ← global.css (Tailwind + design tokens)
 ```
@@ -152,7 +153,7 @@ All tables get RLS enabled from the first migration — never ship a table witho
 | 5 | Master/Admin dashboard: platform-wide analytics, sales, user management | ✅ Done — deployed and verified end-to-end on 2026-07-19 (teacher submits for review → direct-API publish attempt genuinely rejected by RLS, not just hidden by UI → admin approves via `/admin/courses` → status confirmed `published` in DB → course appears in the student catalog). Also resolves the Phase 2 self-service-publish simplification noted in `docs/data-model.md`. Sales/revenue is a placeholder pointing at Phase 6, since the `sales` table has no real data yet. |
 | 6 | Payment integration (bKash/Nagad/SSLCommerz) | Planned |
 | 7 | PWA packaging + mobile installability | Planned |
-| 8 | Full system language toggle (English/Bangla UI, not just content) | Noted 2026-07-19 — explicitly deferred by the user ("do this when needed, later"), not scheduled yet. Distinct from the Bengali *font* fix in the redesign below, which only makes existing Bangla content render correctly — this phase would translate the UI chrome itself (nav, buttons, forms, error messages). |
+| 8 | Full system language toggle (English/Bangla UI, not just content) | 🚧 In progress, started 2026-07-19 — `react-i18next` infrastructure done (default Bangla, EN/বাং switcher in nav, choice persisted via localStorage, `<html lang>` kept in sync), verified working. Translating each page's strings is proceeding phase by phase (public → student → teacher → admin), same pattern as the UI/UX redesign. Backend/Supabase error messages (login errors, RLS rejections) are staying in English for now — a separate follow-up, not part of this pass. See `docs/design-system.md` § Language. |
 
 Cross-cutting, not numbered as a phase: **UI/UX redesign** (2026-07-19, using the `ui-ux-pro-max` skill) — ✅ done across all five sub-phases (foundation, public pages, student flow, teacher flow, admin flow), verified visually via Playwright at each step. See `docs/design-system.md`.
 
