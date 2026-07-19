@@ -244,6 +244,10 @@ create policy "topics_delete_owner_or_admin" on public.topics
 -- ============================================================================
 
 alter table public.quizzes add column module_id uuid references public.modules (id) on delete cascade;
+-- The new merged rows below are inserted without a chapter_id (they're module-scoped, not
+-- chapter-scoped) — chapter_id is dropped a few statements down anyway, so drop its NOT NULL
+-- now rather than backfilling a value that's about to be discarded.
+alter table public.quizzes alter column chapter_id drop not null;
 
 with merged as (
   select t.module_id, jsonb_agg(elem.value order by t.order_index, elem.ord) as questions
