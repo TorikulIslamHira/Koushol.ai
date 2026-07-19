@@ -1,10 +1,12 @@
+import { BookOpen } from 'lucide-react'
 import { CourseCard } from '@/features/courses/components/CourseCard'
+import { EmptyState } from '@/components/ui/EmptyState'
 import type { CourseRow } from '@/types/database'
 
 /** Grid of course cards for the browse/catalog page. */
 export function CourseList({ courses }: { courses: CourseRow[] }) {
   if (courses.length === 0) {
-    return <p className="text-black/60">No published courses yet — check back soon.</p>
+    return <EmptyState icon={BookOpen} title="No published courses yet — check back soon." />
   }
 
   return (

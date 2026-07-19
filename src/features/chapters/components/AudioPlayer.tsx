@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Play, Pause } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import type { AudioSegment } from '@/types/database'
 
@@ -45,11 +46,16 @@ export function AudioPlayer({ segments }: { segments: AudioSegment[] }) {
   const src = `data:${current.mime_type};base64,${current.audio_base64}`
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-black/10 px-3 py-2">
-      <Button type="button" variant="secondary" onClick={togglePlay}>
-        {playing ? 'Pause' : '▶ Listen to this chapter'}
+    <div className="flex items-center gap-3 rounded-lg border border-slate-200 px-3 py-2">
+      <Button type="button" variant="secondary" onClick={togglePlay} className="gap-2">
+        {playing ? (
+          <Pause className="h-4 w-4" aria-hidden="true" />
+        ) : (
+          <Play className="h-4 w-4" aria-hidden="true" />
+        )}
+        {playing ? 'Pause' : 'Listen to this chapter'}
       </Button>
-      <span className="text-xs text-black/50">
+      <span className="text-xs text-slate-400">
         Segment {index + 1} / {segments.length}
       </span>
       <audio

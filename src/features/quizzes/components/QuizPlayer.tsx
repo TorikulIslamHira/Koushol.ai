@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { CheckCircle2, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { QUIZ_PASS_THRESHOLD } from '@/lib/constants'
@@ -39,7 +40,7 @@ export function QuizPlayer({
             <label
               key={oIndex}
               className={cn(
-                'flex cursor-pointer items-center gap-2 rounded-lg border border-black/10 px-3 py-2 text-sm',
+                'flex cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm transition-colors duration-150 hover:border-brand-green/50',
                 answers[qIndex] === oIndex && 'border-brand-green bg-brand-green/5',
               )}
             >
@@ -56,7 +57,17 @@ export function QuizPlayer({
       ))}
 
       {result ? (
-        <p className={cn('font-medium', result.passed ? 'text-brand-green' : 'text-red-600')}>
+        <p
+          className={cn(
+            'flex items-center gap-2 font-medium',
+            result.passed ? 'text-brand-green' : 'text-danger',
+          )}
+        >
+          {result.passed ? (
+            <CheckCircle2 className="h-5 w-5 shrink-0" aria-hidden="true" />
+          ) : (
+            <XCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
+          )}
           {result.passed
             ? `Passed with ${result.scorePercent}%! Next chapter unlocked.`
             : `Scored ${result.scorePercent}% — need ${QUIZ_PASS_THRESHOLD}% to pass. Try again.`}

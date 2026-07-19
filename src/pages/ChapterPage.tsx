@@ -1,4 +1,5 @@
 import { useParams, Navigate, Link } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
 import { useCourse } from '@/features/courses/hooks/useCourse'
 import { useEnrollment } from '@/features/enrollment/hooks/useEnrollment'
 import { useChapterProgress } from '@/features/chapters/hooks/useChapterProgress'
@@ -10,6 +11,7 @@ import { useChapterAudio } from '@/features/chapters/hooks/useChapterAudio'
 import { QuizPlayer } from '@/features/quizzes/components/QuizPlayer'
 import { Spinner } from '@/components/ui/Spinner'
 import { Card } from '@/components/ui/Card'
+import { ProgressBar } from '@/components/ui/ProgressBar'
 import { supabase } from '@/lib/supabase'
 import { useState } from 'react'
 
@@ -24,10 +26,10 @@ export function ChapterPage() {
   const [submitting, setSubmitting] = useState(false)
 
   if (courseLoading) return <Spinner />
-  if (!course || !chapterId) return <p className="text-black/60">Course not found.</p>
+  if (!course || !chapterId) return <p className="text-slate-500">Course not found.</p>
 
   const chapter = chapters.find((c) => c.id === chapterId)
-  if (!chapter) return <p className="text-black/60">Chapter not found.</p>
+  if (!chapter) return <p className="text-slate-500">Chapter not found.</p>
 
   const unlockedIndex = enrollment?.unlocked_chapter_index ?? 0
   if (chapter.order_index > unlockedIndex) {
@@ -48,13 +50,27 @@ export function ChapterPage() {
   }
 
   const nextChapter = chapters.find((c) => c.order_index === chapter.order_index + 1)
+  const progressPercent =
+    chapters.length > 0 ? Math.min(100, (unlockedIndex / chapters.length) * 100) : 0
 
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-[220px_1fr]">
       <aside>
-        <Link to={`/courses/${courseId}`} className="mb-4 block text-sm text-brand-green hover:underline">
-          ← {course.title}
+        <Link
+          to={`/courses/${courseId}`}
+          className="mb-4 flex items-center gap-1 text-sm text-brand-green transition-colors duration-150 hover:underline"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+          {course.title}
         </Link>
+        {enrollment && (
+          <div className="mb-4">
+            <ProgressBar percent={progressPercent} />
+            <p className="mt-1 text-xs text-slate-400">
+              {Math.min(unlockedIndex, chapters.length)} / {chapters.length} unlocked
+            </p>
+          </div>
+        )}
         <ChapterSidebar
           courseId={course.id}
           chapters={chapters}
@@ -70,7 +86,7 @@ export function ChapterPage() {
         {quizLoading && <Spinner />}
         {quiz && quiz.questions.length > 0 && (
           <Card>
-            <h3 className="mb-4 font-display text-lg font-semibold">Quiz</h3>
+            <h3 className="mb-4 font-display text-lg font-semibold text-brand-ink">Quiz</h3>
             {progress?.completed_at ? (
               <p className="text-brand-green">
                 Already passed with {progress.quiz_score}%.{' '}
@@ -86,7 +102,7 @@ export function ChapterPage() {
             ) : enrollment ? (
               <QuizPlayer quiz={quiz} onSubmit={handleQuizSubmit} submitting={submitting} />
             ) : (
-              <p className="text-black/60">
+              <p className="text-slate-500">
                 Enroll in this course to take the quiz and track your progress.
               </p>
             )}

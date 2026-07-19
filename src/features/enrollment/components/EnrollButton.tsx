@@ -40,7 +40,7 @@ export function EnrollButton({ course, chapters }: { course: CourseRow; chapters
       <Button onClick={enroll} disabled={enrolling}>
         {enrolling ? 'Enrolling…' : `Enroll — ${formatBDT(course.price)}`}
       </Button>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
     </div>
   )
 }

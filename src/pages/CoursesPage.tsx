@@ -10,7 +10,7 @@ export function CoursesPage() {
     <div className="flex flex-col gap-6">
       <h1 className="font-display text-2xl font-semibold">Courses</h1>
       {loading && <Spinner />}
-      {error && <p className="text-red-600">{error}</p>}
+      {error && <p className="text-danger">{error}</p>}
       {!loading && !error && <CourseList courses={courses} />}
     </div>
   )
