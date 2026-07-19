@@ -15,6 +15,9 @@ dist-ssr
 # Supabase CLI local machine state (project link cache, version info) — not portable across machines
 supabase/.temp/
 
+# Pre-migration DB snapshots — contain user emails/course content, not for version control
+backups/
+
 # Python bytecode cache from .claude/skills/ui-ux-pro-max's search scripts — not source, machine-local
 __pycache__/
 *.pyc
