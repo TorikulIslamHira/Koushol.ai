@@ -3,6 +3,7 @@ import { AuthProvider } from '@/app/providers/AuthProvider'
 import { Layout } from '@/app/Layout'
 import { RequireAuth } from '@/features/auth/components/RequireAuth'
 import { RequireTeacher } from '@/features/auth/components/RequireTeacher'
+import { RequireAdmin } from '@/features/auth/components/RequireAdmin'
 import { HomePage } from '@/pages/HomePage'
 import { LoginPage } from '@/pages/LoginPage'
 import { SignupPage } from '@/pages/SignupPage'
@@ -15,8 +16,11 @@ import { NewCoursePage } from '@/pages/NewCoursePage'
 import { CourseEditorPage } from '@/pages/CourseEditorPage'
 import { TeacherChapterEditorPage } from '@/pages/TeacherChapterEditorPage'
 import { CourseAnalyticsPage } from '@/pages/CourseAnalyticsPage'
+import { AdminDashboardPage } from '@/pages/AdminDashboardPage'
+import { AdminUsersPage } from '@/pages/AdminUsersPage'
+import { AdminCourseReviewPage } from '@/pages/AdminCourseReviewPage'
 
-/** Root component: wires up auth context and Phase 1+2 routes (see PROJECT.md Section 8). */
+/** Root component: wires up auth context and Phase 1-5 routes (see PROJECT.md Section 8). */
 export function App() {
   return (
     <BrowserRouter>
@@ -80,6 +84,30 @@ export function App() {
                 <RequireTeacher>
                   <CourseAnalyticsPage />
                 </RequireTeacher>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <RequireAdmin>
+                  <AdminDashboardPage />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <RequireAdmin>
+                  <AdminUsersPage />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/courses"
+              element={
+                <RequireAdmin>
+                  <AdminCourseReviewPage />
+                </RequireAdmin>
               }
             />
           </Route>

@@ -14,6 +14,7 @@ Applied in order (each file name is timestamp-prefixed, so this is also executio
 8. `20260719010700_create_sales.sql`
 9. `20260719020000_add_courses_raw_notes.sql`
 10. `20260719030000_create_chapter_audio.sql`
+11. `20260719040000_course_publish_approval.sql`
 
 ## `users`
 
@@ -37,16 +38,16 @@ RLS: own row select/update; admin select/update all; no client insert/delete.
 | `teacher_id` | `uuid` FK → `users.id` | |
 | `title` | `text` | |
 | `description` | `text` | default `''` |
-| `status` | `course_status` enum (`draft`/`published`) | defaults `draft` |
+| `status` | `course_status` enum (`draft`/`pending_approval`/`published`) | defaults `draft`. `pending_approval` added in `20260719040000_course_publish_approval.sql`. |
 | `price` | `numeric(10,2)` | `>= 0`, in BDT |
 | `created_at` | `timestamptz` | |
 | `raw_notes` | `text`, nullable | Teacher's original notes, input to AI course generation (Phase 3). Added in `20260719020000_add_courses_raw_notes.sql`. |
 
-RLS: anyone (incl. anonymous) can select `status = 'published'`; owning teacher or admin can select/insert/update/delete regardless of status.
+RLS: anyone (incl. anonymous) can select `status = 'published'`; owning teacher or admin can select/insert/update/delete regardless of status. **Since `20260719040000_course_publish_approval.sql`, a teacher's insert/update policies additionally require `status <> 'published'`** — only an admin's policy can set that value. This means the publish workflow is: teacher moves a course to `pending_approval` (`useCourseMutations.updateCourse`), an admin reviews it (`/admin/courses`) and either approves (→ `published`) or rejects (→ `draft`). A teacher calling the Supabase client directly to force `status = 'published'` themselves gets rejected by RLS, not just hidden by the UI — this was a deliberate fix for a real gap, not just cosmetic (see the Phase 2/5 history below).
 
 **RLS is row-level, not column-level**: the "published" policy above exposes every column, including `raw_notes`, to any reader of a published course — there's no way to hide one column from an otherwise-permitted row in plain Postgres RLS. The student-facing hooks (`useCourses`, `useCourse` without `includeRawNotes`) work around this by explicitly selecting a public column list (`PUBLIC_COURSE_COLUMNS` in `src/features/courses/hooks/useCourses.ts`) instead of `select('*')`. Keep that in mind before adding another teacher-only column — the DB won't stop it from leaking, only the query will.
 
-**Known Phase 2 simplification**: `PROJECT.md` Section 3 lists teacher publish as "needs admin approval", but the admin approval UI is Phase 5 and doesn't exist yet. `src/features/courses/hooks/useCourseMutations.ts` lets a teacher publish/unpublish their own course directly (RLS already allows this — the owner/admin update policy doesn't distinguish which columns changed). Revisit once Phase 5 lands.
+**History**: Phase 2 shipped publish as self-service (documented then as a known simplification, since the Phase 5 admin dashboard didn't exist yet to actually review anything). Phase 5 resolved it with the `pending_approval` status and the RLS split above, plus `/admin/courses` as the review queue.
 
 ## `chapters`
 
@@ -177,6 +178,14 @@ Provider is Groq (`api.groq.com`, OpenAI-compatible chat completions), not Anthr
 **Cost guardrail** (`PROJECT.md` Section 9): chunk count is capped, one Sarvam call per segment (no retries), and every generation logs segment count + total characters (`console.log`, visible via `supabase functions logs generate-chapter-audio`). See `docs/decisions/cost-notes.md` for the ~৳43–65/course estimate this should stay inside.
 
 **Deployment**: same as `generate-course` — `supabase functions deploy generate-chapter-audio`, and `SARVAM_API_KEY` set with `supabase secrets set SARVAM_API_KEY=...`.
+
+## Admin dashboard (Phase 5)
+
+No new tables — `features/admin/` (`useAdminStats`, `useAllUsers`, `useUpdateUserRole`, `useAdminCourses`) reads through the admin RLS policies that already existed on `users`, `courses`, and `enrollments` since Phase 1. The one real schema/security change Phase 5 needed was the course publish-approval split described in the `courses` section above (`20260719040000_course_publish_approval.sql`) — everything else (user list, role changes, stats) was already fully expressible with existing policies; it just didn't have a UI yet.
+
+`useUpdateUserRole` is the only path to becoming a teacher or admin — there is still no self-service role escalation anywhere in the app, matching `PROJECT.md` Section 3.
+
+Sales/revenue is a placeholder note on `/admin` pointing at Phase 6 — the `sales` table is still schema-only (see the `sales` section above), so there's nothing real to show yet.
 
 ## Seed data
 

@@ -8,8 +8,9 @@ import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Spinner } from '@/components/ui/Spinner'
+import { COURSE_STATUS_BADGE_TONE, COURSE_STATUS_LABEL } from '@/features/courses/statusDisplay'
 
-/** Course editor ("/teach/courses/:courseId") — edit metadata, publish/unpublish, manage chapters (manually or via AI generation), delete, and a link to analytics. */
+/** Course editor ("/teach/courses/:courseId") — edit metadata, submit for admin approval, manage chapters (manually or via AI generation), delete, and a link to analytics. Publishing isn't self-service — see useCourseMutations. */
 export function CourseEditorPage() {
   const { courseId } = useParams<{ courseId: string }>()
   const navigate = useNavigate()
@@ -24,26 +25,48 @@ export function CourseEditorPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h1 className="font-display text-2xl font-semibold">{course.title}</h1>
-          <Badge tone={course.status === 'published' ? 'green' : 'neutral'}>
-            {course.status}
-          </Badge>
+          <Badge tone={COURSE_STATUS_BADGE_TONE[course.status]}>{COURSE_STATUS_LABEL[course.status]}</Badge>
         </div>
         <div className="flex gap-2">
           <Link to={`/teach/courses/${courseId}/analytics`}>
             <Button variant="ghost">Analytics</Button>
           </Link>
-          <Button
-            variant="secondary"
-            disabled={saving}
-            onClick={async () => {
-              await updateCourse(courseId, {
-                status: course.status === 'published' ? 'draft' : 'published',
-              })
-              refetch()
-            }}
-          >
-            {course.status === 'published' ? 'Unpublish' : 'Publish'}
-          </Button>
+          {course.status === 'draft' && (
+            <Button
+              variant="secondary"
+              disabled={saving}
+              onClick={async () => {
+                await updateCourse(courseId, { status: 'pending_approval' })
+                refetch()
+              }}
+            >
+              Submit for review
+            </Button>
+          )}
+          {course.status === 'pending_approval' && (
+            <Button
+              variant="ghost"
+              disabled={saving}
+              onClick={async () => {
+                await updateCourse(courseId, { status: 'draft' })
+                refetch()
+              }}
+            >
+              Withdraw
+            </Button>
+          )}
+          {course.status === 'published' && (
+            <Button
+              variant="secondary"
+              disabled={saving}
+              onClick={async () => {
+                await updateCourse(courseId, { status: 'draft' })
+                refetch()
+              }}
+            >
+              Unpublish
+            </Button>
+          )}
         </div>
       </div>
 

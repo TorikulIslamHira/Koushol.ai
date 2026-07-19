@@ -10,12 +10,12 @@ export interface CourseInput {
 }
 
 /**
- * Create/update/delete/publish for a teacher's own course. RLS (owner/admin-only) is the
- * real enforcement — see supabase/migrations/20260719010100_create_courses.sql.
- *
- * Known Phase 2 simplification: PROJECT.md Section 3 lists teacher publish as "needs admin
- * approval", but Phase 5 (the admin dashboard/approval UI) doesn't exist yet. Publishing is
- * self-service for now — revisit once Phase 5 lands.
+ * Create/update/delete for a teacher's own course, and (admin-only) approve/reject. RLS is
+ * the real enforcement — see supabase/migrations/20260719040000_course_publish_approval.sql:
+ * a teacher's own update policy rejects any attempt to set status to 'published' directly
+ * (client-side status !== 'published' checks below are UX only), so `updateCourse` behaves
+ * differently depending on who calls it — teachers can only reach 'draft' or
+ * 'pending_approval', admins can set any status including 'published'.
  */
 export function useCourseMutations() {
   const { session } = useAuth()

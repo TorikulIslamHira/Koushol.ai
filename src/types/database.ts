@@ -1,7 +1,7 @@
 /** Row shapes for Supabase tables, hand-written to match supabase/migrations/*.sql. Regenerate/reconcile whenever a migration changes a table shape. */
 
 export type UserRole = 'student' | 'teacher' | 'admin'
-export type CourseStatus = 'draft' | 'published'
+export type CourseStatus = 'draft' | 'pending_approval' | 'published'
 export type PaymentProvider = 'bkash' | 'nagad' | 'sslcommerz'
 export type SaleStatus = 'pending' | 'completed' | 'failed' | 'refunded'
 

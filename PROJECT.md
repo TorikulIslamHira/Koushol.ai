@@ -1,7 +1,7 @@
 # Koushol — Interactive Learning Platform
 
-Project Spec & Engineering Rules — v1.6
-Status: Phases 1-4 done — see Section 8
+Project Spec & Engineering Rules — v1.7
+Status: Phases 1-5 done — see Section 8
 Last updated: 2026-07-19
 
 This document is the single source of truth for architecture, folder structure, coding rules, data model, and roadmap. Any AI agent or developer working on this repo must read this file first and follow it strictly. If a decision here needs to change, update this file in the same commit — never let the code and this document drift apart.
@@ -28,7 +28,7 @@ Design identity: dark green (#0C8A4B) + gold (#D4A017) accents, Space Grotesk (d
 | Backend / DB / Auth | Supabase (Postgres) | Already connected; free tier to start |
 | AI course generation | Groq API (Llama 3.3 70B, model configurable via `GROQ_MODEL` secret) | Phase 3. Switched from the originally-planned Claude API on 2026-07-19 — teacher wanted to test on a free tier before committing to a paid provider. Groq's chat-completions API is OpenAI-compatible; the Edge Function (`supabase/functions/generate-course/`) is written against it directly (no SDK). Swapping back to Claude later is a contained change (endpoint + request/response shape) — update this row in the same commit if that happens. |
 | TTS | Sarvam AI (Bulbul, speaker `anushka` by default, model configurable via `SARVAM_MODEL` secret) | Phase 4. Language is an explicit per-generation teacher choice, not hardcoded to Bengali — see `docs/data-model.md` § TTS audio. |
-| Payments | bKash / Nagad / SSLCommerz | Phase 5→6, no monthly fee, %-based |
+| Payments | bKash / Nagad / SSLCommerz | Phase 6, no monthly fee, %-based |
 | Hosting | Vercel or Netlify | Free tier to start |
 | Domain | Already purchased | — |
 | Routing | React Router v7 | Client-side routing for the SPA |
@@ -88,8 +88,10 @@ Koushol.ai/
     │   ├── quizzes/
     │   │   ├── components/
     │   │   └── hooks/
-    │   └── enrollment/
-    │       ├── components/
+    │   ├── enrollment/
+    │   │   ├── components/
+    │   │   └── hooks/
+    │   └── admin/                  ← platform-wide, admin-only (Phase 5) — no components/ yet
     │       └── hooks/
     ├── pages/                      ← one file per route, matches the URL it renders
     ├── lib/                        ← supabase client, constants, utils
@@ -141,7 +143,7 @@ All tables get RLS enabled from the first migration — never ship a table witho
 | 2 | Teacher flow: create/edit courses manually, publish, own-course analytics | ✅ Done — verified end-to-end on 2026-07-19 (create → chapter → quiz → publish → shows in student catalog → delete) |
 | 3 | AI course generation: teacher notes → Groq (Llama 3.3) → structured chapters + quiz | ✅ Done — deployed and verified end-to-end on 2026-07-19 (raw notes → generate → review proposal → add to course → chapter + quiz confirmed in DB with `is_ai_generated = true`). See `docs/data-model.md` § AI course generation. |
 | 4 | TTS audio player (Sarvam AI) for chapter content | ✅ Done — deployed and verified end-to-end on 2026-07-19 (teacher generates audio with an explicit language choice → real WAV audio confirmed in DB → plays back on the student-facing chapter page). One live-API guess was wrong and fixed on first real call (default speaker name) — see `docs/data-model.md` § TTS audio. |
-| 5 | Master/Admin dashboard: platform-wide analytics, sales, user management | Planned |
+| 5 | Master/Admin dashboard: platform-wide analytics, sales, user management | ✅ Done — deployed and verified end-to-end on 2026-07-19 (teacher submits for review → direct-API publish attempt genuinely rejected by RLS, not just hidden by UI → admin approves via `/admin/courses` → status confirmed `published` in DB → course appears in the student catalog). Also resolves the Phase 2 self-service-publish simplification noted in `docs/data-model.md`. Sales/revenue is a placeholder pointing at Phase 6, since the `sales` table has no real data yet. |
 | 6 | Payment integration (bKash/Nagad/SSLCommerz) | Planned |
 | 7 | PWA packaging + mobile installability | Planned |
 

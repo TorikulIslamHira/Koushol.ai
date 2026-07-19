@@ -24,6 +24,11 @@ export function Layout() {
                     Teach
                   </Link>
                 )}
+                {profile?.role === 'admin' && (
+                  <Link to="/admin" className="hover:text-brand-green">
+                    Admin
+                  </Link>
+                )}
                 {profile && <span className="text-black/50">{profile.name}</span>}
                 <Button variant="ghost" onClick={signOut}>
                   Sign out
