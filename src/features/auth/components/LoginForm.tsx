@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -8,6 +9,7 @@ import { Input } from '@/components/ui/Input'
 export function LoginForm() {
   const { signIn } = useAuth()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -29,11 +31,11 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
-        Email
+        {t('auth.email')}
         <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
       </label>
       <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
-        Password
+        {t('auth.password')}
         <Input
           type="password"
           required
@@ -43,7 +45,7 @@ export function LoginForm() {
       </label>
       {error && <p className="text-sm text-danger">{error}</p>}
       <Button type="submit" disabled={submitting}>
-        {submitting ? 'Signing in…' : 'Sign in'}
+        {submitting ? t('auth.signingIn') : t('nav.signIn')}
       </Button>
     </form>
   )

@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -8,6 +9,7 @@ import { Input } from '@/components/ui/Input'
 export function SignupForm() {
   const { signUp } = useAuth()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -30,15 +32,15 @@ export function SignupForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
-        Name
+        {t('auth.name')}
         <Input type="text" required value={name} onChange={(e) => setName(e.target.value)} />
       </label>
       <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
-        Email
+        {t('auth.email')}
         <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
       </label>
       <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
-        Password
+        {t('auth.password')}
         <Input
           type="password"
           required
@@ -49,7 +51,7 @@ export function SignupForm() {
       </label>
       {error && <p className="text-sm text-danger">{error}</p>}
       <Button type="submit" disabled={submitting}>
-        {submitting ? 'Creating account…' : 'Create account'}
+        {submitting ? t('auth.creatingAccount') : t('auth.createAccount')}
       </Button>
     </form>
   )

@@ -16,5 +16,93 @@
     "loading": "Loading…",
     "backToHome": "Back to home",
     "notFound": "Not found."
+  },
+  "home": {
+    "badge": "Build career skills, one chapter at a time",
+    "heading1": "Learn by doing,",
+    "headingHighlight": "not just reading.",
+    "subheading": "Koushol turns career-skill courses into interactive chapters and quizzes — read, get tested, unlock the next step, and earn a certificate when you finish.",
+    "browseCourses": "Browse courses",
+    "howItWorks": "How it works",
+    "steps": {
+      "read": { "title": "Read a chapter", "description": "Bite-sized lessons, one topic at a time — no wall of text to get through." },
+      "quiz": { "title": "Take the quiz", "description": "Prove you understood it before moving on — 70% to pass, retake anytime." },
+      "unlock": { "title": "Unlock the next step", "description": "Progress locks sequentially, so you can't skip ahead of what you know." }
+    },
+    "whatMakesDifferent": "What makes it different",
+    "features": {
+      "aiCourse": { "title": "AI-assisted course creation", "description": "Teachers turn raw notes into structured chapters and quizzes automatically." },
+      "audio": { "title": "Listen to any chapter", "description": "Bengali and multi-language narration, generated per chapter." },
+      "sequential": { "title": "Sequential unlocking", "description": "Chapters and quizzes gate progress, so learning actually builds up." },
+      "teachers": { "title": "Built for teachers too", "description": "Publish courses, track student progress, and see quiz performance per chapter." }
+    },
+    "ctaTitle": "Ready to start learning?",
+    "ctaSubtitle": "Browse the catalog — the first chapter of every course is free to read."
+  },
+  "auth": {
+    "welcomeBack": "Welcome back",
+    "signInSubtitle": "Sign in to continue learning.",
+    "noAccount": "No account?",
+    "createAccount": "Create your account",
+    "createAccountSubtitle": "Free to browse, free to start learning.",
+    "alreadyHaveAccount": "Already have an account?",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "signingIn": "Signing in…",
+    "creatingAccount": "Creating account…"
+  },
+  "notFoundPage": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or may have moved."
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "draftBanner": "<strong>Draft, not legal advice.</strong> This is standard boilerplate written to match Koushol's current features. It has not been reviewed by a lawyer and should be reviewed by one before it's relied on for real users or payments.",
+    "lastUpdated": "Last updated: 2026-07-19",
+    "sections": {
+      "what": { "title": "1. What Koushol is", "body": "Koushol is an online learning platform. Students browse courses, read chapters, take quizzes, and track progress. Teachers create and publish courses, which an administrator reviews before they go live to students." },
+      "accounts": { "title": "2. Accounts", "body": "You need an account to enroll in courses, track progress, or publish content. You're responsible for keeping your login credentials secure and for activity under your account. New accounts default to the student role — teacher and admin access is granted by an administrator, not self-service." },
+      "content": { "title": "3. Teacher-submitted content", "body": "Teachers are responsible for the accuracy and originality of the courses they submit, including any chapters generated with the AI course-creation tool. Koushol reviews submissions before publishing but does not independently verify factual accuracy. Don't upload content you don't have the rights to." },
+      "payments": { "title": "4. Payments", "body": "Paid courses and payment processing (bKash, Nagad, SSLCommerz) are planned but not live yet. This section will be updated with real payment, refund, and cancellation terms before that ships — don't rely on it as final until then." },
+      "use": { "title": "5. Acceptable use", "body": "Don't use Koushol to harass others, upload unlawful content, attempt to bypass access controls, or interfere with the service. We can suspend accounts that violate this." },
+      "changes": { "title": "6. Changes", "body": "We may update these terms as the product changes (see Section 4 above for a concrete example). Material changes will update the \"last updated\" date." },
+      "contact": { "title": "7. Contact", "body": "Questions about these terms — contact the Koushol team directly." }
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "draftBanner": "<strong>Draft, not legal advice.</strong> This describes what Koushol's code actually does today. It has not been reviewed by a lawyer and should be before it's relied on for real users, especially around Bangladesh-specific data protection requirements.",
+    "lastUpdated": "Last updated: 2026-07-19",
+    "collect": {
+      "title": "What we collect",
+      "account": "Account info: name, email, and role (student/teacher/admin).",
+      "activity": "Learning activity: enrollments, which chapters you've unlocked, and quiz scores.",
+      "teacher": "For teachers: course content you write, and raw notes you submit to the AI course-generation tool."
+    },
+    "storage": {
+      "title": "Where it's stored and processed",
+      "intro": "Account data and course content are stored in Supabase (our database and authentication provider). Sign-in sessions are kept in your browser's local storage, not third-party tracking cookies.",
+      "aiIntro": "Two AI providers process specific content on request, not continuously:",
+      "groq": "<strong>Groq</strong> — processes a teacher's raw notes when they use \"Generate with AI\" to draft chapters and quizzes.",
+      "sarvam": "<strong>Sarvam AI</strong> — processes a chapter's text when a teacher generates audio narration for it.",
+      "fonts": "Fonts are loaded from Google Fonts, which — like any CDN — receives your IP address when your browser requests them."
+    },
+    "payments": {
+      "title": "Payments",
+      "body": "Not live yet. Once bKash/Nagad/SSLCommerz integration ships (Phase 6), this section will describe what payment data those providers receive — treat this page as incomplete on that topic until then."
+    },
+    "access": {
+      "title": "Access control",
+      "body": "Your data is protected by database-level access rules (Row Level Security), not just app-level checks — students can only see their own progress, teachers can only see students enrolled in their own courses, and platform-wide access is limited to admins."
+    },
+    "choices": {
+      "title": "Your choices",
+      "body": "Contact the Koushol team to request a copy of your data or account deletion. Note that this is a manual process today — there's no self-service export/delete flow yet."
+    },
+    "contact": {
+      "title": "Contact",
+      "body": "Questions about this policy — contact the Koushol team directly."
+    }
   }
 }

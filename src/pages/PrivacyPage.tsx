@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { AlertTriangle } from 'lucide-react'
 import { Card } from '@/components/ui/Card'
 
@@ -6,11 +7,15 @@ import { Card } from '@/components/ui/Card'
  * which third parties process it (verified against the real data model and Edge Functions,
  * not generic filler), but has not been reviewed by a lawyer. Update this in the same
  * commit whenever a new third-party processor is added — see PROJECT.md Section 2.
+ * Translated in both languages (src/i18n/locales/) — same "not legal advice" caveat applies
+ * to both versions.
  */
 export function PrivacyPage() {
+  const { t } = useTranslation()
+
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6 py-8">
-      <h1 className="font-display text-2xl font-semibold text-brand-ink">Privacy Policy</h1>
+      <h1 className="font-display text-2xl font-semibold text-brand-ink">{t('privacy.title')}</h1>
 
       <Card className="flex items-start gap-3 border-brand-gold/30 bg-brand-gold/5">
         <AlertTriangle
@@ -18,96 +23,65 @@ export function PrivacyPage() {
           aria-hidden="true"
           strokeWidth={1.75}
         />
-        <p className="text-sm text-slate-700">
-          <strong>Draft, not legal advice.</strong> This describes what Koushol's code
-          actually does today. It has not been reviewed by a lawyer and should be before
-          it's relied on for real users, especially around Bangladesh-specific data
-          protection requirements.
-        </p>
+        <p
+          className="text-sm text-slate-700"
+          dangerouslySetInnerHTML={{ __html: t('privacy.draftBanner') }}
+        />
       </Card>
 
       <div className="flex flex-col gap-5 text-sm leading-relaxed text-slate-700">
-        <p className="text-xs text-slate-400">Last updated: 2026-07-19</p>
+        <p className="text-xs text-slate-400">{t('privacy.lastUpdated')}</p>
 
         <section>
           <h2 className="mb-1 font-display text-base font-semibold text-brand-ink">
-            What we collect
+            {t('privacy.collect.title')}
           </h2>
           <ul className="ml-4 list-disc space-y-1">
-            <li>Account info: name, email, and role (student/teacher/admin).</li>
-            <li>
-              Learning activity: enrollments, which chapters you've unlocked, and quiz scores.
-            </li>
-            <li>
-              For teachers: course content you write, and raw notes you submit to the
-              AI course-generation tool.
-            </li>
+            <li>{t('privacy.collect.account')}</li>
+            <li>{t('privacy.collect.activity')}</li>
+            <li>{t('privacy.collect.teacher')}</li>
           </ul>
         </section>
 
         <section>
           <h2 className="mb-1 font-display text-base font-semibold text-brand-ink">
-            Where it's stored and processed
+            {t('privacy.storage.title')}
           </h2>
-          <p>
-            Account data and course content are stored in Supabase (our database and
-            authentication provider). Sign-in sessions are kept in your browser's local
-            storage, not third-party tracking cookies.
-          </p>
-          <p className="mt-2">Two AI providers process specific content on request, not continuously:</p>
+          <p>{t('privacy.storage.intro')}</p>
+          <p className="mt-2">{t('privacy.storage.aiIntro')}</p>
           <ul className="ml-4 mt-1 list-disc space-y-1">
-            <li>
-              <strong>Groq</strong> — processes a teacher's raw notes when they use "Generate
-              with AI" to draft chapters and quizzes.
-            </li>
-            <li>
-              <strong>Sarvam AI</strong> — processes a chapter's text when a teacher generates
-              audio narration for it.
-            </li>
+            <li dangerouslySetInnerHTML={{ __html: t('privacy.storage.groq') }} />
+            <li dangerouslySetInnerHTML={{ __html: t('privacy.storage.sarvam') }} />
           </ul>
-          <p className="mt-2">
-            Fonts are loaded from Google Fonts, which — like any CDN — receives your IP address
-            when your browser requests them.
-          </p>
+          <p className="mt-2">{t('privacy.storage.fonts')}</p>
         </section>
 
         <section>
           <h2 className="mb-1 font-display text-base font-semibold text-brand-ink">
-            Payments
+            {t('privacy.payments.title')}
           </h2>
-          <p>
-            Not live yet. Once bKash/Nagad/SSLCommerz integration ships (Phase 6), this section
-            will describe what payment data those providers receive — treat this page as
-            incomplete on that topic until then.
-          </p>
+          <p>{t('privacy.payments.body')}</p>
         </section>
 
         <section>
           <h2 className="mb-1 font-display text-base font-semibold text-brand-ink">
-            Access control
+            {t('privacy.access.title')}
           </h2>
-          <p>
-            Your data is protected by database-level access rules (Row Level Security), not
-            just app-level checks — students can only see their own progress, teachers can only
-            see students enrolled in their own courses, and platform-wide access is limited to
-            admins.
-          </p>
+          <p>{t('privacy.access.body')}</p>
         </section>
 
         <section>
           <h2 className="mb-1 font-display text-base font-semibold text-brand-ink">
-            Your choices
+            {t('privacy.choices.title')}
           </h2>
-          <p>
-            Contact the Koushol team to request a copy of your data or account deletion. Note
-            that this is a manual process today — there's no self-service export/delete flow
-            yet.
-          </p>
+          <p>{t('privacy.choices.body')}</p>
         </section>
 
         <section>
-          <h2 className="mb-1 font-display text-base font-semibold text-brand-ink">Contact</h2>
-          <p>Questions about this policy — contact the Koushol team directly.</p>
+          <h2 className="mb-1 font-display text-base font-semibold text-brand-ink">
+            {t('privacy.contact.title')}
+          </h2>
+          <p>{t('privacy.contact.body')}</p>
         </section>
       </div>
     </div>
