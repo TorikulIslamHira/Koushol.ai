@@ -13,6 +13,7 @@ Applied in order (each file name is timestamp-prefixed, so this is also executio
 7. `20260719010600_create_certificates.sql`
 8. `20260719010700_create_sales.sql`
 9. `20260719020000_add_courses_raw_notes.sql`
+10. `20260719030000_create_chapter_audio.sql`
 
 ## `users`
 
@@ -71,6 +72,20 @@ RLS: `order_index = 0` of a published course is a public free preview (readable 
 **Known Phase 1 limitation**: `correct_index` is part of the same jsonb payload the client fetches to render the quiz, so any enrolled student's browser can read the answer key by inspecting network traffic. Grading happens entirely client-side (`src/features/quizzes/components/QuizPlayer.tsx`) against `QUIZ_PASS_THRESHOLD` (70%, `src/lib/constants.ts`). This is an accepted tradeoff for an MVP with no real stakes riding on quiz integrity yet. Before that changes (e.g. paid certificates, leaderboard, anything adversarial), move grading to a Supabase Edge Function that holds the answer key server-side and only returns a pass/fail + score.
 
 RLS: same visibility as the parent chapter (free-preview chapter, enrolled student, or owning teacher/admin).
+
+## `chapter_audio`
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | `uuid` PK | |
+| `chapter_id` | `uuid` FK → `chapters.id` cascade, **unique** | one audio row per chapter |
+| `segments` | `jsonb` | array of `{ audio_base64, mime_type }` — Sarvam's TTS API caps input length per request, so long content is split into segments and played back in order |
+| `language_code` | `text` | e.g. `bn-IN`, `en-IN` — the language the teacher generated this narration in, not inferred from content |
+| `generated_at` | `timestamptz` | |
+
+RLS: same visibility as the parent chapter (free-preview chapter, enrolled student, or owning teacher/admin) — same pattern as `quizzes`.
+
+**Why a separate table instead of a column on `chapters`**: every existing `chapters` read in the codebase does `select('*')`, and audio segments can be multi-hundred-KB base64 blobs. Bundling that into `chapters` would silently bloat every course/chapter page load, including ones that never play audio. `chapter_audio` is only fetched where actually needed (`useChapterAudio`, called from the chapter reader and the teacher's audio panel).
 
 ## `enrollments`
 
@@ -146,6 +161,22 @@ Provider is Groq (`api.groq.com`, OpenAI-compatible chat completions), not Anthr
 **Cost guardrail** (`PROJECT.md` Section 9): one Groq call per invocation, `rawNotes` capped at 20,000 characters, and every call logs token usage (`console.log` in the function, visible via `supabase functions logs generate-course`). Groq's free tier has no real dollar cost, but usage is still logged so a runaway loop would show up before hitting rate limits. See `docs/decisions/cost-notes.md`.
 
 **Deployment**: this function is not applied via `supabase/migrations/` — it's deployed separately with `supabase functions deploy generate-course`, and `GROQ_API_KEY` is set with `supabase secrets set GROQ_API_KEY=...` (dashboard: Edge Functions → generate-course → Secrets). The GitHub↔Supabase integration deploying migrations does not deploy functions.
+
+## TTS audio ("listen to this course") (Phase 4)
+
+`supabase/functions/generate-chapter-audio/index.ts` is a second Edge Function, same shape as `generate-course`: the only place `SARVAM_API_KEY` is used, called via `supabase.functions.invoke` from `src/features/chapters/hooks/useGenerateChapterAudio.ts`, and authorization is the existing chapters owner/admin RLS policy re-used through an RLS-respecting client (no separate auth check written).
+
+**Contract**: `POST { chapterId, languageCode }` → `{ segments: [{ audio_base64, mime_type }], languageCode }`. Unlike `generate-course`, this function *does* write to the DB itself (upserts `chapter_audio`) rather than leaving that to a frontend review step — there's no meaningful "review before committing" step for audio the way there is for AI-written chapter text, so the extra round trip would just be friction.
+
+**Language is an explicit teacher choice, not inferred from content.** Sarvam's Bulbul model is Bengali-focused; some seed course content is English prose (e.g. "Bangla Grammar Basics" *explains* Bangla grammar in English). Defaulting to Bengali regardless of what's actually on the page would silently produce wrong-language or garbled narration. `GenerateAudioPanel` (`src/features/chapters/components/`) shows a language dropdown (`SUPPORTED_AUDIO_LANGUAGES`) every time.
+
+**Chunking**: Sarvam's TTS API caps input length per request, so chapter content is split on sentence boundaries into ≤450-character segments (`chunkText` in the function), capped at `MAX_SEGMENTS = 15` — a chapter needing more than that is rejected with a "shorten the chapter" error rather than silently firing 30+ paid/rate-limited calls. `AudioPlayer` (`src/features/chapters/components/`) plays segments back-to-back as one continuous listen.
+
+**Verified against Sarvam's live API on first real call (2026-07-19)**: the endpoint/request/response shape (`inputs`/`speaker`/`model` fields, `audios[]` response) was correct on the first try. One thing wasn't: the guessed default speaker `'meera'` doesn't exist — Sarvam's 400 response usefully listed the valid names, and the default is now `'anushka'` (confirmed as Sarvam's documented default voice). `SARVAM_MODEL` and `SARVAM_SPEAKER` stay overridable via secrets in case Sarvam's lineup moves on again.
+
+**Cost guardrail** (`PROJECT.md` Section 9): chunk count is capped, one Sarvam call per segment (no retries), and every generation logs segment count + total characters (`console.log`, visible via `supabase functions logs generate-chapter-audio`). See `docs/decisions/cost-notes.md` for the ~৳43–65/course estimate this should stay inside.
+
+**Deployment**: same as `generate-course` — `supabase functions deploy generate-chapter-audio`, and `SARVAM_API_KEY` set with `supabase secrets set SARVAM_API_KEY=...`.
 
 ## Seed data
 

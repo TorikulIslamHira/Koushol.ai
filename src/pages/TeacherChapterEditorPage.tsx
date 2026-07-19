@@ -5,6 +5,7 @@ import { ChapterForm } from '@/features/chapters/components/ChapterForm'
 import { useQuiz } from '@/features/quizzes/hooks/useQuiz'
 import { useQuizMutations } from '@/features/quizzes/hooks/useQuizMutations'
 import { QuizEditor } from '@/features/quizzes/components/QuizEditor'
+import { GenerateAudioPanel } from '@/features/chapters/components/GenerateAudioPanel'
 import { Card } from '@/components/ui/Card'
 import { Spinner } from '@/components/ui/Spinner'
 
@@ -49,6 +50,11 @@ export function TeacherChapterEditorPage() {
           />
         )}
         {quizError && <p className="mt-2 text-sm text-red-600">{quizError}</p>}
+      </Card>
+
+      <Card>
+        <h2 className="mb-4 font-display text-lg font-semibold">Audio</h2>
+        <GenerateAudioPanel chapterId={chapterId} />
       </Card>
     </div>
   )

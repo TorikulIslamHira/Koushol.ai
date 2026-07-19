@@ -46,6 +46,19 @@ export interface QuizRow {
   questions: QuizQuestion[]
 }
 
+export interface AudioSegment {
+  audio_base64: string
+  mime_type: string
+}
+
+export interface ChapterAudioRow {
+  id: string
+  chapter_id: string
+  segments: AudioSegment[]
+  language_code: string
+  generated_at: string
+}
+
 export interface EnrollmentRow {
   id: string
   student_id: string

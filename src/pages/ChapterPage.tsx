@@ -5,6 +5,8 @@ import { useChapterProgress } from '@/features/chapters/hooks/useChapterProgress
 import { useQuiz } from '@/features/quizzes/hooks/useQuiz'
 import { ChapterReader } from '@/features/chapters/components/ChapterReader'
 import { ChapterSidebar } from '@/features/chapters/components/ChapterSidebar'
+import { AudioPlayer } from '@/features/chapters/components/AudioPlayer'
+import { useChapterAudio } from '@/features/chapters/hooks/useChapterAudio'
 import { QuizPlayer } from '@/features/quizzes/components/QuizPlayer'
 import { Spinner } from '@/components/ui/Spinner'
 import { Card } from '@/components/ui/Card'
@@ -18,6 +20,7 @@ export function ChapterPage() {
   const { enrollment, refetch: refetchEnrollment } = useEnrollment(courseId)
   const { progress, recordAttempt } = useChapterProgress(chapterId)
   const { quiz, loading: quizLoading } = useQuiz(chapterId)
+  const { audio } = useChapterAudio(chapterId)
   const [submitting, setSubmitting] = useState(false)
 
   if (courseLoading) return <Spinner />
@@ -62,6 +65,7 @@ export function ChapterPage() {
 
       <div className="flex flex-col gap-8">
         <ChapterReader chapter={chapter} />
+        {audio && audio.segments.length > 0 && <AudioPlayer segments={audio.segments} />}
 
         {quizLoading && <Spinner />}
         {quiz && quiz.questions.length > 0 && (
