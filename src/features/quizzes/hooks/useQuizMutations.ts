@@ -2,8 +2,8 @@ import { useCallback, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { QuizQuestion } from '@/types/database'
 
-/** Upserts the (at most one) quiz for a chapter. RLS (owner/admin-only) is the real enforcement — see supabase/migrations/20260719010400_create_quizzes.sql. */
-export function useQuizMutations(chapterId: string) {
+/** Upserts the (at most one) quiz for a module. RLS (owner/admin-only) is the real enforcement — see supabase/migrations/20260719050000_restructure_modules_topics.sql. */
+export function useQuizMutations(moduleId: string) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -14,7 +14,7 @@ export function useQuizMutations(chapterId: string) {
       try {
         const { error } = await supabase
           .from('quizzes')
-          .upsert({ chapter_id: chapterId, questions }, { onConflict: 'chapter_id' })
+          .upsert({ module_id: moduleId, questions }, { onConflict: 'module_id' })
         if (error) {
           setError(error.message)
           return false
@@ -27,7 +27,7 @@ export function useQuizMutations(chapterId: string) {
         setSaving(false)
       }
     },
-    [chapterId],
+    [moduleId],
   )
 
   return { saveQuiz, saving, error }

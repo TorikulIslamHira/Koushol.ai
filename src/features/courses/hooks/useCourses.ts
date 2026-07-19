@@ -2,14 +2,6 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { CourseRow } from '@/types/database'
 
-/**
- * Columns safe to expose to students: excludes raw_notes, the teacher's AI-generation
- * input (RLS is row-level only, so student-facing queries must opt out of that column
- * themselves rather than relying on the "published" policy to hide it).
- */
-export const PUBLIC_COURSE_COLUMNS =
-  'id, teacher_id, title, description, status, price, created_at'
-
 /** Fetches every published course for the browse/catalog page. RLS already restricts this to status='published' for anonymous/student callers. */
 export function useCourses() {
   const [courses, setCourses] = useState<CourseRow[]>([])
@@ -21,7 +13,7 @@ export function useCourses() {
     setLoading(true)
     supabase
       .from('courses')
-      .select(PUBLIC_COURSE_COLUMNS)
+      .select('*')
       .eq('status', 'published')
       .order('created_at', { ascending: false })
       .then(

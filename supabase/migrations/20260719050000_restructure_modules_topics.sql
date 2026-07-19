@@ -121,6 +121,38 @@ from public.modules m
 where m.course_id = ch.course_id and m.order_index = 0;
 
 -- ============================================================================
+-- 2.5. Drop every policy that references chapters.course_id, on ANY table, before
+--      that column is dropped below — Postgres tracks cross-table policy dependencies
+--      through USING/WITH CHECK joins, not just same-table ones. chapter_progress's
+--      two course_id-referencing policies are dropped here too even though the whole
+--      table is dropped later (that drop happens after this column drop, too late).
+-- ============================================================================
+
+drop policy "chapters_select_free_preview" on public.chapters;
+drop policy "chapters_select_owner_or_admin" on public.chapters;
+drop policy "chapters_select_enrolled" on public.chapters;
+drop policy "chapters_insert_owner_or_admin" on public.chapters;
+drop policy "chapters_update_owner_or_admin" on public.chapters;
+drop policy "chapters_delete_owner_or_admin" on public.chapters;
+
+drop policy "quizzes_select_free_preview" on public.quizzes;
+drop policy "quizzes_select_enrolled" on public.quizzes;
+drop policy "quizzes_select_owner_or_admin" on public.quizzes;
+drop policy "quizzes_insert_owner_or_admin" on public.quizzes;
+drop policy "quizzes_update_owner_or_admin" on public.quizzes;
+drop policy "quizzes_delete_owner_or_admin" on public.quizzes;
+
+drop policy "chapter_progress_select_teacher_or_admin" on public.chapter_progress;
+drop policy "chapter_progress_insert_own" on public.chapter_progress;
+
+drop policy "chapter_audio_select_free_preview" on public.chapter_audio;
+drop policy "chapter_audio_select_enrolled" on public.chapter_audio;
+drop policy "chapter_audio_select_owner_or_admin" on public.chapter_audio;
+drop policy "chapter_audio_insert_owner_or_admin" on public.chapter_audio;
+drop policy "chapter_audio_update_owner_or_admin" on public.chapter_audio;
+drop policy "chapter_audio_delete_owner_or_admin" on public.chapter_audio;
+
+-- ============================================================================
 -- 3. chapters -> topics
 -- ============================================================================
 
@@ -133,13 +165,6 @@ alter table public.chapters add constraint topics_module_id_order_index_key uniq
 alter table public.chapters rename to topics;
 alter index chapters_pkey rename to topics_pkey;
 create index topics_module_id_idx on public.topics (module_id);
-
-drop policy "chapters_select_free_preview" on public.topics;
-drop policy "chapters_select_owner_or_admin" on public.topics;
-drop policy "chapters_select_enrolled" on public.topics;
-drop policy "chapters_insert_owner_or_admin" on public.topics;
-drop policy "chapters_update_owner_or_admin" on public.topics;
-drop policy "chapters_delete_owner_or_admin" on public.topics;
 
 create policy "topics_select_free_preview" on public.topics
   for select
@@ -238,13 +263,6 @@ alter table public.quizzes add constraint quizzes_module_id_key unique (module_i
 alter table public.quizzes drop column chapter_id;
 drop index if exists quizzes_chapter_id_idx;
 create index quizzes_module_id_idx on public.quizzes (module_id);
-
-drop policy "quizzes_select_free_preview" on public.quizzes;
-drop policy "quizzes_select_enrolled" on public.quizzes;
-drop policy "quizzes_select_owner_or_admin" on public.quizzes;
-drop policy "quizzes_insert_owner_or_admin" on public.quizzes;
-drop policy "quizzes_update_owner_or_admin" on public.quizzes;
-drop policy "quizzes_delete_owner_or_admin" on public.quizzes;
 
 create policy "quizzes_select_free_preview" on public.quizzes
   for select
@@ -417,13 +435,6 @@ alter table public.chapter_audio rename to topic_audio;
 alter index chapter_audio_pkey rename to topic_audio_pkey;
 drop index if exists chapter_audio_chapter_id_idx;
 create index topic_audio_topic_id_idx on public.topic_audio (topic_id);
-
-drop policy "chapter_audio_select_free_preview" on public.topic_audio;
-drop policy "chapter_audio_select_enrolled" on public.topic_audio;
-drop policy "chapter_audio_select_owner_or_admin" on public.topic_audio;
-drop policy "chapter_audio_insert_owner_or_admin" on public.topic_audio;
-drop policy "chapter_audio_update_owner_or_admin" on public.topic_audio;
-drop policy "chapter_audio_delete_owner_or_admin" on public.topic_audio;
 
 create policy "topic_audio_select_free_preview" on public.topic_audio
   for select

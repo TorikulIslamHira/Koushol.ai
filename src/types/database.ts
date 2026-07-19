@@ -21,17 +21,21 @@ export interface CourseRow {
   status: CourseStatus
   price: number
   created_at: string
-  /** Teacher's raw notes, used as AI course-generation input. Only fetched on teacher-authoring pages — see useCourse's includeRawNotes option. */
-  raw_notes: string | null
 }
 
-export interface ChapterRow {
+export interface ModuleRow {
   id: string
   course_id: string
   order_index: number
   title: string
+}
+
+export interface TopicRow {
+  id: string
+  module_id: string
+  order_index: number
+  title: string
   content: string
-  is_ai_generated: boolean
 }
 
 export interface QuizQuestion {
@@ -42,7 +46,7 @@ export interface QuizQuestion {
 
 export interface QuizRow {
   id: string
-  chapter_id: string
+  module_id: string
   questions: QuizQuestion[]
 }
 
@@ -51,9 +55,9 @@ export interface AudioSegment {
   mime_type: string
 }
 
-export interface ChapterAudioRow {
+export interface TopicAudioRow {
   id: string
-  chapter_id: string
+  topic_id: string
   segments: AudioSegment[]
   language_code: string
   generated_at: string
@@ -63,14 +67,14 @@ export interface EnrollmentRow {
   id: string
   student_id: string
   course_id: string
-  unlocked_chapter_index: number
+  unlocked_module_index: number
   enrolled_at: string
 }
 
-export interface ChapterProgressRow {
+export interface ModuleProgressRow {
   id: string
   student_id: string
-  chapter_id: string
+  module_id: string
   quiz_score: number | null
   completed_at: string | null
 }

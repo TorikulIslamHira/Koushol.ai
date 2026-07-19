@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/Card'
 import { Spinner } from '@/components/ui/Spinner'
 import { StatTile } from '@/components/ui/StatTile'
 
-/** Own-course analytics page ("/teach/courses/:courseId/analytics") — enrollment count and per-chapter completion/quiz averages. */
+/** Own-course analytics page ("/teach/courses/:courseId/analytics") — enrollment count and per-module completion/quiz averages. */
 export function CourseAnalyticsPage() {
   const { courseId } = useParams<{ courseId: string }>()
   const { course, loading: courseLoading } = useCourse(courseId)
@@ -32,10 +32,10 @@ export function CourseAnalyticsPage() {
       <StatTile label={t('analytics.totalEnrollments')} value={analytics.enrollmentCount} />
 
       <div className="flex flex-col gap-3">
-        {analytics.chapterStats.map(({ chapter, completedCount, averageScore }) => (
-          <Card key={chapter.id} className="flex items-center justify-between gap-4">
+        {analytics.moduleStats.map(({ module, completedCount, averageScore }) => (
+          <Card key={module.id} className="flex items-center justify-between gap-4">
             <span className="font-medium text-brand-ink">
-              {chapter.order_index + 1}. {chapter.title}
+              {module.order_index + 1}. {module.title}
             </span>
             <div className="flex gap-6 text-sm text-slate-500">
               <span>{t('analytics.completed', { count: completedCount })}</span>
@@ -43,8 +43,8 @@ export function CourseAnalyticsPage() {
             </div>
           </Card>
         ))}
-        {analytics.chapterStats.length === 0 && (
-          <p className="text-sm text-slate-500">{t('analytics.noChaptersYet')}</p>
+        {analytics.moduleStats.length === 0 && (
+          <p className="text-sm text-slate-500">{t('modules.noModulesYet')}</p>
         )}
       </div>
     </div>

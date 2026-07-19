@@ -1,13 +1,13 @@
-// What: Turns a chapter's text content into TTS audio via the Sarvam AI API (Bulbul).
+// What: Turns a topic's text content into TTS audio via the Sarvam AI API (Bulbul).
 // Why: Runs server-side because the Sarvam API key is a secret — it must never reach the
 //      browser (see docs/data-model.md / PROJECT.md Section 9 cost guardrails). Same
-//      pattern as supabase/functions/generate-course/.
-// Depends on: supabase/migrations/20260719030000_create_chapter_audio.sql, the
+//      pattern as supabase/functions/generate-module-quiz/.
+// Depends on: supabase/migrations/20260719050000_restructure_modules_topics.sql, the
 //      SARVAM_API_KEY secret (set via `supabase secrets set`), and the caller being the
-//      chapter's owning teacher or an admin — enforced by re-using the chapters table's RLS
+//      topic's owning teacher or an admin — enforced by re-using the topics table's RLS
 //      via an RLS-respecting client built from the caller's own JWT, not the service role.
 //
-// Input:  POST { chapterId: string, languageCode: string }
+// Input:  POST { topicId: string, languageCode: string }
 // Output: { segments: [{ audio_base64, mime_type }], languageCode }
 //
 // ASSUMPTIONS TO VERIFY on first real call (Sarvam's exact contract wasn't available to
@@ -86,16 +86,16 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'Server is missing SARVAM_API_KEY.' }, 500)
   }
 
-  let body: { chapterId?: string; languageCode?: string }
+  let body: { topicId?: string; languageCode?: string }
   try {
     body = await req.json()
   } catch {
     return jsonResponse({ error: 'Invalid JSON body.' }, 400)
   }
 
-  const { chapterId, languageCode } = body
-  if (!chapterId || typeof chapterId !== 'string') {
-    return jsonResponse({ error: 'chapterId is required.' }, 400)
+  const { topicId, languageCode } = body
+  if (!topicId || typeof topicId !== 'string') {
+    return jsonResponse({ error: 'topicId is required.' }, 400)
   }
   if (!languageCode || !SUPPORTED_LANGUAGES.has(languageCode)) {
     return jsonResponse(
@@ -114,24 +114,24 @@ Deno.serve(async (req: Request) => {
     { global: { headers: { Authorization: authHeader } } },
   )
 
-  const { data: chapter, error: chapterError } = await supabase
-    .from('chapters')
+  const { data: topic, error: topicError } = await supabase
+    .from('topics')
     .select('id, title, content')
-    .eq('id', chapterId)
+    .eq('id', topicId)
     .single()
-  if (chapterError || !chapter) {
+  if (topicError || !topic) {
     // RLS denies the select if the caller isn't the owning teacher or an admin.
-    return jsonResponse({ error: 'Chapter not found or not yours to edit.' }, 403)
+    return jsonResponse({ error: 'Topic not found or not yours to edit.' }, 403)
   }
-  if (!chapter.content || !chapter.content.trim()) {
-    return jsonResponse({ error: 'Chapter has no content to narrate yet.' }, 400)
+  if (!topic.content || !topic.content.trim()) {
+    return jsonResponse({ error: 'Topic has no content to narrate yet.' }, 400)
   }
 
-  const chunks = chunkText(chapter.content)
+  const chunks = chunkText(topic.content)
   if (chunks.length > MAX_SEGMENTS) {
     return jsonResponse(
       {
-        error: `Chapter content is too long for audio generation (${chunks.length} segments, max ${MAX_SEGMENTS}). Shorten the chapter first.`,
+        error: `Topic content is too long for audio generation (${chunks.length} segments, max ${MAX_SEGMENTS}). Shorten the topic first.`,
       },
       400,
     )
@@ -179,14 +179,14 @@ Deno.serve(async (req: Request) => {
   }
 
   console.log(
-    `[generate-chapter-audio] chapter=${chapterId} language=${languageCode} segments=${segments.length} chars=${totalChars}`,
+    `[generate-topic-audio] topic=${topicId} language=${languageCode} segments=${segments.length} chars=${totalChars}`,
   )
 
   const { error: upsertError } = await supabase
-    .from('chapter_audio')
+    .from('topic_audio')
     .upsert(
-      { chapter_id: chapterId, segments, language_code: languageCode },
-      { onConflict: 'chapter_id' },
+      { topic_id: topicId, segments, language_code: languageCode },
+      { onConflict: 'topic_id' },
     )
   if (upsertError) {
     return jsonResponse({ error: `Failed to save audio: ${upsertError.message}` }, 500)

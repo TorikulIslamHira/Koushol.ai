@@ -42,8 +42,8 @@ export function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {enrollments.map((enrollment) => {
           const percent =
-            enrollment.chapterCount > 0
-              ? Math.min(100, (enrollment.unlocked_chapter_index / enrollment.chapterCount) * 100)
+            enrollment.moduleCount > 0
+              ? Math.min(100, (enrollment.unlocked_module_index / enrollment.moduleCount) * 100)
               : 0
           return (
             <Link key={enrollment.id} to={`/courses/${enrollment.course_id}`} className="group">
@@ -54,8 +54,8 @@ export function DashboardPage() {
                 <ProgressBar percent={percent} />
                 <p className="text-xs text-slate-400">
                   {t('dashboard.chaptersUnlocked', {
-                    unlocked: Math.min(enrollment.unlocked_chapter_index, enrollment.chapterCount),
-                    total: enrollment.chapterCount,
+                    unlocked: Math.min(enrollment.unlocked_module_index, enrollment.moduleCount),
+                    total: enrollment.moduleCount,
                   })}
                 </p>
               </Card>

@@ -1,31 +1,31 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import type { ChapterAudioRow } from '@/types/database'
+import type { TopicAudioRow } from '@/types/database'
 
-/** Fetches a chapter's generated TTS audio (if any). RLS mirrors chapter visibility — see supabase/migrations/20260719030000_create_chapter_audio.sql. */
-export function useChapterAudio(chapterId: string | undefined) {
-  const [audio, setAudio] = useState<ChapterAudioRow | null>(null)
+/** Fetches a topic's generated TTS audio (if any). RLS mirrors topic visibility — see supabase/migrations/20260719050000_restructure_modules_topics.sql. */
+export function useTopicAudio(topicId: string | undefined) {
+  const [audio, setAudio] = useState<TopicAudioRow | null>(null)
   const [loading, setLoading] = useState(true)
 
   const refetch = useCallback(() => {
-    if (!chapterId) {
+    if (!topicId) {
       setLoading(false)
       return
     }
     setLoading(true)
     supabase
-      .from('chapter_audio')
+      .from('topic_audio')
       .select('*')
-      .eq('chapter_id', chapterId)
+      .eq('topic_id', topicId)
       .maybeSingle()
       .then(
         ({ data }) => {
-          setAudio((data as ChapterAudioRow) ?? null)
+          setAudio((data as TopicAudioRow) ?? null)
           setLoading(false)
         },
         () => setLoading(false),
       )
-  }, [chapterId])
+  }, [topicId])
 
   useEffect(() => {
     refetch()

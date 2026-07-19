@@ -10,9 +10,9 @@ This document is the single source of truth for architecture, folder structure, 
 
 Koushol is a web-first (mobile-installable later) interactive learning platform.
 
-Students enroll in courses, read chapters, take quizzes, unlock progress sequentially, and earn certificates.
+Students enroll in courses, structured as **Course → Modules → Topics**: they read every topic in an unlocked module freely, then take that module's quiz to unlock the next module (progress locks sequentially), and earn certificates.
 
-Teachers write raw topic notes; an AI engine converts those notes into a structured interactive course (chapters + quizzes).
+Teachers build courses by hand — name the course, add modules, add hand-written topics inside each module — then an AI engine drafts a quiz for a module from its topics' content, which the teacher reviews and can edit before saving.
 
 A Master/Admin role has full permissions plus an analytics dashboard (sales, revenue, student activity, teacher performance).
 
@@ -31,7 +31,7 @@ Design identity: dark green (#0C8A4B) + gold (#D4A017) accents, Space Grotesk (d
 | Frontend | React + Tailwind (Vite, TypeScript) | Web-first, installable PWA later |
 | Icons | [lucide-react](https://lucide.dev) | Added during the UI/UX redesign (started 2026-07-19) — the `ui-ux-pro-max` skill's pre-delivery checklist flags emoji-as-icons (🔒, ↑↓, ✕) as unprofessional; Lucide is its recommended SVG icon set |
 | Backend / DB / Auth | Supabase (Postgres) | Already connected; free tier to start |
-| AI course generation | Groq API (Llama 3.3 70B, model configurable via `GROQ_MODEL` secret) | Phase 3. Switched from the originally-planned Claude API on 2026-07-19 — teacher wanted to test on a free tier before committing to a paid provider. Groq's chat-completions API is OpenAI-compatible; the Edge Function (`supabase/functions/generate-course/`) is written against it directly (no SDK). Swapping back to Claude later is a contained change (endpoint + request/response shape) — update this row in the same commit if that happens. |
+| AI-assisted quiz generation | Groq API (Llama 3.3 70B, model configurable via `GROQ_MODEL` secret) | Phase 3, restructured 2026-07-19: AI now drafts a quiz for a module from its topics' content (was originally a whole-course "raw notes → chapters + quizzes" generator, removed in the Module/Topic restructure). Switched from the originally-planned Claude API on 2026-07-19 — teacher wanted to test on a free tier before committing to a paid provider. Groq's chat-completions API is OpenAI-compatible; the Edge Function (`supabase/functions/generate-module-quiz/`) is written against it directly (no SDK). Swapping back to Claude later is a contained change (endpoint + request/response shape) — update this row in the same commit if that happens. |
 | TTS | Sarvam AI (Bulbul, speaker `anushka` by default, model configurable via `SARVAM_MODEL` secret) | Phase 4. Language is an explicit per-generation teacher choice, not hardcoded to Bengali — see `docs/data-model.md` § TTS audio. |
 | Payments | bKash / Nagad / SSLCommerz | Phase 6, no monthly fee, %-based |
 | Hosting | Vercel or Netlify | Free tier to start |
@@ -45,10 +45,10 @@ Do not introduce a new framework, database, or third-party service without addin
 | Capability | Student | Teacher | Master/Admin |
 |---|---|---|---|
 | Browse & enroll in courses | ✅ | ✅ | ✅ |
-| View chapters / take quizzes | ✅ | ✅ | ✅ |
+| View modules/topics / take quizzes | ✅ | ✅ | ✅ |
 | Earn certificates | ✅ | — | — |
-| Create/edit own courses (raw notes) | ❌ | ✅ | ✅ |
-| Trigger AI course generation | ❌ | ✅ (own courses) | ✅ (any course) |
+| Create/edit own courses (modules, topics) | ❌ | ✅ | ✅ |
+| Trigger AI quiz generation for a module | ❌ | ✅ (own courses) | ✅ (any course) |
 | Publish/unpublish a course | ❌ | ✅ (own, needs admin approval) | ✅ |
 | View own student list & progress | ❌ | ✅ (own courses only) | ✅ (all) |
 | View sales/revenue analytics | ❌ | ✅ (own courses only) | ✅ (platform-wide) |
@@ -73,8 +73,8 @@ Koushol.ai/
 ├── supabase/
 │   ├── migrations/                ← one file per schema change, timestamped
 │   ├── functions/                 ← Edge Functions (Deno) — anything needing a secret
-│   │   ├── generate-course/       ← Groq API call for AI course generation (Phase 3)
-│   │   └── generate-chapter-audio/ ← Sarvam AI TTS call (Phase 4)
+│   │   ├── generate-module-quiz/  ← Groq API call, drafts a module's quiz from its topics (Phase 3)
+│   │   └── generate-topic-audio/  ← Sarvam AI TTS call (Phase 4)
 │   └── seed.sql                   ← local dev sample data only, never run on prod
 └── src/
     ├── app/                        ← root App.tsx, Layout.tsx, providers/
@@ -117,7 +117,7 @@ Rules:
 - Components: `PascalCase.tsx` (e.g. `CourseCard.tsx`)
 - Hooks: `useCamelCase.ts` (e.g. `useEnrollment.ts`)
 - Utils/lib functions: `camelCase.ts`
-- Supabase tables: `snake_case`, plural (e.g. `course_chapters` → actually `chapters`, see Section 7)
+- Supabase tables: `snake_case`, plural (e.g. `modules`, `topics`, see Section 7)
 - Supabase columns: `snake_case`
 - Route/page files: match the URL path they render
 
@@ -133,10 +133,11 @@ Rules:
 
 - `users` (id, role: student/teacher/admin, name, email, created_at)
 - `courses` (id, teacher_id, title, description, status: draft/published, price, created_at)
-- `chapters` (id, course_id, order_index, title, content, is_ai_generated)
-- `quizzes` (id, chapter_id, questions jsonb)
-- `enrollments` (id, student_id, course_id, unlocked_chapter_index, enrolled_at)
-- `chapter_progress` (id, student_id, chapter_id, quiz_score, completed_at)
+- `modules` (id, course_id, order_index, title)
+- `topics` (id, module_id, order_index, title, content)
+- `quizzes` (id, module_id, questions jsonb) — one quiz per module
+- `enrollments` (id, student_id, course_id, unlocked_module_index, enrolled_at)
+- `module_progress` (id, student_id, module_id, quiz_score, completed_at)
 - `certificates` (id, student_id, course_id, issued_at)
 - `sales` (id, course_id, student_id, amount, payment_provider, status, created_at)
 
@@ -146,10 +147,10 @@ All tables get RLS enabled from the first migration — never ship a table witho
 
 | Phase | Scope | Status |
 |---|---|---|
-| 1 | Student flow: browse, enroll, chapters, quiz, manual course content, Supabase auth+DB | ✅ Done — migrations + seed applied to the live Supabase project, verified end-to-end locally (signup, browse, enroll, chapter, quiz, unlock) on 2026-07-19 |
-| 2 | Teacher flow: create/edit courses manually, publish, own-course analytics | ✅ Done — verified end-to-end on 2026-07-19 (create → chapter → quiz → publish → shows in student catalog → delete) |
-| 3 | AI course generation: teacher notes → Groq (Llama 3.3) → structured chapters + quiz | ✅ Done — deployed and verified end-to-end on 2026-07-19 (raw notes → generate → review proposal → add to course → chapter + quiz confirmed in DB with `is_ai_generated = true`). See `docs/data-model.md` § AI course generation. |
-| 4 | TTS audio player (Sarvam AI) for chapter content | ✅ Done — deployed and verified end-to-end on 2026-07-19 (teacher generates audio with an explicit language choice → real WAV audio confirmed in DB → plays back on the student-facing chapter page). One live-API guess was wrong and fixed on first real call (default speaker name) — see `docs/data-model.md` § TTS audio. |
+| 1 | Student flow: browse, enroll, modules/topics, quiz, manual course content, Supabase auth+DB | ✅ Done — migrations + seed applied to the live Supabase project, verified end-to-end locally (signup, browse, enroll, read, quiz, unlock) on 2026-07-19 |
+| 2 | Teacher flow: create/edit courses manually, publish, own-course analytics | ✅ Done — verified end-to-end on 2026-07-19 (create → module → topic → quiz → publish → shows in student catalog → delete) |
+| 3 | AI-assisted quiz generation: teacher-written topics → Groq (Llama 3.3) → draft module quiz | ✅ Done, restructured 2026-07-19 — teacher builds modules/topics by hand, AI drafts a quiz per module from its topics on request, teacher reviews/edits before saving. Replaced the original whole-course "raw notes → chapters + quizzes" generator. See `docs/data-model.md` § AI-assisted quiz generation. |
+| 4 | TTS audio player (Sarvam AI) for topic content | ✅ Done — deployed and verified end-to-end on 2026-07-19 (teacher generates audio with an explicit language choice → real WAV audio confirmed in DB → plays back on the student-facing topic page). One live-API guess was wrong and fixed on first real call (default speaker name) — see `docs/data-model.md` § TTS audio. |
 | 5 | Master/Admin dashboard: platform-wide analytics, sales, user management | ✅ Done — deployed and verified end-to-end on 2026-07-19 (teacher submits for review → direct-API publish attempt genuinely rejected by RLS, not just hidden by UI → admin approves via `/admin/courses` → status confirmed `published` in DB → course appears in the student catalog). Also resolves the Phase 2 self-service-publish simplification noted in `docs/data-model.md`. Sales/revenue is a placeholder pointing at Phase 6, since the `sales` table has no real data yet. |
 | 6 | Payment integration (bKash/Nagad/SSLCommerz) | Planned |
 | 7 | PWA packaging + mobile installability | Planned |
@@ -165,7 +166,7 @@ Any code that calls a paid API (Claude, Sarvam AI, Supabase Pro features) must:
 - Log estimated cost per call in a comment or console log during development.
 - Never run in an uncapped loop (e.g. auto-regenerating AI content on every keystroke).
 - Respect the budget ranges documented in `docs/decisions/cost-notes.md`: AI course gen $0 on Groq's free tier for now, TTS ~৳43–65/course.
-- **Run server-side, in a Supabase Edge Function (`supabase/functions/`), never in browser code.** A paid API's key is a secret; anything shipped to the client (including Vite env vars prefixed `VITE_`) is readable by anyone who opens dev tools. See `supabase/functions/generate-course/` for the pattern: the frontend calls `supabase.functions.invoke(...)`, which forwards the user's own JWT so the function can re-use existing RLS policies for authorization instead of duplicating them.
+- **Run server-side, in a Supabase Edge Function (`supabase/functions/`), never in browser code.** A paid API's key is a secret; anything shipped to the client (including Vite env vars prefixed `VITE_`) is readable by anyone who opens dev tools. See `supabase/functions/generate-module-quiz/` for the pattern: the frontend calls `supabase.functions.invoke(...)`, which forwards the user's own JWT so the function can re-use existing RLS policies for authorization instead of duplicating them.
 
 No paid API was called in Phase 1 or 2 — this section became load-bearing starting Phase 3.
 
@@ -175,7 +176,7 @@ Read this file, then `docs/design-system.md` and `docs/data-model.md`, before wr
 
 Phase 1 decisions that were previously open, resolved 2026-07-19:
 - **Quiz-passing threshold: 70%** — `QUIZ_PASS_THRESHOLD` in `src/lib/constants.ts`.
-- **Chapter preview access: first chapter (order_index 0) of any published course is a free public preview**; the rest require enrollment. Enforced in RLS (`chapters_select_free_preview` policy) and mirrored in the UI.
+- **Topic preview access: the first topic (order_index 0) of the first module (order_index 0) of any published course is a free public preview**; the rest require enrollment. Enforced in RLS (`topics_select_free_preview` policy) and mirrored in the UI.
 - **Phase 1 content source: SQL seed migration** (`supabase/seed.sql`) with two sample courses, so the student flow is testable end to end without a teacher UI.
 
 Still not decided — ask before building: certificate design (Phase 1 doesn't need it yet; the `certificates` table is schema-only with no issuance code).

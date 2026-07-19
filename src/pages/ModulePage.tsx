@@ -1,59 +1,62 @@
+import { useState } from 'react'
 import { useParams, Navigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft } from 'lucide-react'
 import { useCourse } from '@/features/courses/hooks/useCourse'
 import { useEnrollment } from '@/features/enrollment/hooks/useEnrollment'
-import { useChapterProgress } from '@/features/chapters/hooks/useChapterProgress'
+import { useModuleProgress } from '@/features/courses/hooks/useModuleProgress'
 import { useQuiz } from '@/features/quizzes/hooks/useQuiz'
-import { ChapterReader } from '@/features/chapters/components/ChapterReader'
-import { ChapterSidebar } from '@/features/chapters/components/ChapterSidebar'
+import { TopicReader } from '@/features/chapters/components/TopicReader'
+import { TopicTabs } from '@/features/chapters/components/TopicTabs'
 import { AudioPlayer } from '@/features/chapters/components/AudioPlayer'
-import { useChapterAudio } from '@/features/chapters/hooks/useChapterAudio'
+import { useTopicAudio } from '@/features/chapters/hooks/useTopicAudio'
 import { QuizPlayer } from '@/features/quizzes/components/QuizPlayer'
 import { Spinner } from '@/components/ui/Spinner'
 import { Card } from '@/components/ui/Card'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { supabase } from '@/lib/supabase'
-import { useState } from 'react'
 
-/** Chapter reader + quiz page ("/courses/:courseId/chapters/:chapterId"). Passing the quiz advances the student's enrollments.unlocked_chapter_index. */
-export function ChapterPage() {
-  const { courseId, chapterId } = useParams<{ courseId: string; chapterId: string }>()
-  const { course, chapters, loading: courseLoading } = useCourse(courseId)
+/** Module reader + quiz page ("/courses/:courseId/modules/:moduleId"). Topics within the module are freely browsable; passing the module's quiz advances enrollments.unlocked_module_index. */
+export function ModulePage() {
+  const { courseId, moduleId } = useParams<{ courseId: string; moduleId: string }>()
+  const { course, modules, loading: courseLoading } = useCourse(courseId)
   const { enrollment, refetch: refetchEnrollment } = useEnrollment(courseId)
-  const { progress, recordAttempt } = useChapterProgress(chapterId)
-  const { quiz, loading: quizLoading } = useQuiz(chapterId)
-  const { audio } = useChapterAudio(chapterId)
+  const { progress, recordAttempt } = useModuleProgress(moduleId)
+  const { quiz, loading: quizLoading } = useQuiz(moduleId)
   const [submitting, setSubmitting] = useState(false)
   const { t } = useTranslation()
 
+  const module = modules.find((m) => m.id === moduleId)
+  const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>(undefined)
+  const { audio } = useTopicAudio(selectedTopicId ?? module?.topics[0]?.id)
+
   if (courseLoading) return <Spinner />
-  if (!course || !chapterId) return <p className="text-slate-500">{t('courses.courseNotFound')}</p>
+  if (!course || !moduleId) return <p className="text-slate-500">{t('courses.courseNotFound')}</p>
+  if (!module) return <p className="text-slate-500">{t('modules.moduleNotFound')}</p>
 
-  const chapter = chapters.find((c) => c.id === chapterId)
-  if (!chapter) return <p className="text-slate-500">{t('courses.chapterNotFound')}</p>
-
-  const unlockedIndex = enrollment?.unlocked_chapter_index ?? 0
-  if (chapter.order_index > unlockedIndex) {
+  const unlockedIndex = enrollment?.unlocked_module_index ?? 0
+  if (module.order_index > unlockedIndex) {
     return <Navigate to={`/courses/${courseId}`} replace />
   }
+
+  const currentTopic = module.topics.find((tp) => tp.id === selectedTopicId) ?? module.topics[0]
 
   async function handleQuizSubmit(scorePercent: number, passed: boolean) {
     setSubmitting(true)
     await recordAttempt(scorePercent, passed)
-    if (passed && enrollment && chapter!.order_index === enrollment.unlocked_chapter_index) {
+    if (passed && enrollment && module!.order_index === enrollment.unlocked_module_index) {
       await supabase
         .from('enrollments')
-        .update({ unlocked_chapter_index: enrollment.unlocked_chapter_index + 1 })
+        .update({ unlocked_module_index: enrollment.unlocked_module_index + 1 })
         .eq('id', enrollment.id)
       refetchEnrollment()
     }
     setSubmitting(false)
   }
 
-  const nextChapter = chapters.find((c) => c.order_index === chapter.order_index + 1)
+  const nextModule = modules.find((m) => m.order_index === module.order_index + 1)
   const progressPercent =
-    chapters.length > 0 ? Math.min(100, (unlockedIndex / chapters.length) * 100) : 0
+    modules.length > 0 ? Math.min(100, (unlockedIndex / modules.length) * 100) : 0
 
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-[220px_1fr]">
@@ -70,22 +73,24 @@ export function ChapterPage() {
             <ProgressBar percent={progressPercent} />
             <p className="mt-1 text-xs text-slate-400">
               {t('chapter.unlockedCount', {
-                unlocked: Math.min(unlockedIndex, chapters.length),
-                total: chapters.length,
+                unlocked: Math.min(unlockedIndex, modules.length),
+                total: modules.length,
               })}
             </p>
           </div>
         )}
-        <ChapterSidebar
-          courseId={course.id}
-          chapters={chapters}
-          currentChapterId={chapter.id}
-          unlockedIndex={unlockedIndex}
-        />
+        <h2 className="mb-2 font-display text-sm font-semibold text-brand-ink">{module.title}</h2>
+        {currentTopic && (
+          <TopicTabs
+            topics={module.topics}
+            currentTopicId={currentTopic.id}
+            onSelect={setSelectedTopicId}
+          />
+        )}
       </aside>
 
       <div className="flex flex-col gap-8">
-        <ChapterReader chapter={chapter} />
+        {currentTopic && <TopicReader topic={currentTopic} />}
         {audio && audio.segments.length > 0 && <AudioPlayer segments={audio.segments} />}
 
         {quizLoading && <Spinner />}
@@ -97,11 +102,8 @@ export function ChapterPage() {
             {progress?.completed_at ? (
               <p className="text-brand-green">
                 {t('chapter.alreadyPassed', { score: progress.quiz_score })}{' '}
-                {nextChapter && (
-                  <Link
-                    to={`/courses/${courseId}/chapters/${nextChapter.id}`}
-                    className="underline"
-                  >
+                {nextModule && (
+                  <Link to={`/courses/${courseId}/modules/${nextModule.id}`} className="underline">
                     {t('chapter.goToNext')}
                   </Link>
                 )}

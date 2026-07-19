@@ -4,19 +4,18 @@ import { BarChart3, Trash2 } from 'lucide-react'
 import { useCourse } from '@/features/courses/hooks/useCourse'
 import { useCourseMutations } from '@/features/courses/hooks/useCourseMutations'
 import { CourseForm } from '@/features/courses/components/CourseForm'
-import { AIGenerateCourse } from '@/features/courses/components/AIGenerateCourse'
-import { ChapterEditorList } from '@/features/chapters/components/ChapterEditorList'
+import { ModuleEditorList } from '@/features/courses/components/ModuleEditorList'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Spinner } from '@/components/ui/Spinner'
 import { COURSE_STATUS_BADGE_TONE, COURSE_STATUS_LABEL_KEY } from '@/features/courses/statusDisplay'
 
-/** Course editor ("/teach/courses/:courseId") — edit metadata, submit for admin approval, manage chapters (manually or via AI generation), delete, and a link to analytics. Publishing isn't self-service — see useCourseMutations. */
+/** Course editor ("/teach/courses/:courseId") — edit metadata, submit for admin approval, manage modules, delete, and a link to analytics. Publishing isn't self-service — see useCourseMutations. */
 export function CourseEditorPage() {
   const { courseId } = useParams<{ courseId: string }>()
   const navigate = useNavigate()
-  const { course, chapters, loading, refetch } = useCourse(courseId, { includeRawNotes: true })
+  const { course, modules, loading, refetch } = useCourse(courseId)
   const { updateCourse, deleteCourse, saving, error } = useCourseMutations()
   const { t } = useTranslation()
 
@@ -90,14 +89,7 @@ export function CourseEditorPage() {
         {error && <p className="mt-2 text-sm text-danger">{error}</p>}
       </Card>
 
-      <ChapterEditorList courseId={courseId} chapters={chapters} onChanged={refetch} />
-
-      <AIGenerateCourse
-        courseId={courseId}
-        initialNotes={course.raw_notes ?? ''}
-        existingChapterCount={chapters.length}
-        onApplied={refetch}
-      />
+      <ModuleEditorList courseId={courseId} modules={modules} onChanged={refetch} />
 
       <button
         type="button"

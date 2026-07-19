@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/Button'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useEnrollment } from '@/features/enrollment/hooks/useEnrollment'
 import { formatBDT } from '@/lib/utils'
-import type { ChapterRow, CourseRow } from '@/types/database'
+import type { ModuleRow, CourseRow } from '@/types/database'
 
-/** Enroll CTA on the course detail page — prompts sign-in first if needed, otherwise creates the enrollment row. `chapters` lets "Continue learning" resolve unlocked_chapter_index (a position) to the actual chapter id the route needs. */
-export function EnrollButton({ course, chapters }: { course: CourseRow; chapters: ChapterRow[] }) {
+/** Enroll CTA on the course detail page — prompts sign-in first if needed, otherwise creates the enrollment row. `modules` lets "Continue learning" resolve unlocked_module_index (a position) to the actual module id the route needs. */
+export function EnrollButton({ course, modules }: { course: CourseRow; modules: ModuleRow[] }) {
   const { session } = useAuth()
   const navigate = useNavigate()
   const { t } = useTranslation()
@@ -16,13 +16,13 @@ export function EnrollButton({ course, chapters }: { course: CourseRow; chapters
   if (loading) return null
 
   if (enrollment) {
-    const currentChapter =
-      chapters.find((c) => c.order_index === enrollment.unlocked_chapter_index) ?? chapters[0]
+    const currentModule =
+      modules.find((m) => m.order_index === enrollment.unlocked_module_index) ?? modules[0]
     return (
       <Button
         variant="secondary"
-        disabled={!currentChapter}
-        onClick={() => currentChapter && navigate(`/courses/${course.id}/chapters/${currentChapter.id}`)}
+        disabled={!currentModule}
+        onClick={() => currentModule && navigate(`/courses/${course.id}/modules/${currentModule.id}`)}
       >
         {t('enroll.continueLearning')}
       </Button>

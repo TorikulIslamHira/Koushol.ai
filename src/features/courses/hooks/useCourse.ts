@@ -1,46 +1,68 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
-import { PUBLIC_COURSE_COLUMNS } from '@/features/courses/hooks/useCourses'
-import type { ChapterRow, CourseRow } from '@/types/database'
+import type { CourseRow, ModuleRow, TopicRow } from '@/types/database'
+
+export interface ModuleWithTopics extends ModuleRow {
+  topics: TopicRow[]
+}
 
 /**
- * Fetches one course plus its chapters (ordered) for the course detail / reader / teacher
- * editor pages. Chapter visibility beyond the free-preview chapter is enforced by RLS, not
- * here. Pass `includeRawNotes: true` only from teacher-authoring pages — raw_notes is the AI
- * generation input and shouldn't be fetched on student-facing pages (see useCourses.ts).
+ * Fetches one course plus its modules (ordered) each with their ordered topics, for the
+ * course detail / reader / teacher editor pages. Visibility beyond the free-preview topic
+ * (first topic of the first module) is enforced by RLS, not here.
  */
-export function useCourse(courseId: string | undefined, opts?: { includeRawNotes?: boolean }) {
+export function useCourse(courseId: string | undefined) {
   const [course, setCourse] = useState<CourseRow | null>(null)
-  const [chapters, setChapters] = useState<ChapterRow[]>([])
+  const [modules, setModules] = useState<ModuleWithTopics[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const includeRawNotes = opts?.includeRawNotes ?? false
 
   const refetch = useCallback(() => {
     if (!courseId) return
     setLoading(true)
-    const courseQuery = includeRawNotes
-      ? supabase.from('courses').select('*').eq('id', courseId).single()
-      : supabase.from('courses').select(PUBLIC_COURSE_COLUMNS).eq('id', courseId).single()
     Promise.all([
-      courseQuery,
-      supabase.from('chapters').select('*').eq('course_id', courseId).order('order_index'),
+      supabase.from('courses').select('*').eq('id', courseId).single(),
+      supabase.from('modules').select('*').eq('course_id', courseId).order('order_index'),
     ])
-      .then(([courseRes, chaptersRes]) => {
+      .then(async ([courseRes, modulesRes]) => {
         if (courseRes.error) setError(courseRes.error.message)
         setCourse((courseRes.data as CourseRow) ?? null)
-        setChapters((chaptersRes.data as ChapterRow[]) ?? [])
+        const moduleRows = (modulesRes.data as ModuleRow[]) ?? []
+
+        if (moduleRows.length === 0) {
+          setModules([])
+          setLoading(false)
+          return
+        }
+
+        const { data: topicRows } = await supabase
+          .from('topics')
+          .select('*')
+          .in(
+            'module_id',
+            moduleRows.map((m) => m.id),
+          )
+          .order('order_index')
+
+        const topicsByModule = new Map<string, TopicRow[]>()
+        for (const topic of (topicRows as TopicRow[]) ?? []) {
+          const list = topicsByModule.get(topic.module_id) ?? []
+          list.push(topic)
+          topicsByModule.set(topic.module_id, list)
+        }
+
+        setModules(moduleRows.map((m) => ({ ...m, topics: topicsByModule.get(m.id) ?? [] })))
         setLoading(false)
       })
       .catch((err: unknown) => {
         setError(err instanceof Error ? err.message : 'Failed to load course.')
         setLoading(false)
       })
-  }, [courseId, includeRawNotes])
+  }, [courseId])
 
   useEffect(() => {
     refetch()
   }, [refetch])
 
-  return { course, chapters, loading, error, refetch }
+  return { course, modules, loading, error, refetch }
 }

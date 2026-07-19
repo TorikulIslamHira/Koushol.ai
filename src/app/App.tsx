@@ -11,12 +11,13 @@ import { LoginPage } from '@/pages/LoginPage'
 import { SignupPage } from '@/pages/SignupPage'
 import { CoursesPage } from '@/pages/CoursesPage'
 import { CourseDetailPage } from '@/pages/CourseDetailPage'
-import { ChapterPage } from '@/pages/ChapterPage'
+import { ModulePage } from '@/pages/ModulePage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { TeacherDashboardPage } from '@/pages/TeacherDashboardPage'
 import { NewCoursePage } from '@/pages/NewCoursePage'
 import { CourseEditorPage } from '@/pages/CourseEditorPage'
-import { TeacherChapterEditorPage } from '@/pages/TeacherChapterEditorPage'
+import { TeacherModuleEditorPage } from '@/pages/TeacherModuleEditorPage'
+import { TeacherTopicEditorPage } from '@/pages/TeacherTopicEditorPage'
 import { CourseAnalyticsPage } from '@/pages/CourseAnalyticsPage'
 import { AdminDashboardPage } from '@/pages/AdminDashboardPage'
 import { AdminUsersPage } from '@/pages/AdminUsersPage'
@@ -46,11 +47,11 @@ export function App() {
             <Route path="/courses" element={<CoursesPage />} />
             <Route path="/courses/:courseId" element={<CourseDetailPage />} />
             {/*
-              Not wrapped in RequireAuth: chapter order_index 0 is a public free
-              preview (see PROJECT.md Section 10). ChapterPage itself redirects
-              away if a signed-out/non-enrolled visitor requests a locked chapter.
+              Not wrapped in RequireAuth: the first topic of the first module is a public
+              free preview (see PROJECT.md Section 10). ModulePage itself redirects away if
+              a signed-out/non-enrolled visitor requests a locked module.
             */}
-            <Route path="/courses/:courseId/chapters/:chapterId" element={<ChapterPage />} />
+            <Route path="/courses/:courseId/modules/:moduleId" element={<ModulePage />} />
             <Route
               path="/dashboard"
               element={
@@ -84,10 +85,18 @@ export function App() {
               }
             />
             <Route
-              path="/teach/courses/:courseId/chapters/:chapterId"
+              path="/teach/courses/:courseId/modules/:moduleId"
               element={
                 <RequireTeacher>
-                  <TeacherChapterEditorPage />
+                  <TeacherModuleEditorPage />
+                </RequireTeacher>
+              }
+            />
+            <Route
+              path="/teach/courses/:courseId/modules/:moduleId/topics/:topicId"
+              element={
+                <RequireTeacher>
+                  <TeacherTopicEditorPage />
                 </RequireTeacher>
               }
             />

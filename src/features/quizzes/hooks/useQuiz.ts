@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { QuizRow } from '@/types/database'
 
-/** Fetches the quiz (if any) attached to a chapter. Grading happens client-side for Phase 1 — see the note in supabase/migrations/20260719010400_create_quizzes.sql. */
-export function useQuiz(chapterId: string | undefined) {
+/** Fetches the quiz (if any) attached to a module. Grading happens client-side for Phase 1 — see the note in supabase/migrations/20260719010400_create_quizzes.sql. */
+export function useQuiz(moduleId: string | undefined) {
   const [quiz, setQuiz] = useState<QuizRow | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!chapterId) {
+    if (!moduleId) {
       setLoading(false)
       return
     }
@@ -17,7 +17,7 @@ export function useQuiz(chapterId: string | undefined) {
     supabase
       .from('quizzes')
       .select('*')
-      .eq('chapter_id', chapterId)
+      .eq('module_id', moduleId)
       .maybeSingle()
       .then(
         ({ data }) => {
@@ -32,7 +32,7 @@ export function useQuiz(chapterId: string | undefined) {
     return () => {
       cancelled = true
     }
-  }, [chapterId])
+  }, [moduleId])
 
   return { quiz, loading }
 }

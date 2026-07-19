@@ -5,21 +5,21 @@ import { ChevronUp, ChevronDown, Trash2, Plus } from 'lucide-react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { useChapterMutations } from '@/features/chapters/hooks/useChapterMutations'
-import type { ChapterRow } from '@/types/database'
+import { useModuleMutations } from '@/features/courses/hooks/useModuleMutations'
+import type { ModuleRow } from '@/types/database'
 
-/** Teacher-facing chapter list on the course editor page: reorder, delete, and add new chapters. Editing a chapter's content/quiz happens on its own page (features/chapters + features/quizzes editors). */
-export function ChapterEditorList({
+/** Teacher-facing module list on the course editor page: reorder, delete, and add new modules. Editing a module's topics/quiz happens on its own page. */
+export function ModuleEditorList({
   courseId,
-  chapters,
+  modules,
   onChanged,
 }: {
   courseId: string
-  chapters: ChapterRow[]
+  modules: ModuleRow[]
   onChanged: () => void
 }) {
   const { t } = useTranslation()
-  const { createChapter, deleteChapter, moveChapter, saving, error } = useChapterMutations(
+  const { createModule, deleteModule, moveModule, saving, error } = useModuleMutations(
     courseId,
     onChanged,
   )
@@ -27,60 +27,60 @@ export function ChapterEditorList({
 
   async function handleAdd() {
     if (!newTitle.trim()) return
-    const ok = await createChapter(newTitle.trim(), '', chapters.length)
+    const ok = await createModule(newTitle.trim(), modules.length)
     if (ok) setNewTitle('')
   }
 
   return (
     <Card className="flex flex-col gap-4">
       <h2 className="font-display text-lg font-semibold text-brand-ink">
-        {t('chapters.heading')}
+        {t('modules.heading')}
       </h2>
 
-      {chapters.length === 0 && (
-        <p className="text-sm text-slate-500">{t('chapters.noChaptersYet')}</p>
+      {modules.length === 0 && (
+        <p className="text-sm text-slate-500">{t('modules.noModulesYet')}</p>
       )}
 
       <ol className="flex flex-col gap-2">
-        {chapters.map((chapter, index) => (
+        {modules.map((module, index) => (
           <li
-            key={chapter.id}
+            key={module.id}
             className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 px-3 py-2"
           >
             <Link
-              to={`/teach/courses/${courseId}/chapters/${chapter.id}`}
+              to={`/teach/courses/${courseId}/modules/${module.id}`}
               className="flex-1 text-sm text-slate-700 transition-colors duration-150 hover:text-brand-green hover:underline"
             >
-              {index + 1}. {chapter.title || t('chapters.untitled')}
+              {index + 1}. {module.title || t('modules.untitled')}
             </Link>
             <div className="flex items-center gap-1">
               <button
                 type="button"
-                aria-label={t('chapters.moveUp')}
+                aria-label={t('modules.moveUp')}
                 disabled={index === 0 || saving}
-                onClick={() => moveChapter(chapters, chapter.id, 'up')}
+                onClick={() => moveModule(modules, module.id, 'up')}
                 className="rounded p-1.5 text-slate-500 transition-colors duration-150 hover:bg-slate-100 disabled:opacity-30"
               >
                 <ChevronUp className="h-4 w-4" aria-hidden="true" />
               </button>
               <button
                 type="button"
-                aria-label={t('chapters.moveDown')}
-                disabled={index === chapters.length - 1 || saving}
-                onClick={() => moveChapter(chapters, chapter.id, 'down')}
+                aria-label={t('modules.moveDown')}
+                disabled={index === modules.length - 1 || saving}
+                onClick={() => moveModule(modules, module.id, 'down')}
                 className="rounded p-1.5 text-slate-500 transition-colors duration-150 hover:bg-slate-100 disabled:opacity-30"
               >
                 <ChevronDown className="h-4 w-4" aria-hidden="true" />
               </button>
               <button
                 type="button"
-                aria-label={t('chapters.deleteChapter')}
+                aria-label={t('modules.deleteModule')}
                 disabled={saving}
                 onClick={() => {
-                  if (confirm(t('chapters.deleteChapterConfirm', { title: chapter.title }))) {
-                    deleteChapter(
-                      chapter.id,
-                      chapters.filter((c) => c.id !== chapter.id),
+                  if (confirm(t('modules.deleteModuleConfirm', { title: module.title }))) {
+                    deleteModule(
+                      module.id,
+                      modules.filter((m) => m.id !== module.id),
                     )
                   }
                 }}
@@ -96,7 +96,7 @@ export function ChapterEditorList({
       <div className="flex items-center gap-2">
         <Input
           type="text"
-          placeholder={t('chapters.newChapterPlaceholder')}
+          placeholder={t('modules.newModulePlaceholder')}
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           className="flex-1 text-sm"
@@ -108,7 +108,7 @@ export function ChapterEditorList({
           className="gap-1.5"
         >
           <Plus className="h-4 w-4" aria-hidden="true" />
-          {t('chapters.addChapter')}
+          {t('modules.addModule')}
         </Button>
       </div>
       {error && <p className="text-sm text-danger">{error}</p>}

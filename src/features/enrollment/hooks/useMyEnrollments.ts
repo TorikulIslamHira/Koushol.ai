@@ -5,10 +5,10 @@ import type { CourseRow, EnrollmentRow } from '@/types/database'
 
 export interface EnrollmentWithCourse extends EnrollmentRow {
   course: CourseRow
-  chapterCount: number
+  moduleCount: number
 }
 
-/** Fetches the current student's enrollments joined with course info and total chapter count, for the dashboard's progress bars. */
+/** Fetches the current student's enrollments joined with course info and total module count, for the dashboard's progress bars. */
 export function useMyEnrollments() {
   const { session } = useAuth()
   const [enrollments, setEnrollments] = useState<EnrollmentWithCourse[]>([])
@@ -32,10 +32,10 @@ export function useMyEnrollments() {
           const withCounts = await Promise.all(
             rows.map(async (row) => {
               const { count } = await supabase
-                .from('chapters')
+                .from('modules')
                 .select('*', { count: 'exact', head: true })
                 .eq('course_id', row.course_id)
-              return { ...row, chapterCount: count ?? 0 }
+              return { ...row, moduleCount: count ?? 0 }
             }),
           )
           if (!cancelled) {

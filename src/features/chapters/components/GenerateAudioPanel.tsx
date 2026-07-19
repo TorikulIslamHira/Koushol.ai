@@ -4,19 +4,19 @@ import { Button } from '@/components/ui/Button'
 import { Select } from '@/components/ui/Select'
 import { AudioPlayer } from '@/features/chapters/components/AudioPlayer'
 import {
-  useGenerateChapterAudio,
+  useGenerateTopicAudio,
   SUPPORTED_AUDIO_LANGUAGES,
-} from '@/features/chapters/hooks/useGenerateChapterAudio'
-import { useChapterAudio } from '@/features/chapters/hooks/useChapterAudio'
+} from '@/features/chapters/hooks/useGenerateTopicAudio'
+import { useTopicAudio } from '@/features/chapters/hooks/useTopicAudio'
 
 /**
- * Teacher-facing "Generate audio" panel on the chapter editor. Language is an explicit
- * choice, not inferred from content — see useGenerateChapterAudio for why.
+ * Teacher-facing "Generate audio" panel on the topic editor. Language is an explicit
+ * choice, not inferred from content — see useGenerateTopicAudio for why.
  */
-export function GenerateAudioPanel({ chapterId }: { chapterId: string }) {
+export function GenerateAudioPanel({ topicId }: { topicId: string }) {
   const { t } = useTranslation()
-  const { audio, refetch } = useChapterAudio(chapterId)
-  const { generate, generating, error } = useGenerateChapterAudio(chapterId)
+  const { audio, refetch } = useTopicAudio(topicId)
+  const { generate, generating, error } = useGenerateTopicAudio(topicId)
   const [languageCode, setLanguageCode] = useState(audio?.language_code ?? 'bn-IN')
 
   async function handleGenerate() {

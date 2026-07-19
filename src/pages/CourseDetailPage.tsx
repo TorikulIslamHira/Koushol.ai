@@ -8,12 +8,12 @@ import { Spinner } from '@/components/ui/Spinner'
 import { Badge } from '@/components/ui/Badge'
 import { cn } from '@/lib/utils'
 
-/** Course detail page ("/courses/:courseId") — description, chapter list, enroll CTA. */
+/** Course detail page ("/courses/:courseId") — description, module list, enroll CTA. */
 export function CourseDetailPage() {
   const { courseId } = useParams<{ courseId: string }>()
-  const { course, chapters, loading, error } = useCourse(courseId)
+  const { course, modules, loading, error } = useCourse(courseId)
   const { enrollment } = useEnrollment(courseId)
-  const unlockedIndex = enrollment?.unlocked_chapter_index ?? 0
+  const unlockedIndex = enrollment?.unlocked_module_index ?? 0
   const { t } = useTranslation()
 
   if (loading) return <Spinner />
@@ -31,31 +31,31 @@ export function CourseDetailPage() {
           <h1 className="font-display text-2xl font-semibold text-brand-ink">{course.title}</h1>
           <p className="mt-2 max-w-2xl text-slate-600">{course.description}</p>
         </div>
-        <EnrollButton course={course} chapters={chapters} />
+        <EnrollButton course={course} modules={modules} />
       </div>
 
       <div>
         <h2 className="mb-2 font-display text-lg font-semibold text-brand-ink">
-          {t('courses.chapters')}
+          {t('modules.heading')}
         </h2>
         <ol className="flex flex-col gap-1">
-          {chapters.map((chapter) => {
-            const isLocked = chapter.order_index > unlockedIndex
-            const isCompleted = chapter.order_index < unlockedIndex
+          {modules.map((module) => {
+            const isLocked = module.order_index > unlockedIndex
+            const isCompleted = module.order_index < unlockedIndex
             return (
               <li
-                key={chapter.id}
+                key={module.id}
                 className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm"
               >
-                <span className="w-5 shrink-0 text-slate-400">{chapter.order_index + 1}.</span>
+                <span className="w-5 shrink-0 text-slate-400">{module.order_index + 1}.</span>
                 {isLocked ? (
                   <span className="flex items-center gap-1.5 text-slate-400">
-                    {chapter.title}
+                    {module.title}
                     <Lock className="h-3.5 w-3.5" aria-hidden="true" />
                   </span>
                 ) : (
                   <Link
-                    to={`/courses/${course.id}/chapters/${chapter.id}`}
+                    to={`/courses/${course.id}/modules/${module.id}`}
                     className={cn(
                       'flex items-center gap-1.5 text-slate-700 transition-colors duration-150 hover:text-brand-green hover:underline',
                     )}
@@ -66,10 +66,10 @@ export function CourseDetailPage() {
                         aria-hidden="true"
                       />
                     )}
-                    {chapter.title}
+                    {module.title}
                   </Link>
                 )}
-                {chapter.order_index === 0 && (
+                {module.order_index === 0 && (
                   <Badge tone="green">{t('courses.freePreview')}</Badge>
                 )}
               </li>

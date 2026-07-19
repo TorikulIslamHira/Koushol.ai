@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import type { ChapterRow } from '@/types/database'
+import type { ModuleRow } from '@/types/database'
 
-export interface ChapterStats {
-  chapter: ChapterRow
+export interface ModuleStats {
+  module: ModuleRow
   completedCount: number
   averageScore: number | null
 }
 
 export interface CourseAnalytics {
   enrollmentCount: number
-  chapterStats: ChapterStats[]
+  moduleStats: ModuleStats[]
 }
 
-/** Own-course analytics for a teacher: total enrollments, and per-chapter completion count + average quiz score. RLS (owner/admin-only) restricts this to the course's own teacher — see supabase/migrations/20260719010500_create_chapter_progress.sql. */
+/** Own-course analytics for a teacher: total enrollments, and per-module completion count + average quiz score. RLS (owner/admin-only) restricts this to the course's own teacher — see supabase/migrations/20260719050000_restructure_modules_topics.sql. */
 export function useCourseAnalytics(courseId: string | undefined) {
   const [analytics, setAnalytics] = useState<CourseAnalytics | null>(null)
   const [loading, setLoading] = useState(true)
@@ -29,19 +29,19 @@ export function useCourseAnalytics(courseId: string | undefined) {
 
     Promise.all([
       supabase.from('enrollments').select('*', { count: 'exact', head: true }).eq('course_id', courseId),
-      supabase.from('chapters').select('*').eq('course_id', courseId).order('order_index'),
+      supabase.from('modules').select('*').eq('course_id', courseId).order('order_index'),
     ])
-      .then(async ([enrollmentRes, chaptersRes]) => {
+      .then(async ([enrollmentRes, modulesRes]) => {
         if (enrollmentRes.error) throw enrollmentRes.error
-        if (chaptersRes.error) throw chaptersRes.error
-        const chapters = (chaptersRes.data as ChapterRow[]) ?? []
+        if (modulesRes.error) throw modulesRes.error
+        const modules = (modulesRes.data as ModuleRow[]) ?? []
 
-        const chapterStats = await Promise.all(
-          chapters.map(async (chapter): Promise<ChapterStats> => {
+        const moduleStats = await Promise.all(
+          modules.map(async (module): Promise<ModuleStats> => {
             const { data: progressRows, error: progressError } = await supabase
-              .from('chapter_progress')
+              .from('module_progress')
               .select('quiz_score, completed_at')
-              .eq('chapter_id', chapter.id)
+              .eq('module_id', module.id)
             if (progressError) throw progressError
 
             const completed = (progressRows ?? []).filter((r) => r.completed_at !== null)
@@ -51,12 +51,12 @@ export function useCourseAnalytics(courseId: string | undefined) {
             const averageScore =
               scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : null
 
-            return { chapter, completedCount: completed.length, averageScore }
+            return { module, completedCount: completed.length, averageScore }
           }),
         )
 
         if (cancelled) return
-        setAnalytics({ enrollmentCount: enrollmentRes.count ?? 0, chapterStats })
+        setAnalytics({ enrollmentCount: enrollmentRes.count ?? 0, moduleStats })
         setLoading(false)
       })
       .catch((err: unknown) => {

@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import type { EnrollmentRow } from '@/types/database'
 
-/** Looks up (and can create) the current student's enrollment row for a course — the source of truth for unlocked_chapter_index. */
+/** Looks up (and can create) the current student's enrollment row for a course — the source of truth for unlocked_module_index. */
 export function useEnrollment(courseId: string | undefined) {
   const { session } = useAuth()
   const [enrollment, setEnrollment] = useState<EnrollmentRow | null>(null)

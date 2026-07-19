@@ -109,10 +109,8 @@
   "courses": {
     "title": "Courses",
     "emptyState": "No published courses yet — check back soon.",
-    "chapters": "Chapters",
     "freePreview": "Free preview",
-    "courseNotFound": "Course not found.",
-    "chapterNotFound": "Chapter not found."
+    "courseNotFound": "Course not found."
   },
   "enroll": {
     "continueLearning": "Continue learning",
@@ -123,7 +121,7 @@
   "chapter": {
     "quiz": "Quiz",
     "alreadyPassed": "Already passed with {{score}}%.",
-    "goToNext": "Go to next chapter →",
+    "goToNext": "Go to next module →",
     "enrollToTakeQuiz": "Enroll in this course to take the quiz and track your progress.",
     "unlockedCount": "{{unlocked}} / {{total}} unlocked"
   },
@@ -143,7 +141,7 @@
     "title": "My learning",
     "emptyState": "You haven't enrolled in a course yet.",
     "browseCourses": "Browse courses →",
-    "chaptersUnlocked": "{{unlocked}} / {{total}} chapters unlocked"
+    "chaptersUnlocked": "{{unlocked}} / {{total}} modules unlocked"
   },
   "courseStatus": {
     "draft": "draft",
@@ -169,33 +167,34 @@
     "description": "Description",
     "price": "Price (৳)"
   },
-  "chapters": {
-    "heading": "Chapters",
-    "noChaptersYet": "No chapters yet.",
-    "newChapterPlaceholder": "New chapter title",
-    "addChapter": "Add chapter",
-    "deleteChapterConfirm": "Delete \"{{title}}\"? This also removes its quiz.",
+  "modules": {
+    "heading": "Modules",
+    "noModulesYet": "No modules yet.",
+    "newModulePlaceholder": "New module title",
+    "addModule": "Add module",
+    "deleteModuleConfirm": "Delete \"{{title}}\"? This also removes its topics and quiz.",
     "moveUp": "Move up",
     "moveDown": "Move down",
-    "deleteChapter": "Delete chapter",
-    "content": "Content",
-    "saveChapter": "Save chapter",
+    "deleteModule": "Delete module",
     "notFound": "Not found.",
-    "chapterNotFound": "Chapter not found.",
+    "moduleNotFound": "Module not found.",
+    "untitled": "(untitled)"
+  },
+  "topics": {
+    "heading": "Topics",
+    "noTopicsYet": "No topics yet.",
+    "newTopicPlaceholder": "New topic title",
+    "addTopic": "Add topic",
+    "deleteTopicConfirm": "Delete \"{{title}}\"?",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "deleteTopic": "Delete topic",
+    "content": "Content",
+    "saveTopic": "Save topic",
+    "notFound": "Not found.",
+    "topicNotFound": "Topic not found.",
     "untitled": "(untitled)",
     "audioHeading": "Audio"
-  },
-  "aiGenerate": {
-    "title": "Generate with AI",
-    "subtitle": "Paste your raw topic notes below. AI will propose chapters and quizzes appended after your existing chapters — review before adding.",
-    "placeholder": "Paste your raw notes here…",
-    "generateChapters": "Generate chapters",
-    "generating": "Generating…",
-    "proposedChapters": "Proposed chapters ({{count}})",
-    "quizQuestionCount": "{{count}} quiz question(s)",
-    "addChaptersToCourse": "Add {{count}} chapter(s) to course",
-    "adding": "Adding…",
-    "discard": "Discard"
   },
   "audioPanel": {
     "generateAudio": "Generate audio",
@@ -211,13 +210,15 @@
     "addOption": "Add option",
     "addQuestion": "Add question",
     "saveQuiz": "Save quiz",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "generateWithAi": "Generate quiz with AI",
+    "generating": "Generating…",
+    "needsTopicsFirst": "Add at least one topic with content before generating a quiz."
   },
   "analytics": {
     "title": "Analytics",
     "totalEnrollments": "Total enrollments",
-    "completed": "{{count}} completed",
-    "noChaptersYet": "No chapters yet."
+    "completed": "{{count}} completed"
   },
   "admin": {
     "title": "Admin",
