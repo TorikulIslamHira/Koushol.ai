@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/Button'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useEnrollment } from '@/features/enrollment/hooks/useEnrollment'
@@ -9,6 +10,7 @@ import type { ChapterRow, CourseRow } from '@/types/database'
 export function EnrollButton({ course, chapters }: { course: CourseRow; chapters: ChapterRow[] }) {
   const { session } = useAuth()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { enrollment, loading, enrolling, error, enroll } = useEnrollment(course.id)
 
   if (loading) return null
@@ -22,7 +24,7 @@ export function EnrollButton({ course, chapters }: { course: CourseRow; chapters
         disabled={!currentChapter}
         onClick={() => currentChapter && navigate(`/courses/${course.id}/chapters/${currentChapter.id}`)}
       >
-        Continue learning
+        {t('enroll.continueLearning')}
       </Button>
     )
   }
@@ -30,7 +32,7 @@ export function EnrollButton({ course, chapters }: { course: CourseRow; chapters
   if (!session) {
     return (
       <Button onClick={() => navigate('/login', { state: { from: `/courses/${course.id}` } })}>
-        Sign in to enroll — {formatBDT(course.price)}
+        {t('enroll.signInToEnroll', { price: formatBDT(course.price) })}
       </Button>
     )
   }
@@ -38,7 +40,7 @@ export function EnrollButton({ course, chapters }: { course: CourseRow; chapters
   return (
     <div className="flex flex-col items-start gap-2">
       <Button onClick={enroll} disabled={enrolling}>
-        {enrolling ? 'Enrolling…' : `Enroll — ${formatBDT(course.price)}`}
+        {enrolling ? t('enroll.enrolling') : t('enroll.enrollFor', { price: formatBDT(course.price) })}
       </Button>
       {error && <p className="text-sm text-danger">{error}</p>}
     </div>

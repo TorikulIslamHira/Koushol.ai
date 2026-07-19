@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { GraduationCap } from 'lucide-react'
 import { useMyEnrollments } from '@/features/enrollment/hooks/useMyEnrollments'
 import { Card } from '@/components/ui/Card'
@@ -10,19 +11,22 @@ import { Button } from '@/components/ui/Button'
 /** Student dashboard ("/dashboard") — enrolled courses with progress. */
 export function DashboardPage() {
   const { enrollments, loading } = useMyEnrollments()
+  const { t } = useTranslation()
 
   if (loading) return <Spinner />
 
   if (enrollments.length === 0) {
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="font-display text-2xl font-semibold text-brand-ink">My learning</h1>
+        <h1 className="font-display text-2xl font-semibold text-brand-ink">
+          {t('dashboard.title')}
+        </h1>
         <EmptyState
           icon={GraduationCap}
-          title="You haven't enrolled in a course yet."
+          title={t('dashboard.emptyState')}
           action={
             <Link to="/courses">
-              <Button variant="ghost">Browse courses →</Button>
+              <Button variant="ghost">{t('dashboard.browseCourses')}</Button>
             </Link>
           }
         />
@@ -32,7 +36,9 @@ export function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-2xl font-semibold text-brand-ink">My learning</h1>
+      <h1 className="font-display text-2xl font-semibold text-brand-ink">
+        {t('dashboard.title')}
+      </h1>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {enrollments.map((enrollment) => {
           const percent =
@@ -47,8 +53,10 @@ export function DashboardPage() {
                 </h2>
                 <ProgressBar percent={percent} />
                 <p className="text-xs text-slate-400">
-                  {Math.min(enrollment.unlocked_chapter_index, enrollment.chapterCount)} /{' '}
-                  {enrollment.chapterCount} chapters unlocked
+                  {t('dashboard.chaptersUnlocked', {
+                    unlocked: Math.min(enrollment.unlocked_chapter_index, enrollment.chapterCount),
+                    total: enrollment.chapterCount,
+                  })}
                 </p>
               </Card>
             </Link>

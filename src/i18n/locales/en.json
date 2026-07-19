@@ -104,5 +104,44 @@
       "title": "Contact",
       "body": "Questions about this policy — contact the Koushol team directly."
     }
+  },
+  "courses": {
+    "title": "Courses",
+    "emptyState": "No published courses yet — check back soon.",
+    "chapters": "Chapters",
+    "freePreview": "Free preview",
+    "courseNotFound": "Course not found.",
+    "chapterNotFound": "Chapter not found."
+  },
+  "enroll": {
+    "continueLearning": "Continue learning",
+    "signInToEnroll": "Sign in to enroll — {{price}}",
+    "enrolling": "Enrolling…",
+    "enrollFor": "Enroll — {{price}}"
+  },
+  "chapter": {
+    "quiz": "Quiz",
+    "alreadyPassed": "Already passed with {{score}}%.",
+    "goToNext": "Go to next chapter →",
+    "enrollToTakeQuiz": "Enroll in this course to take the quiz and track your progress.",
+    "unlockedCount": "{{unlocked}} / {{total}} unlocked"
+  },
+  "quiz": {
+    "submitQuiz": "Submit quiz",
+    "submitting": "Submitting…",
+    "retakeQuiz": "Retake quiz",
+    "passed": "Passed with {{score}}%! Next chapter unlocked.",
+    "failed": "Scored {{score}}% — need {{threshold}}% to pass. Try again."
+  },
+  "audio": {
+    "listen": "Listen to this chapter",
+    "pause": "Pause",
+    "segment": "Segment {{current}} / {{total}}"
+  },
+  "dashboard": {
+    "title": "My learning",
+    "emptyState": "You haven't enrolled in a course yet.",
+    "browseCourses": "Browse courses →",
+    "chaptersUnlocked": "{{unlocked}} / {{total}} chapters unlocked"
   }
 }

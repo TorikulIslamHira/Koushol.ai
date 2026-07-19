@@ -1,4 +1,5 @@
 import { useParams, Navigate, Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { ArrowLeft } from 'lucide-react'
 import { useCourse } from '@/features/courses/hooks/useCourse'
 import { useEnrollment } from '@/features/enrollment/hooks/useEnrollment'
@@ -24,12 +25,13 @@ export function ChapterPage() {
   const { quiz, loading: quizLoading } = useQuiz(chapterId)
   const { audio } = useChapterAudio(chapterId)
   const [submitting, setSubmitting] = useState(false)
+  const { t } = useTranslation()
 
   if (courseLoading) return <Spinner />
-  if (!course || !chapterId) return <p className="text-slate-500">Course not found.</p>
+  if (!course || !chapterId) return <p className="text-slate-500">{t('courses.courseNotFound')}</p>
 
   const chapter = chapters.find((c) => c.id === chapterId)
-  if (!chapter) return <p className="text-slate-500">Chapter not found.</p>
+  if (!chapter) return <p className="text-slate-500">{t('courses.chapterNotFound')}</p>
 
   const unlockedIndex = enrollment?.unlocked_chapter_index ?? 0
   if (chapter.order_index > unlockedIndex) {
@@ -67,7 +69,10 @@ export function ChapterPage() {
           <div className="mb-4">
             <ProgressBar percent={progressPercent} />
             <p className="mt-1 text-xs text-slate-400">
-              {Math.min(unlockedIndex, chapters.length)} / {chapters.length} unlocked
+              {t('chapter.unlockedCount', {
+                unlocked: Math.min(unlockedIndex, chapters.length),
+                total: chapters.length,
+              })}
             </p>
           </div>
         )}
@@ -86,25 +91,25 @@ export function ChapterPage() {
         {quizLoading && <Spinner />}
         {quiz && quiz.questions.length > 0 && (
           <Card>
-            <h3 className="mb-4 font-display text-lg font-semibold text-brand-ink">Quiz</h3>
+            <h3 className="mb-4 font-display text-lg font-semibold text-brand-ink">
+              {t('chapter.quiz')}
+            </h3>
             {progress?.completed_at ? (
               <p className="text-brand-green">
-                Already passed with {progress.quiz_score}%.{' '}
+                {t('chapter.alreadyPassed', { score: progress.quiz_score })}{' '}
                 {nextChapter && (
                   <Link
                     to={`/courses/${courseId}/chapters/${nextChapter.id}`}
                     className="underline"
                   >
-                    Go to next chapter →
+                    {t('chapter.goToNext')}
                   </Link>
                 )}
               </p>
             ) : enrollment ? (
               <QuizPlayer quiz={quiz} onSubmit={handleQuizSubmit} submitting={submitting} />
             ) : (
-              <p className="text-slate-500">
-                Enroll in this course to take the quiz and track your progress.
-              </p>
+              <p className="text-slate-500">{t('chapter.enrollToTakeQuiz')}</p>
             )}
           </Card>
         )}

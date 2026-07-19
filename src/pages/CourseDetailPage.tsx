@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { BookOpen, Lock, CheckCircle2 } from 'lucide-react'
 import { useCourse } from '@/features/courses/hooks/useCourse'
 import { useEnrollment } from '@/features/enrollment/hooks/useEnrollment'
@@ -13,10 +14,11 @@ export function CourseDetailPage() {
   const { course, chapters, loading, error } = useCourse(courseId)
   const { enrollment } = useEnrollment(courseId)
   const unlockedIndex = enrollment?.unlocked_chapter_index ?? 0
+  const { t } = useTranslation()
 
   if (loading) return <Spinner />
   if (error) return <p className="text-danger">{error}</p>
-  if (!course) return <p className="text-slate-500">Course not found.</p>
+  if (!course) return <p className="text-slate-500">{t('courses.courseNotFound')}</p>
 
   return (
     <div className="flex flex-col gap-6">
@@ -33,7 +35,9 @@ export function CourseDetailPage() {
       </div>
 
       <div>
-        <h2 className="mb-2 font-display text-lg font-semibold text-brand-ink">Chapters</h2>
+        <h2 className="mb-2 font-display text-lg font-semibold text-brand-ink">
+          {t('courses.chapters')}
+        </h2>
         <ol className="flex flex-col gap-1">
           {chapters.map((chapter) => {
             const isLocked = chapter.order_index > unlockedIndex
@@ -65,7 +69,9 @@ export function CourseDetailPage() {
                     {chapter.title}
                   </Link>
                 )}
-                {chapter.order_index === 0 && <Badge tone="green">Free preview</Badge>}
+                {chapter.order_index === 0 && (
+                  <Badge tone="green">{t('courses.freePreview')}</Badge>
+                )}
               </li>
             )
           })}

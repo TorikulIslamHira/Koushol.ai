@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Play, Pause } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import type { AudioSegment } from '@/types/database'
 
 /** Plays a chapter's generated TTS segments back-to-back as one continuous listen, advancing to the next segment's data URI when the current one ends. */
 export function AudioPlayer({ segments }: { segments: AudioSegment[] }) {
+  const { t } = useTranslation()
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -53,10 +55,10 @@ export function AudioPlayer({ segments }: { segments: AudioSegment[] }) {
         ) : (
           <Play className="h-4 w-4" aria-hidden="true" />
         )}
-        {playing ? 'Pause' : 'Listen to this chapter'}
+        {playing ? t('audio.pause') : t('audio.listen')}
       </Button>
       <span className="text-xs text-slate-400">
-        Segment {index + 1} / {segments.length}
+        {t('audio.segment', { current: index + 1, total: segments.length })}
       </span>
       <audio
         ref={audioRef}

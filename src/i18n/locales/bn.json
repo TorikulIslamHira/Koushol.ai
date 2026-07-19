@@ -104,5 +104,44 @@
       "title": "যোগাযোগ",
       "body": "এই নীতি সম্পর্কে প্রশ্ন থাকলে — সরাসরি কৌশল টিমের সাথে যোগাযোগ করুন।"
     }
+  },
+  "courses": {
+    "title": "কোর্স",
+    "emptyState": "এখনো কোনো প্রকাশিত কোর্স নেই — শীঘ্রই আবার দেখুন।",
+    "chapters": "চ্যাপ্টার",
+    "freePreview": "বিনামূল্যে প্রিভিউ",
+    "courseNotFound": "কোর্স পাওয়া যায়নি।",
+    "chapterNotFound": "চ্যাপ্টার পাওয়া যায়নি।"
+  },
+  "enroll": {
+    "continueLearning": "শেখা চালিয়ে যান",
+    "signInToEnroll": "ভর্তি হতে লগইন করুন — {{price}}",
+    "enrolling": "ভর্তি হচ্ছে…",
+    "enrollFor": "ভর্তি হন — {{price}}"
+  },
+  "chapter": {
+    "quiz": "কুইজ",
+    "alreadyPassed": "{{score}}% নিয়ে ইতিমধ্যে পাস করেছেন।",
+    "goToNext": "পরের চ্যাপ্টারে যান →",
+    "enrollToTakeQuiz": "কুইজ দিতে ও অগ্রগতি ট্র্যাক করতে এই কোর্সে ভর্তি হন।",
+    "unlockedCount": "{{unlocked}} / {{total}} আনলক করা হয়েছে"
+  },
+  "quiz": {
+    "submitQuiz": "কুইজ জমা দিন",
+    "submitting": "জমা হচ্ছে…",
+    "retakeQuiz": "আবার কুইজ দিন",
+    "passed": "{{score}}% নিয়ে পাস করেছেন! পরের চ্যাপ্টার আনলক হয়েছে।",
+    "failed": "{{score}}% পেয়েছেন — পাস করতে {{threshold}}% প্রয়োজন। আবার চেষ্টা করুন।"
+  },
+  "audio": {
+    "listen": "এই চ্যাপ্টার শুনুন",
+    "pause": "থামান",
+    "segment": "অংশ {{current}} / {{total}}"
+  },
+  "dashboard": {
+    "title": "আমার শেখা",
+    "emptyState": "আপনি এখনো কোনো কোর্সে ভর্তি হননি।",
+    "browseCourses": "কোর্স দেখুন →",
+    "chaptersUnlocked": "{{unlocked}} / {{total}} চ্যাপ্টার আনলক করা হয়েছে"
   }
 }

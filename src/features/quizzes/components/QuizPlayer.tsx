@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { CheckCircle2, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
@@ -15,6 +16,7 @@ export function QuizPlayer({
   onSubmit: (scorePercent: number, passed: boolean) => void
   submitting: boolean
 }) {
+  const { t } = useTranslation()
   const [answers, setAnswers] = useState<Record<number, number>>({})
   const [result, setResult] = useState<{ scorePercent: number; passed: boolean } | null>(null)
 
@@ -69,12 +71,12 @@ export function QuizPlayer({
             <XCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
           )}
           {result.passed
-            ? `Passed with ${result.scorePercent}%! Next chapter unlocked.`
-            : `Scored ${result.scorePercent}% — need ${QUIZ_PASS_THRESHOLD}% to pass. Try again.`}
+            ? t('quiz.passed', { score: result.scorePercent })
+            : t('quiz.failed', { score: result.scorePercent, threshold: QUIZ_PASS_THRESHOLD })}
         </p>
       ) : (
         <Button onClick={handleSubmit} disabled={!allAnswered || submitting}>
-          {submitting ? 'Submitting…' : 'Submit quiz'}
+          {submitting ? t('quiz.submitting') : t('quiz.submitQuiz')}
         </Button>
       )}
       {result && !result.passed && (
@@ -85,7 +87,7 @@ export function QuizPlayer({
             setResult(null)
           }}
         >
-          Retake quiz
+          {t('quiz.retakeQuiz')}
         </Button>
       )}
     </div>
