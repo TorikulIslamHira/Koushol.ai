@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 import type { UserRow } from '@/types/database'
@@ -30,8 +30,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.subscription.unsubscribe()
   }, [])
 
+  // Supabase silently refreshes the access token (and re-fires onAuthStateChange with a new
+  // session object) whenever the tab regains focus, even for an already-signed-in user. Without
+  // this guard, that would re-trigger the profile fetch below on every tab switch, flipping
+  // `loading` back to true and unmounting whatever page (e.g. an in-progress course form) was
+  // showing — see the tab-switch data-loss bug. Only refetch when the user actually changes.
+  const lastFetchedUserIdRef = useRef<string | null>(null)
+
   useEffect(() => {
-    if (!session) return
+    if (!session) {
+      lastFetchedUserIdRef.current = null
+      return
+    }
+    if (lastFetchedUserIdRef.current === session.user.id) return
+    lastFetchedUserIdRef.current = session.user.id
+
     let cancelled = false
     setLoading(true)
     supabase
