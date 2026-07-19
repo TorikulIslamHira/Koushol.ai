@@ -1,0 +1,45 @@
+import { Link, Outlet } from 'react-router-dom'
+import { useAuth } from '@/features/auth/hooks/useAuth'
+import { Button } from '@/components/ui/Button'
+
+/** App shell: top nav (brand + auth-aware links) wrapping every route via <Outlet />. */
+export function Layout() {
+  const { session, profile, signOut } = useAuth()
+
+  return (
+    <div className="min-h-screen">
+      <header className="border-b border-black/5 bg-white">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+          <Link to="/" className="font-display text-xl font-bold text-brand-green">
+            Koushol
+          </Link>
+          <nav className="flex items-center gap-4 text-sm">
+            <Link to="/courses" className="hover:text-brand-green">
+              Courses
+            </Link>
+            {session ? (
+              <>
+                {profile && <span className="text-black/50">{profile.name}</span>}
+                <Button variant="ghost" onClick={signOut}>
+                  Sign out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="hover:text-brand-green">
+                  Sign in
+                </Link>
+                <Link to="/signup">
+                  <Button variant="secondary">Sign up</Button>
+                </Link>
+              </>
+            )}
+          </nav>
+        </div>
+      </header>
+      <main className="mx-auto max-w-5xl px-4 py-8">
+        <Outlet />
+      </main>
+    </div>
+  )
+}

@@ -1,0 +1,130 @@
+# Koushol Data Model
+
+Expands `PROJECT.md` Section 7 with actual column types, constraints, and RLS policy summaries. The migrations in `supabase/migrations/` are the executable source of truth — if this doc and a migration ever disagree, the migration wins and this doc is out of date and needs fixing in the same PR that caused the drift.
+
+Applied in order (each file name is timestamp-prefixed, so this is also execution order):
+
+1. `20260719010000_create_users.sql`
+2. `20260719010100_create_courses.sql`
+3. `20260719010200_create_chapters.sql`
+4. `20260719010300_create_enrollments.sql`
+5. `20260719010400_create_quizzes.sql`
+6. `20260719010500_create_chapter_progress.sql`
+7. `20260719010600_create_certificates.sql`
+8. `20260719010700_create_sales.sql`
+
+## `users`
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | `uuid` PK | = `auth.users.id`, FK with `on delete cascade` |
+| `role` | `user_role` enum (`student`/`teacher`/`admin`) | defaults `student` |
+| `name` | `text` | |
+| `email` | `text` | |
+| `created_at` | `timestamptz` | defaults `now()` |
+
+Populated automatically by the `handle_new_auth_user` trigger on `auth.users` insert — never insert into `public.users` directly from app code. `current_user_role()` is a `security definer` helper function other tables' RLS policies call to check the caller's role without recursing into `users`' own RLS.
+
+RLS: own row select/update; admin select/update all; no client insert/delete.
+
+## `courses`
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | `uuid` PK | `gen_random_uuid()` |
+| `teacher_id` | `uuid` FK → `users.id` | |
+| `title` | `text` | |
+| `description` | `text` | default `''` |
+| `status` | `course_status` enum (`draft`/`published`) | defaults `draft` |
+| `price` | `numeric(10,2)` | `>= 0`, in BDT |
+| `created_at` | `timestamptz` | |
+
+RLS: anyone (incl. anonymous) can select `status = 'published'`; owning teacher or admin can select/insert/update/delete regardless of status.
+
+## `chapters`
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | `uuid` PK | |
+| `course_id` | `uuid` FK → `courses.id` cascade | |
+| `order_index` | `int` | `>= 0`, unique per `(course_id, order_index)` |
+| `title` | `text` | |
+| `content` | `text` | plain text for Phase 1 — no markdown/HTML rendering yet |
+| `is_ai_generated` | `bool` | defaults `false`; set `true` once Phase 3 lands |
+
+RLS: `order_index = 0` of a published course is a public free preview (readable by anyone, including anonymous); enrolled students can read every chapter of their course (policy added in the `enrollments` migration, since it needs that table to exist); owning teacher/admin has full CRUD.
+
+## `quizzes`
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | `uuid` PK | |
+| `chapter_id` | `uuid` FK → `chapters.id` cascade, **unique** | one quiz per chapter |
+| `questions` | `jsonb` | array of `{ question, options[], correct_index }` |
+
+**Known Phase 1 limitation**: `correct_index` is part of the same jsonb payload the client fetches to render the quiz, so any enrolled student's browser can read the answer key by inspecting network traffic. Grading happens entirely client-side (`src/features/quizzes/components/QuizPlayer.tsx`) against `QUIZ_PASS_THRESHOLD` (70%, `src/lib/constants.ts`). This is an accepted tradeoff for an MVP with no real stakes riding on quiz integrity yet. Before that changes (e.g. paid certificates, leaderboard, anything adversarial), move grading to a Supabase Edge Function that holds the answer key server-side and only returns a pass/fail + score.
+
+RLS: same visibility as the parent chapter (free-preview chapter, enrolled student, or owning teacher/admin).
+
+## `enrollments`
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | `uuid` PK | |
+| `student_id` | `uuid` FK → `users.id` cascade | |
+| `course_id` | `uuid` FK → `courses.id` cascade | |
+| `unlocked_chapter_index` | `int` | `>= 0`, defaults `0`; the highest `chapters.order_index` this student may currently access |
+| `enrolled_at` | `timestamptz` | |
+
+Unique on `(student_id, course_id)` — one enrollment row per student per course.
+
+RLS: student sees/creates/updates their own rows only (insert requires the target course to be `published`); teacher/admin can select rows for their own courses (all, for admin).
+
+**Unlock mechanism (Phase 1, client-driven)**: passing a chapter's quiz calls `supabase.from('enrollments').update({ unlocked_chapter_index: n+1 })` from `src/pages/ChapterPage.tsx`. Like the quiz grading note above, this trusts the authenticated client to report a genuine pass — acceptable for MVP, revisit alongside the Edge Function grading migration.
+
+## `chapter_progress`
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | `uuid` PK | |
+| `student_id` | `uuid` FK → `users.id` cascade | |
+| `chapter_id` | `uuid` FK → `chapters.id` cascade | |
+| `quiz_score` | `numeric(5,2)` | `0–100`, nullable |
+| `completed_at` | `timestamptz` | null until a passing attempt is recorded |
+
+Unique on `(student_id, chapter_id)` — retaking a quiz upserts the same row (see `useChapterProgress.recordAttempt`).
+
+RLS: student sees/inserts/updates their own; teacher/admin can select rows for their own courses (all, for admin). Insert requires the student to be enrolled in the chapter's course.
+
+## `certificates`
+
+Schema-only placeholder — **no issuance code exists yet**, and the certificate's visual design is explicitly undecided (see `PROJECT.md` Section 10). Table + RLS exist now so the FK/unique shape doesn't need a breaking migration later.
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | `uuid` PK | |
+| `student_id` | `uuid` FK → `users.id` cascade | |
+| `course_id` | `uuid` FK → `courses.id` cascade | |
+| `issued_at` | `timestamptz` | |
+
+Unique on `(student_id, course_id)`. RLS: student/teacher/admin can select relevant rows; only admin (or a future service-role Edge Function, which bypasses RLS entirely) can insert.
+
+## `sales`
+
+Schema-only placeholder for Phase 6 (bKash/Nagad/SSLCommerz) — no payment provider is wired up yet.
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | `uuid` PK | |
+| `course_id` | `uuid` FK → `courses.id` cascade | |
+| `student_id` | `uuid` FK → `users.id` cascade | |
+| `amount` | `numeric(10,2)` | `>= 0`, BDT |
+| `payment_provider` | `payment_provider` enum (`bkash`/`nagad`/`sslcommerz`) | |
+| `status` | `sale_status` enum (`pending`/`completed`/`failed`/`refunded`) | defaults `pending` |
+| `created_at` | `timestamptz` | |
+
+RLS: student/teacher/admin can select relevant rows; only admin (or a future service-role webhook handler) can insert.
+
+## Seed data
+
+`supabase/seed.sql` creates one demo teacher (`teacher.demo@koushol.ai`, local dev only — never run against a production project) and two published courses ("Bangla Grammar Basics", "Intro to Digital Marketing") with chapters and quizzes, so the full student flow is clickable immediately after `supabase db reset`.
