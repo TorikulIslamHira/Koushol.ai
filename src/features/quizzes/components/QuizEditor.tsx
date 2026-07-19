@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
 import type { QuizQuestion } from '@/types/database'
 
 const emptyQuestion = (): QuizQuestion => ({ question: '', options: ['', ''], correct_index: 0 })
@@ -58,19 +60,19 @@ export function QuizEditor({
   return (
     <div className="flex flex-col gap-6">
       {questions.map((q, qIndex) => (
-        <div key={qIndex} className="flex flex-col gap-2 rounded-lg border border-black/10 p-3">
+        <div key={qIndex} className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3">
           <div className="flex items-start gap-2">
-            <input
+            <Input
               type="text"
               placeholder="Question"
               value={q.question}
               onChange={(e) => updateQuestion(qIndex, { question: e.target.value })}
-              className="flex-1 rounded-lg border border-black/10 px-3 py-2 text-sm"
+              className="flex-1 text-sm"
             />
             <button
               type="button"
               onClick={() => removeQuestion(qIndex)}
-              className="rounded px-2 py-1 text-sm text-red-600"
+              className="rounded px-2 py-1 text-sm text-danger transition-colors duration-150 hover:bg-danger-bg"
             >
               Remove
             </button>
@@ -83,20 +85,21 @@ export function QuizEditor({
                 checked={q.correct_index === oIndex}
                 onChange={() => updateQuestion(qIndex, { correct_index: oIndex })}
               />
-              <input
+              <Input
                 type="text"
                 placeholder={`Option ${oIndex + 1}`}
                 value={option}
                 onChange={(e) => updateOption(qIndex, oIndex, e.target.value)}
-                className="flex-1 rounded-lg border border-black/10 px-2 py-1"
+                className="flex-1 px-2 py-1"
               />
               {q.options.length > 2 && (
                 <button
                   type="button"
+                  aria-label="Remove option"
                   onClick={() => removeOption(qIndex, oIndex)}
-                  className="text-xs text-red-600"
+                  className="rounded p-1 text-slate-400 transition-colors duration-150 hover:bg-danger-bg hover:text-danger"
                 >
-                  ✕
+                  <X className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
               )}
             </label>
@@ -104,9 +107,10 @@ export function QuizEditor({
           <button
             type="button"
             onClick={() => addOption(qIndex)}
-            className="self-start text-xs text-brand-green hover:underline"
+            className="flex items-center gap-1 self-start text-xs text-brand-green hover:underline"
           >
-            + Add option
+            <Plus className="h-3 w-3" aria-hidden="true" />
+            Add option
           </button>
         </div>
       ))}
@@ -114,9 +118,10 @@ export function QuizEditor({
       <button
         type="button"
         onClick={() => setQuestions((prev) => [...prev, emptyQuestion()])}
-        className="self-start text-sm text-brand-green hover:underline"
+        className="flex items-center gap-1 self-start text-sm text-brand-green hover:underline"
       >
-        + Add question
+        <Plus className="h-4 w-4" aria-hidden="true" />
+        Add question
       </button>
 
       <Button

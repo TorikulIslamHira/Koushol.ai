@@ -1,4 +1,5 @@
 import { useParams, useNavigate, Link } from 'react-router-dom'
+import { BarChart3, Trash2 } from 'lucide-react'
 import { useCourse } from '@/features/courses/hooks/useCourse'
 import { useCourseMutations } from '@/features/courses/hooks/useCourseMutations'
 import { CourseForm } from '@/features/courses/components/CourseForm'
@@ -18,18 +19,23 @@ export function CourseEditorPage() {
   const { updateCourse, deleteCourse, saving, error } = useCourseMutations()
 
   if (loading) return <Spinner />
-  if (!course || !courseId) return <p className="text-black/60">Course not found.</p>
+  if (!course || !courseId) return <p className="text-slate-500">Course not found.</p>
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="font-display text-2xl font-semibold">{course.title}</h1>
-          <Badge tone={COURSE_STATUS_BADGE_TONE[course.status]}>{COURSE_STATUS_LABEL[course.status]}</Badge>
+          <h1 className="font-display text-2xl font-semibold text-brand-ink">{course.title}</h1>
+          <Badge tone={COURSE_STATUS_BADGE_TONE[course.status]}>
+            {COURSE_STATUS_LABEL[course.status]}
+          </Badge>
         </div>
         <div className="flex gap-2">
           <Link to={`/teach/courses/${courseId}/analytics`}>
-            <Button variant="ghost">Analytics</Button>
+            <Button variant="ghost" className="gap-1.5">
+              <BarChart3 className="h-4 w-4" aria-hidden="true" />
+              Analytics
+            </Button>
           </Link>
           {course.status === 'draft' && (
             <Button
@@ -79,7 +85,7 @@ export function CourseEditorPage() {
             refetch()
           }}
         />
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-2 text-sm text-danger">{error}</p>}
       </Card>
 
       <ChapterEditorList courseId={courseId} chapters={chapters} onChanged={refetch} />
@@ -93,7 +99,7 @@ export function CourseEditorPage() {
 
       <button
         type="button"
-        className="self-start text-sm text-red-600 hover:underline"
+        className="flex items-center gap-1.5 self-start text-sm text-danger transition-colors duration-150 hover:underline"
         onClick={async () => {
           if (confirm(`Delete "${course.title}"? This cannot be undone.`)) {
             const ok = await deleteCourse(courseId)
@@ -101,6 +107,7 @@ export function CourseEditorPage() {
           }
         }}
       >
+        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
         Delete course
       </button>
     </div>

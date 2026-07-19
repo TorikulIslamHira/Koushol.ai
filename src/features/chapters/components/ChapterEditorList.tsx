@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { ChevronUp, ChevronDown, Trash2, Plus } from 'lucide-react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
 import { useChapterMutations } from '@/features/chapters/hooks/useChapterMutations'
 import type { ChapterRow } from '@/types/database'
 
@@ -29,19 +31,19 @@ export function ChapterEditorList({
 
   return (
     <Card className="flex flex-col gap-4">
-      <h2 className="font-display text-lg font-semibold">Chapters</h2>
+      <h2 className="font-display text-lg font-semibold text-brand-ink">Chapters</h2>
 
-      {chapters.length === 0 && <p className="text-sm text-black/60">No chapters yet.</p>}
+      {chapters.length === 0 && <p className="text-sm text-slate-500">No chapters yet.</p>}
 
       <ol className="flex flex-col gap-2">
         {chapters.map((chapter, index) => (
           <li
             key={chapter.id}
-            className="flex items-center justify-between gap-2 rounded-lg border border-black/10 px-3 py-2"
+            className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 px-3 py-2"
           >
             <Link
               to={`/teach/courses/${courseId}/chapters/${chapter.id}`}
-              className="flex-1 text-sm hover:text-brand-green hover:underline"
+              className="flex-1 text-sm text-slate-700 transition-colors duration-150 hover:text-brand-green hover:underline"
             >
               {index + 1}. {chapter.title || '(untitled)'}
             </Link>
@@ -51,18 +53,18 @@ export function ChapterEditorList({
                 aria-label="Move up"
                 disabled={index === 0 || saving}
                 onClick={() => moveChapter(chapters, chapter.id, 'up')}
-                className="rounded px-2 py-1 text-sm disabled:opacity-30"
+                className="rounded p-1.5 text-slate-500 transition-colors duration-150 hover:bg-slate-100 disabled:opacity-30"
               >
-                ↑
+                <ChevronUp className="h-4 w-4" aria-hidden="true" />
               </button>
               <button
                 type="button"
                 aria-label="Move down"
                 disabled={index === chapters.length - 1 || saving}
                 onClick={() => moveChapter(chapters, chapter.id, 'down')}
-                className="rounded px-2 py-1 text-sm disabled:opacity-30"
+                className="rounded p-1.5 text-slate-500 transition-colors duration-150 hover:bg-slate-100 disabled:opacity-30"
               >
-                ↓
+                <ChevronDown className="h-4 w-4" aria-hidden="true" />
               </button>
               <button
                 type="button"
@@ -76,9 +78,9 @@ export function ChapterEditorList({
                     )
                   }
                 }}
-                className="rounded px-2 py-1 text-sm text-red-600 disabled:opacity-30"
+                className="rounded p-1.5 text-danger transition-colors duration-150 hover:bg-danger-bg disabled:opacity-30"
               >
-                Delete
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
           </li>
@@ -86,18 +88,19 @@ export function ChapterEditorList({
       </ol>
 
       <div className="flex items-center gap-2">
-        <input
+        <Input
           type="text"
           placeholder="New chapter title"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
-          className="flex-1 rounded-lg border border-black/10 px-3 py-2 text-sm"
+          className="flex-1 text-sm"
         />
-        <Button type="button" onClick={handleAdd} disabled={saving || !newTitle.trim()}>
+        <Button type="button" onClick={handleAdd} disabled={saving || !newTitle.trim()} className="gap-1.5">
+          <Plus className="h-4 w-4" aria-hidden="true" />
           Add chapter
         </Button>
       </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
     </Card>
   )
 }

@@ -10,7 +10,7 @@ export function NewCoursePage() {
 
   return (
     <div className="mx-auto max-w-lg">
-      <h1 className="mb-6 font-display text-2xl font-semibold">New course</h1>
+      <h1 className="mb-6 font-display text-2xl font-semibold text-brand-ink">New course</h1>
       <Card>
         <CourseForm
           submitLabel="Create course"
@@ -20,7 +20,7 @@ export function NewCoursePage() {
             if (course) navigate(`/teach/courses/${course.id}`)
           }}
         />
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-2 text-sm text-danger">{error}</p>}
       </Card>
     </div>
   )

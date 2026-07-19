@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/Button'
+import { Input, Textarea } from '@/components/ui/Input'
 import type { CourseInput } from '@/features/courses/hooks/useCourseMutations'
 import type { CourseRow } from '@/types/database'
 
@@ -26,35 +27,27 @@ export function CourseForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <label className="flex flex-col gap-1 text-sm font-medium">
+      <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
         Title
-        <input
-          type="text"
-          required
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="rounded-lg border border-black/10 px-3 py-2"
-        />
+        <Input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} />
       </label>
-      <label className="flex flex-col gap-1 text-sm font-medium">
+      <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
         Description
-        <textarea
+        <Textarea
           required
           rows={4}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="rounded-lg border border-black/10 px-3 py-2"
         />
       </label>
-      <label className="flex flex-col gap-1 text-sm font-medium">
+      <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
         Price (৳)
-        <input
+        <Input
           type="number"
           min={0}
           step="0.01"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
-          className="rounded-lg border border-black/10 px-3 py-2"
         />
       </label>
       <Button type="submit" disabled={submitting}>
