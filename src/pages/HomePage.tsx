@@ -49,12 +49,15 @@ export function HomePage() {
   return (
     <div className="flex flex-col gap-20 py-12">
       <section className="flex flex-col items-start gap-6">
+        <span className="rounded-full bg-brand-green/10 px-3 py-1 text-sm font-medium text-brand-green">
+          দক্ষতা বাড়ান, ক্যারিয়ার এগিয়ে নিন — build career skills, one chapter at a time
+        </span>
         <h1 className="font-display text-4xl font-bold text-brand-ink sm:text-5xl">
           Learn by doing, <span className="text-brand-green">not just reading.</span>
         </h1>
         <p className="max-w-xl text-lg text-slate-600">
-          Koushol turns courses into interactive chapters and quizzes — read, get tested, unlock
-          the next step, and earn a certificate when you finish.
+          Koushol turns career-skill courses into interactive chapters and quizzes — read, get
+          tested, unlock the next step, and earn a certificate when you finish.
         </p>
         <Link to="/courses">
           <Button className="gap-2">
@@ -103,7 +106,8 @@ export function HomePage() {
       <section className="rounded-xl bg-brand-green px-8 py-10 text-center text-white">
         <h2 className="font-display text-2xl font-semibold">Ready to start learning?</h2>
         <p className="mt-2 text-white/90">
-          Browse the catalog — the first chapter of every course is free to read.
+          এখনই শুরু করুন — browse the catalog, the first chapter of every course is free to
+          read.
         </p>
         <Link to="/courses" className="mt-6 inline-block">
           <Button variant="secondary">Browse courses</Button>

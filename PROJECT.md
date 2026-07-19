@@ -20,6 +20,10 @@ An optional TTS ("listen to this course") audio player will be added later using
 
 Design identity: dark green (#0C8A4B) + gold (#D4A017) accents, Space Grotesk (display) + Inter (body) fonts. See `docs/design-system.md` — do not invent a new palette without updating that file.
 
+**Content direction (decided 2026-07-19)**: course content focuses on **career/professional skills** (e.g. HR, IT, marketing, finance — workplace skill-building for working adults), not academic/language learning. The Phase 1 seed data ("Bangla Grammar Basics") predates this decision and is test fixture content only, not a template for real courses going forward.
+
+**Pricing stays flexible per-course** (teachers set their own price, as already built) — explicitly not moving to a flat platform-wide price, confirmed 2026-07-19.
+
 ## 2. Tech Stack (locked decisions)
 
 | Layer | Choice | Notes |
