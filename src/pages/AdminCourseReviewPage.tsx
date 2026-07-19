@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Check, X, ClipboardCheck } from 'lucide-react'
 import { useAdminCourses } from '@/features/admin/hooks/useAdminCourses'
 import { useCourseMutations } from '@/features/courses/hooks/useCourseMutations'
 import { COURSE_STATUS_BADGE_TONE, COURSE_STATUS_LABEL } from '@/features/courses/statusDisplay'
@@ -7,7 +8,8 @@ import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
-import { formatBDT } from '@/lib/utils'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { formatBDT, cn } from '@/lib/utils'
 import type { CourseStatus } from '@/types/database'
 
 const FILTERS: { label: string; value: CourseStatus | undefined }[] = [
@@ -23,7 +25,7 @@ export function AdminCourseReviewPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-2xl font-semibold">Course review</h1>
+      <h1 className="font-display text-2xl font-semibold text-brand-ink">Course review</h1>
 
       <div className="flex gap-2">
         {FILTERS.map((f) => (
@@ -31,11 +33,12 @@ export function AdminCourseReviewPage() {
             key={f.label}
             type="button"
             onClick={() => setFilter(f.value)}
-            className={
+            className={cn(
+              'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150',
               filter === f.value
-                ? 'rounded-lg bg-brand-green/10 px-3 py-1.5 text-sm font-medium text-brand-green'
-                : 'rounded-lg px-3 py-1.5 text-sm text-black/60 hover:bg-black/5'
-            }
+                ? 'bg-brand-green/10 text-brand-green'
+                : 'text-slate-500 hover:bg-slate-100',
+            )}
           >
             {f.label}
           </button>
@@ -43,9 +46,9 @@ export function AdminCourseReviewPage() {
       </div>
 
       {loading && <Spinner />}
-      {error && <p className="text-red-600">{error}</p>}
+      {error && <p className="text-danger">{error}</p>}
       {!loading && !error && courses.length === 0 && (
-        <p className="text-black/60">Nothing here.</p>
+        <EmptyState icon={ClipboardCheck} title="Nothing here." />
       )}
 
       <div className="flex flex-col gap-2">
@@ -55,7 +58,7 @@ export function AdminCourseReviewPage() {
               <div className="flex items-center gap-2">
                 <Link
                   to={`/courses/${course.id}`}
-                  className="font-medium hover:text-brand-green hover:underline"
+                  className="font-medium text-brand-ink hover:text-brand-green hover:underline"
                 >
                   {course.title}
                 </Link>
@@ -63,27 +66,31 @@ export function AdminCourseReviewPage() {
                   {COURSE_STATUS_LABEL[course.status]}
                 </Badge>
               </div>
-              <p className="text-sm text-black/60">{formatBDT(course.price)}</p>
+              <p className="text-sm text-slate-500">{formatBDT(course.price)}</p>
             </div>
             {course.status === 'pending_approval' && (
               <div className="flex gap-2">
                 <Button
                   disabled={saving}
+                  className="gap-1.5"
                   onClick={async () => {
                     await updateCourse(course.id, { status: 'published' })
                     refetch()
                   }}
                 >
+                  <Check className="h-4 w-4" aria-hidden="true" />
                   Approve
                 </Button>
                 <Button
                   variant="ghost"
                   disabled={saving}
+                  className="gap-1.5"
                   onClick={async () => {
                     await updateCourse(course.id, { status: 'draft' })
                     refetch()
                   }}
                 >
+                  <X className="h-4 w-4" aria-hidden="true" />
                   Reject
                 </Button>
               </div>
