@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
 
 /** Email/password/name sign-up form. New accounts default to the student role (see supabase/migrations/20260719010000_create_users.sql). */
 export function SignupForm() {
@@ -28,38 +29,25 @@ export function SignupForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <label className="flex flex-col gap-1 text-sm font-medium">
+      <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
         Name
-        <input
-          type="text"
-          required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="rounded-lg border border-black/10 px-3 py-2"
-        />
+        <Input type="text" required value={name} onChange={(e) => setName(e.target.value)} />
       </label>
-      <label className="flex flex-col gap-1 text-sm font-medium">
+      <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
         Email
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="rounded-lg border border-black/10 px-3 py-2"
-        />
+        <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
       </label>
-      <label className="flex flex-col gap-1 text-sm font-medium">
+      <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
         Password
-        <input
+        <Input
           type="password"
           required
           minLength={6}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="rounded-lg border border-black/10 px-3 py-2"
         />
       </label>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
       <Button type="submit" disabled={submitting}>
         {submitting ? 'Creating account…' : 'Create account'}
       </Button>

@@ -8,35 +8,47 @@ export function Layout() {
 
   return (
     <div className="min-h-screen">
-      <header className="border-b border-black/5 bg-white">
+      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <Link to="/" className="font-display text-xl font-bold text-brand-green">
             Koushol
           </Link>
           <nav className="flex items-center gap-4 text-sm">
-            <Link to="/courses" className="hover:text-brand-green">
+            <Link
+              to="/courses"
+              className="text-slate-600 transition-colors duration-150 hover:text-brand-green"
+            >
               Courses
             </Link>
             {session ? (
               <>
                 {(profile?.role === 'teacher' || profile?.role === 'admin') && (
-                  <Link to="/teach" className="hover:text-brand-green">
+                  <Link
+                    to="/teach"
+                    className="text-slate-600 transition-colors duration-150 hover:text-brand-green"
+                  >
                     Teach
                   </Link>
                 )}
                 {profile?.role === 'admin' && (
-                  <Link to="/admin" className="hover:text-brand-green">
+                  <Link
+                    to="/admin"
+                    className="text-slate-600 transition-colors duration-150 hover:text-brand-green"
+                  >
                     Admin
                   </Link>
                 )}
-                {profile && <span className="text-black/50">{profile.name}</span>}
+                {profile && <span className="text-slate-400">{profile.name}</span>}
                 <Button variant="ghost" onClick={signOut}>
                   Sign out
                 </Button>
               </>
             ) : (
               <>
-                <Link to="/login" className="hover:text-brand-green">
+                <Link
+                  to="/login"
+                  className="text-slate-600 transition-colors duration-150 hover:text-brand-green"
+                >
                   Sign in
                 </Link>
                 <Link to="/signup">

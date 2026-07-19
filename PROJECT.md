@@ -147,6 +147,9 @@ All tables get RLS enabled from the first migration — never ship a table witho
 | 5 | Master/Admin dashboard: platform-wide analytics, sales, user management | ✅ Done — deployed and verified end-to-end on 2026-07-19 (teacher submits for review → direct-API publish attempt genuinely rejected by RLS, not just hidden by UI → admin approves via `/admin/courses` → status confirmed `published` in DB → course appears in the student catalog). Also resolves the Phase 2 self-service-publish simplification noted in `docs/data-model.md`. Sales/revenue is a placeholder pointing at Phase 6, since the `sales` table has no real data yet. |
 | 6 | Payment integration (bKash/Nagad/SSLCommerz) | Planned |
 | 7 | PWA packaging + mobile installability | Planned |
+| 8 | Full system language toggle (English/Bangla UI, not just content) | Noted 2026-07-19 — explicitly deferred by the user ("do this when needed, later"), not scheduled yet. Distinct from the Bengali *font* fix in the redesign below, which only makes existing Bangla content render correctly — this phase would translate the UI chrome itself (nav, buttons, forms, error messages). |
+
+Cross-cutting, not numbered as a phase: **UI/UX redesign** (started 2026-07-19, using the `ui-ux-pro-max` skill) — foundation (colors, Bengali font fix, primitives) is done; public pages, student flow, teacher flow, and admin flow are in progress. See `docs/design-system.md`.
 
 Do not start a later phase's UI/logic before the current phase is functionally complete and reflected as "done" in this table.
 
