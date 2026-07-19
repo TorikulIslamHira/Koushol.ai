@@ -11,9 +11,14 @@
   --color-brand-gold: #d4a017;
   --color-brand-gold-light: #e6b93a;
   --color-brand-ink: #0b1210;
+  --color-danger: #dc2626;
+  --color-danger-bg: #fef2f2;
 
-  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  /* Hind Siliguri is appended, not swapped in — CSS font fallback resolves per glyph, so
+     Latin text still renders in Space Grotesk/Inter and Bengali script automatically falls
+     back to Hind Siliguri within the same element. See docs/design-system.md § Typography. */
+  --font-display: 'Space Grotesk', 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Inter', 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif;
 }
 
 html,

@@ -25,6 +25,7 @@ Design identity: dark green (#0C8A4B) + gold (#D4A017) accents, Space Grotesk (d
 | Layer | Choice | Notes |
 |---|---|---|
 | Frontend | React + Tailwind (Vite, TypeScript) | Web-first, installable PWA later |
+| Icons | [lucide-react](https://lucide.dev) | Added during the UI/UX redesign (started 2026-07-19) — the `ui-ux-pro-max` skill's pre-delivery checklist flags emoji-as-icons (🔒, ↑↓, ✕) as unprofessional; Lucide is its recommended SVG icon set |
 | Backend / DB / Auth | Supabase (Postgres) | Already connected; free tier to start |
 | AI course generation | Groq API (Llama 3.3 70B, model configurable via `GROQ_MODEL` secret) | Phase 3. Switched from the originally-planned Claude API on 2026-07-19 — teacher wanted to test on a free tier before committing to a paid provider. Groq's chat-completions API is OpenAI-compatible; the Edge Function (`supabase/functions/generate-course/`) is written against it directly (no SDK). Swapping back to Claude later is a contained change (endpoint + request/response shape) — update this row in the same commit if that happens. |
 | TTS | Sarvam AI (Bulbul, speaker `anushka` by default, model configurable via `SARVAM_MODEL` secret) | Phase 4. Language is an explicit per-generation teacher choice, not hardcoded to Bengali — see `docs/data-model.md` § TTS audio. |

@@ -1,7 +1,7 @@
 import type { HTMLAttributes } from 'react'
 import { cn } from '@/lib/utils'
 
-type BadgeTone = 'green' | 'gold' | 'neutral'
+type BadgeTone = 'green' | 'gold' | 'neutral' | 'danger'
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   tone?: BadgeTone
@@ -10,7 +10,8 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 const toneClasses: Record<BadgeTone, string> = {
   green: 'bg-brand-green/10 text-brand-green',
   gold: 'bg-brand-gold/15 text-brand-gold',
-  neutral: 'bg-black/5 text-black/60',
+  neutral: 'bg-slate-100 text-slate-600',
+  danger: 'bg-danger-bg text-danger',
 }
 
 /** Small pill label for status/tags. No business logic — safe to reuse anywhere. */
