@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -16,6 +17,7 @@ export function QuizEditor({
   onSave: (questions: QuizQuestion[]) => void
   saving: boolean
 }) {
+  const { t } = useTranslation()
   const [questions, setQuestions] = useState<QuizQuestion[]>(
     initialQuestions.length > 0 ? initialQuestions : [],
   )
@@ -64,7 +66,7 @@ export function QuizEditor({
           <div className="flex items-start gap-2">
             <Input
               type="text"
-              placeholder="Question"
+              placeholder={t('quizEditor.questionPlaceholder')}
               value={q.question}
               onChange={(e) => updateQuestion(qIndex, { question: e.target.value })}
               className="flex-1 text-sm"
@@ -74,7 +76,7 @@ export function QuizEditor({
               onClick={() => removeQuestion(qIndex)}
               className="rounded px-2 py-1 text-sm text-danger transition-colors duration-150 hover:bg-danger-bg"
             >
-              Remove
+              {t('quizEditor.remove')}
             </button>
           </div>
           {q.options.map((option, oIndex) => (
@@ -87,7 +89,7 @@ export function QuizEditor({
               />
               <Input
                 type="text"
-                placeholder={`Option ${oIndex + 1}`}
+                placeholder={t('quizEditor.optionPlaceholder', { number: oIndex + 1 })}
                 value={option}
                 onChange={(e) => updateOption(qIndex, oIndex, e.target.value)}
                 className="flex-1 px-2 py-1"
@@ -95,7 +97,7 @@ export function QuizEditor({
               {q.options.length > 2 && (
                 <button
                   type="button"
-                  aria-label="Remove option"
+                  aria-label={t('quizEditor.removeOption')}
                   onClick={() => removeOption(qIndex, oIndex)}
                   className="rounded p-1 text-slate-400 transition-colors duration-150 hover:bg-danger-bg hover:text-danger"
                 >
@@ -110,7 +112,7 @@ export function QuizEditor({
             className="flex items-center gap-1 self-start text-xs text-brand-green hover:underline"
           >
             <Plus className="h-3 w-3" aria-hidden="true" />
-            Add option
+            {t('quizEditor.addOption')}
           </button>
         </div>
       ))}
@@ -121,7 +123,7 @@ export function QuizEditor({
         className="flex items-center gap-1 self-start text-sm text-brand-green hover:underline"
       >
         <Plus className="h-4 w-4" aria-hidden="true" />
-        Add question
+        {t('quizEditor.addQuestion')}
       </button>
 
       <Button
@@ -130,7 +132,7 @@ export function QuizEditor({
         disabled={saving || !canSave}
         className="self-start"
       >
-        {saving ? 'Saving…' : 'Save quiz'}
+        {saving ? t('quizEditor.saving') : t('quizEditor.saveQuiz')}
       </Button>
     </div>
   )

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { ChevronUp, ChevronDown, Trash2, Plus } from 'lucide-react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -17,6 +18,7 @@ export function ChapterEditorList({
   chapters: ChapterRow[]
   onChanged: () => void
 }) {
+  const { t } = useTranslation()
   const { createChapter, deleteChapter, moveChapter, saving, error } = useChapterMutations(
     courseId,
     onChanged,
@@ -31,9 +33,13 @@ export function ChapterEditorList({
 
   return (
     <Card className="flex flex-col gap-4">
-      <h2 className="font-display text-lg font-semibold text-brand-ink">Chapters</h2>
+      <h2 className="font-display text-lg font-semibold text-brand-ink">
+        {t('chapters.heading')}
+      </h2>
 
-      {chapters.length === 0 && <p className="text-sm text-slate-500">No chapters yet.</p>}
+      {chapters.length === 0 && (
+        <p className="text-sm text-slate-500">{t('chapters.noChaptersYet')}</p>
+      )}
 
       <ol className="flex flex-col gap-2">
         {chapters.map((chapter, index) => (
@@ -45,12 +51,12 @@ export function ChapterEditorList({
               to={`/teach/courses/${courseId}/chapters/${chapter.id}`}
               className="flex-1 text-sm text-slate-700 transition-colors duration-150 hover:text-brand-green hover:underline"
             >
-              {index + 1}. {chapter.title || '(untitled)'}
+              {index + 1}. {chapter.title || t('chapters.untitled')}
             </Link>
             <div className="flex items-center gap-1">
               <button
                 type="button"
-                aria-label="Move up"
+                aria-label={t('chapters.moveUp')}
                 disabled={index === 0 || saving}
                 onClick={() => moveChapter(chapters, chapter.id, 'up')}
                 className="rounded p-1.5 text-slate-500 transition-colors duration-150 hover:bg-slate-100 disabled:opacity-30"
@@ -59,7 +65,7 @@ export function ChapterEditorList({
               </button>
               <button
                 type="button"
-                aria-label="Move down"
+                aria-label={t('chapters.moveDown')}
                 disabled={index === chapters.length - 1 || saving}
                 onClick={() => moveChapter(chapters, chapter.id, 'down')}
                 className="rounded p-1.5 text-slate-500 transition-colors duration-150 hover:bg-slate-100 disabled:opacity-30"
@@ -68,10 +74,10 @@ export function ChapterEditorList({
               </button>
               <button
                 type="button"
-                aria-label="Delete chapter"
+                aria-label={t('chapters.deleteChapter')}
                 disabled={saving}
                 onClick={() => {
-                  if (confirm(`Delete "${chapter.title}"? This also removes its quiz.`)) {
+                  if (confirm(t('chapters.deleteChapterConfirm', { title: chapter.title }))) {
                     deleteChapter(
                       chapter.id,
                       chapters.filter((c) => c.id !== chapter.id),
@@ -90,14 +96,19 @@ export function ChapterEditorList({
       <div className="flex items-center gap-2">
         <Input
           type="text"
-          placeholder="New chapter title"
+          placeholder={t('chapters.newChapterPlaceholder')}
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           className="flex-1 text-sm"
         />
-        <Button type="button" onClick={handleAdd} disabled={saving || !newTitle.trim()} className="gap-1.5">
+        <Button
+          type="button"
+          onClick={handleAdd}
+          disabled={saving || !newTitle.trim()}
+          className="gap-1.5"
+        >
           <Plus className="h-4 w-4" aria-hidden="true" />
-          Add chapter
+          {t('chapters.addChapter')}
         </Button>
       </div>
       {error && <p className="text-sm text-danger">{error}</p>}

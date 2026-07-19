@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -25,6 +26,7 @@ export function AIGenerateCourse({
   existingChapterCount: number
   onApplied: () => void
 }) {
+  const { t } = useTranslation()
   const [notes, setNotes] = useState(initialNotes)
   const [proposal, setProposal] = useState<GeneratedChapter[] | null>(null)
   const { generate, generating, error: generateError } = useGenerateCourse()
@@ -48,18 +50,15 @@ export function AIGenerateCourse({
     <Card className="flex flex-col gap-4">
       <h2 className="flex items-center gap-2 font-display text-lg font-semibold text-brand-ink">
         <Sparkles className="h-5 w-5 text-brand-gold" aria-hidden="true" />
-        Generate with AI
+        {t('aiGenerate.title')}
       </h2>
-      <p className="text-xs text-slate-500">
-        Paste your raw topic notes below. AI will propose chapters and quizzes appended
-        after your existing chapters — review before adding.
-      </p>
+      <p className="text-xs text-slate-500">{t('aiGenerate.subtitle')}</p>
 
       <Textarea
         rows={8}
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
-        placeholder="Paste your raw notes here…"
+        placeholder={t('aiGenerate.placeholder')}
         className="text-sm"
       />
 
@@ -69,13 +68,15 @@ export function AIGenerateCourse({
         disabled={generating || !notes.trim()}
         className="self-start"
       >
-        {generating ? 'Generating…' : 'Generate chapters'}
+        {generating ? t('aiGenerate.generating') : t('aiGenerate.generateChapters')}
       </Button>
       {generateError && <p className="text-sm text-danger">{generateError}</p>}
 
       {proposal && (
         <div className="flex flex-col gap-4 border-t border-slate-200 pt-4">
-          <h3 className="font-medium text-brand-ink">Proposed chapters ({proposal.length})</h3>
+          <h3 className="font-medium text-brand-ink">
+            {t('aiGenerate.proposedChapters', { count: proposal.length })}
+          </h3>
           {proposal.map((chapter, i) => (
             <div key={i} className="rounded-lg border border-slate-200 p-3 text-sm">
               <p className="font-medium text-brand-ink">
@@ -83,16 +84,18 @@ export function AIGenerateCourse({
               </p>
               <p className="mt-1 whitespace-pre-line text-slate-600">{chapter.content}</p>
               <p className="mt-2 text-xs text-slate-400">
-                {chapter.questions.length} quiz question(s)
+                {t('aiGenerate.quizQuestionCount', { count: chapter.questions.length })}
               </p>
             </div>
           ))}
           <div className="flex gap-2">
             <Button type="button" disabled={applying} onClick={() => apply(proposal)}>
-              {applying ? 'Adding…' : `Add ${proposal.length} chapter(s) to course`}
+              {applying
+                ? t('aiGenerate.adding')
+                : t('aiGenerate.addChaptersToCourse', { count: proposal.length })}
             </Button>
             <Button type="button" variant="ghost" onClick={() => setProposal(null)}>
-              Discard
+              {t('aiGenerate.discard')}
             </Button>
           </div>
           {applyError && <p className="text-sm text-danger">{applyError}</p>}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/Button'
 import { Select } from '@/components/ui/Select'
 import { AudioPlayer } from '@/features/chapters/components/AudioPlayer'
@@ -13,6 +14,7 @@ import { useChapterAudio } from '@/features/chapters/hooks/useChapterAudio'
  * choice, not inferred from content — see useGenerateChapterAudio for why.
  */
 export function GenerateAudioPanel({ chapterId }: { chapterId: string }) {
+  const { t } = useTranslation()
   const { audio, refetch } = useChapterAudio(chapterId)
   const { generate, generating, error } = useGenerateChapterAudio(chapterId)
   const [languageCode, setLanguageCode] = useState(audio?.language_code ?? 'bn-IN')
@@ -32,21 +34,28 @@ export function GenerateAudioPanel({ chapterId }: { chapterId: string }) {
         >
           {SUPPORTED_AUDIO_LANGUAGES.map((lang) => (
             <option key={lang.code} value={lang.code}>
-              {lang.label}
+              {t(lang.labelKey)}
             </option>
           ))}
         </Select>
         <Button type="button" onClick={handleGenerate} disabled={generating}>
-          {generating ? 'Generating…' : audio ? 'Regenerate audio' : 'Generate audio'}
+          {generating
+            ? t('audioPanel.generating')
+            : audio
+              ? t('audioPanel.regenerateAudio')
+              : t('audioPanel.generateAudio')}
         </Button>
       </div>
       {error && <p className="text-sm text-danger">{error}</p>}
       {audio && (
         <div className="flex flex-col gap-1">
           <p className="text-xs text-slate-500">
-            Current audio:{' '}
-            {SUPPORTED_AUDIO_LANGUAGES.find((l) => l.code === audio.language_code)?.label ??
-              audio.language_code}
+            {t('audioPanel.currentAudio', {
+              language: t(
+                SUPPORTED_AUDIO_LANGUAGES.find((l) => l.code === audio.language_code)
+                  ?.labelKey ?? '',
+              ) || audio.language_code,
+            })}
           </p>
           <AudioPlayer segments={audio.segments} />
         </div>

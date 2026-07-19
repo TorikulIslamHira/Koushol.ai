@@ -15,7 +15,8 @@
   "common": {
     "loading": "Loading…",
     "backToHome": "Back to home",
-    "notFound": "Not found."
+    "notFound": "Not found.",
+    "save": "Save"
   },
   "home": {
     "badge": "Build career skills, one chapter at a time",
@@ -143,5 +144,121 @@
     "emptyState": "You haven't enrolled in a course yet.",
     "browseCourses": "Browse courses →",
     "chaptersUnlocked": "{{unlocked}} / {{total}} chapters unlocked"
+  },
+  "courseStatus": {
+    "draft": "draft",
+    "pendingApproval": "pending review",
+    "published": "published"
+  },
+  "teacher": {
+    "myCourses": "My courses",
+    "newCourse": "New course",
+    "createCourse": "Create course",
+    "noCoursesYet": "You haven't created a course yet.",
+    "notFound": "Course not found.",
+    "analytics": "Analytics",
+    "submitForReview": "Submit for review",
+    "withdraw": "Withdraw",
+    "unpublish": "Unpublish",
+    "deleteCourse": "Delete course",
+    "deleteCourseConfirm": "Delete \"{{title}}\"? This cannot be undone.",
+    "saving": "Saving…"
+  },
+  "courseForm": {
+    "title": "Title",
+    "description": "Description",
+    "price": "Price (৳)"
+  },
+  "chapters": {
+    "heading": "Chapters",
+    "noChaptersYet": "No chapters yet.",
+    "newChapterPlaceholder": "New chapter title",
+    "addChapter": "Add chapter",
+    "deleteChapterConfirm": "Delete \"{{title}}\"? This also removes its quiz.",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "deleteChapter": "Delete chapter",
+    "content": "Content",
+    "saveChapter": "Save chapter",
+    "notFound": "Not found.",
+    "chapterNotFound": "Chapter not found.",
+    "untitled": "(untitled)",
+    "audioHeading": "Audio"
+  },
+  "aiGenerate": {
+    "title": "Generate with AI",
+    "subtitle": "Paste your raw topic notes below. AI will propose chapters and quizzes appended after your existing chapters — review before adding.",
+    "placeholder": "Paste your raw notes here…",
+    "generateChapters": "Generate chapters",
+    "generating": "Generating…",
+    "proposedChapters": "Proposed chapters ({{count}})",
+    "quizQuestionCount": "{{count}} quiz question(s)",
+    "addChaptersToCourse": "Add {{count}} chapter(s) to course",
+    "adding": "Adding…",
+    "discard": "Discard"
+  },
+  "audioPanel": {
+    "generateAudio": "Generate audio",
+    "regenerateAudio": "Regenerate audio",
+    "generating": "Generating…",
+    "currentAudio": "Current audio: {{language}}"
+  },
+  "quizEditor": {
+    "questionPlaceholder": "Question",
+    "remove": "Remove",
+    "removeOption": "Remove option",
+    "optionPlaceholder": "Option {{number}}",
+    "addOption": "Add option",
+    "addQuestion": "Add question",
+    "saveQuiz": "Save quiz",
+    "saving": "Saving…"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "totalEnrollments": "Total enrollments",
+    "completed": "{{count}} completed",
+    "noChaptersYet": "No chapters yet."
+  },
+  "admin": {
+    "title": "Admin",
+    "manageUsers": "Manage users →",
+    "reviewCourses": "Review courses →",
+    "users": "Users",
+    "courses": "Courses",
+    "enrollments": "Enrollments",
+    "sales": "Sales",
+    "total": "Total",
+    "students": "Students",
+    "teachers": "Teachers",
+    "admins": "Admins",
+    "draft": "Draft",
+    "pendingReview": "Pending review",
+    "published": "Published",
+    "salesNotLive": "Payments aren't live yet — this fills in once Phase 6 (bKash/Nagad/SSLCommerz) ships. See <code>docs/decisions/cost-notes.md</code> and <code>PROJECT.md</code> Section 8.",
+    "courseReview": "Course review",
+    "filterPending": "Pending review",
+    "filterAll": "All courses",
+    "nothingHere": "Nothing here.",
+    "approve": "Approve",
+    "reject": "Reject",
+    "usersTitle": "Users"
+  },
+  "roles": {
+    "student": "student",
+    "teacher": "teacher",
+    "admin": "admin"
+  },
+  "languageNames": {
+    "bengali": "Bengali",
+    "englishIndia": "English (India)",
+    "hindi": "Hindi",
+    "gujarati": "Gujarati",
+    "kannada": "Kannada",
+    "malayalam": "Malayalam",
+    "marathi": "Marathi",
+    "odia": "Odia",
+    "punjabi": "Punjabi",
+    "tamil": "Tamil",
+    "telugu": "Telugu"
   }
 }

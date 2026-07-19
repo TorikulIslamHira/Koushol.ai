@@ -2,18 +2,19 @@ import { useCallback, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { ChapterAudioRow } from '@/types/database'
 
-export const SUPPORTED_AUDIO_LANGUAGES: { code: string; label: string }[] = [
-  { code: 'bn-IN', label: 'Bengali' },
-  { code: 'en-IN', label: 'English (India)' },
-  { code: 'hi-IN', label: 'Hindi' },
-  { code: 'gu-IN', label: 'Gujarati' },
-  { code: 'kn-IN', label: 'Kannada' },
-  { code: 'ml-IN', label: 'Malayalam' },
-  { code: 'mr-IN', label: 'Marathi' },
-  { code: 'od-IN', label: 'Odia' },
-  { code: 'pa-IN', label: 'Punjabi' },
-  { code: 'ta-IN', label: 'Tamil' },
-  { code: 'te-IN', label: 'Telugu' },
+/** labelKey points at src/i18n/locales/{en,bn}.json's "languageNames" namespace — GenerateAudioPanel translates it via t(), since this is a plain module-level constant and can't call useTranslation() itself. */
+export const SUPPORTED_AUDIO_LANGUAGES: { code: string; labelKey: string }[] = [
+  { code: 'bn-IN', labelKey: 'languageNames.bengali' },
+  { code: 'en-IN', labelKey: 'languageNames.englishIndia' },
+  { code: 'hi-IN', labelKey: 'languageNames.hindi' },
+  { code: 'gu-IN', labelKey: 'languageNames.gujarati' },
+  { code: 'kn-IN', labelKey: 'languageNames.kannada' },
+  { code: 'ml-IN', labelKey: 'languageNames.malayalam' },
+  { code: 'mr-IN', labelKey: 'languageNames.marathi' },
+  { code: 'od-IN', labelKey: 'languageNames.odia' },
+  { code: 'pa-IN', labelKey: 'languageNames.punjabi' },
+  { code: 'ta-IN', labelKey: 'languageNames.tamil' },
+  { code: 'te-IN', labelKey: 'languageNames.telugu' },
 ]
 
 /**

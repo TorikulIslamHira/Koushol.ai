@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { CourseForm } from '@/features/courses/components/CourseForm'
 import { useCourseMutations } from '@/features/courses/hooks/useCourseMutations'
 import { Card } from '@/components/ui/Card'
@@ -7,13 +8,16 @@ import { Card } from '@/components/ui/Card'
 export function NewCoursePage() {
   const navigate = useNavigate()
   const { createCourse, saving, error } = useCourseMutations()
+  const { t } = useTranslation()
 
   return (
     <div className="mx-auto max-w-lg">
-      <h1 className="mb-6 font-display text-2xl font-semibold text-brand-ink">New course</h1>
+      <h1 className="mb-6 font-display text-2xl font-semibold text-brand-ink">
+        {t('teacher.newCourse')}
+      </h1>
       <Card>
         <CourseForm
-          submitLabel="Create course"
+          submitLabel={t('teacher.createCourse')}
           submitting={saving}
           onSubmit={async (input) => {
             const course = await createCourse(input)

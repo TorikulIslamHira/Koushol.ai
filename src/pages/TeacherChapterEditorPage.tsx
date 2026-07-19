@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { ArrowLeft } from 'lucide-react'
 import { useCourse } from '@/features/courses/hooks/useCourse'
 import { useChapterMutations } from '@/features/chapters/hooks/useChapterMutations'
@@ -17,12 +18,13 @@ export function TeacherChapterEditorPage() {
   const { updateChapter, saving: savingChapter } = useChapterMutations(courseId ?? '', refetch)
   const { quiz, loading: quizLoading } = useQuiz(chapterId)
   const { saveQuiz, saving: savingQuiz, error: quizError } = useQuizMutations(chapterId ?? '')
+  const { t } = useTranslation()
 
   if (loading) return <Spinner />
-  if (!course || !courseId || !chapterId) return <p className="text-slate-500">Not found.</p>
+  if (!course || !courseId || !chapterId) return <p className="text-slate-500">{t('chapters.notFound')}</p>
 
   const chapter = chapters.find((c) => c.id === chapterId)
-  if (!chapter) return <p className="text-slate-500">Chapter not found.</p>
+  if (!chapter) return <p className="text-slate-500">{t('chapters.chapterNotFound')}</p>
 
   return (
     <div className="flex flex-col gap-6">
@@ -34,7 +36,7 @@ export function TeacherChapterEditorPage() {
         {course.title}
       </Link>
       <h1 className="font-display text-2xl font-semibold text-brand-ink">
-        {chapter.title || '(untitled)'}
+        {chapter.title || t('chapters.untitled')}
       </h1>
 
       <Card>
@@ -46,7 +48,9 @@ export function TeacherChapterEditorPage() {
       </Card>
 
       <Card>
-        <h2 className="mb-4 font-display text-lg font-semibold text-brand-ink">Quiz</h2>
+        <h2 className="mb-4 font-display text-lg font-semibold text-brand-ink">
+          {t('chapter.quiz')}
+        </h2>
         {quizLoading ? (
           <Spinner />
         ) : (
@@ -60,7 +64,9 @@ export function TeacherChapterEditorPage() {
       </Card>
 
       <Card>
-        <h2 className="mb-4 font-display text-lg font-semibold text-brand-ink">Audio</h2>
+        <h2 className="mb-4 font-display text-lg font-semibold text-brand-ink">
+          {t('chapters.audioHeading')}
+        </h2>
         <GenerateAudioPanel chapterId={chapterId} />
       </Card>
     </div>

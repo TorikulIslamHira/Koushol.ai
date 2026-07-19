@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useAllUsers } from '@/features/admin/hooks/useAllUsers'
 import { useUpdateUserRole } from '@/features/admin/hooks/useUpdateUserRole'
 import { useAuth } from '@/features/auth/hooks/useAuth'
@@ -19,13 +20,14 @@ export function AdminUsersPage() {
   const { users, loading, error, refetch } = useAllUsers()
   const { updateRole, saving } = useUpdateUserRole()
   const { session } = useAuth()
+  const { t } = useTranslation()
 
   if (loading) return <Spinner />
   if (error) return <p className="text-danger">{error}</p>
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-2xl font-semibold text-brand-ink">Users</h1>
+      <h1 className="font-display text-2xl font-semibold text-brand-ink">{t('admin.usersTitle')}</h1>
       <div className="flex flex-col gap-2">
         {users.map((user) => (
           <Card key={user.id} className="flex items-center justify-between gap-4">
@@ -34,7 +36,7 @@ export function AdminUsersPage() {
                 <p className="font-medium text-brand-ink">{user.name}</p>
                 <p className="text-sm text-slate-500">{user.email}</p>
               </div>
-              <Badge tone={ROLE_BADGE_TONE[user.role]}>{user.role}</Badge>
+              <Badge tone={ROLE_BADGE_TONE[user.role]}>{t(`roles.${user.role}`)}</Badge>
             </div>
             <Select
               value={user.role}
@@ -47,7 +49,7 @@ export function AdminUsersPage() {
             >
               {ROLES.map((role) => (
                 <option key={role} value={role}>
-                  {role}
+                  {t(`roles.${role}`)}
                 </option>
               ))}
             </Select>
