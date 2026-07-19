@@ -1,0 +1,51 @@
+name: Deploy
+
+# Builds the SPA in CI (so build-time Supabase env vars never touch the VPS) and ships only
+# the compiled dist/ output via rsync into a timestamped release directory. The VPS-side
+# activate-release.sh script does the atomic symlink switch + nginx reload + old-release
+# pruning — see deploy/README.md for the one-time VPS setup this depends on.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: npm run build
+
+      - name: Set release id
+        id: release
+        run: echo "id=$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload dist to a new release directory on the VPS
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: -avzr --delete
+          path: dist/
+          remote_path: ${{ secrets.DEPLOY_BASE_PATH }}/releases/${{ steps.release.outputs.id }}/
+          remote_host: ${{ secrets.DEPLOY_HOST }}
+          remote_user: ${{ secrets.DEPLOY_USER }}
+          remote_key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Activate the new release (atomic symlink swap + nginx reload + prune old releases)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: ${{ secrets.DEPLOY_BASE_PATH }}/activate-release.sh ${{ steps.release.outputs.id }}
