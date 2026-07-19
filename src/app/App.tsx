@@ -19,6 +19,9 @@ import { CourseAnalyticsPage } from '@/pages/CourseAnalyticsPage'
 import { AdminDashboardPage } from '@/pages/AdminDashboardPage'
 import { AdminUsersPage } from '@/pages/AdminUsersPage'
 import { AdminCourseReviewPage } from '@/pages/AdminCourseReviewPage'
+import { TermsPage } from '@/pages/TermsPage'
+import { PrivacyPage } from '@/pages/PrivacyPage'
+import { NotFoundPage } from '@/pages/NotFoundPage'
 
 /** Root component: wires up auth context and Phase 1-5 routes (see PROJECT.md Section 8). */
 export function App() {
@@ -110,6 +113,9 @@ export function App() {
                 </RequireAdmin>
               }
             />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
       </AuthProvider>

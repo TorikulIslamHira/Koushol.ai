@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Static routes only. Koushol is a client-side-only SPA (no server rendering yet), so
+  individual course pages (/courses/:id) — which are the highest-value pages for search —
+  can't be enumerated here without a server-side sitemap generator that queries published
+  courses at request time. That's a real gap, not an oversight: revisit once Phase 7 (PWA)
+  or any server-rendering work lands. See docs/design-system.md / PROJECT.md Section 8.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://koushol.xyz/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://koushol.xyz/courses</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://koushol.xyz/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://koushol.xyz/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+</urlset>

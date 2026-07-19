@@ -60,6 +60,7 @@ New accounts self-signing-up always get `role = 'student'` (see the `handle_new_
 ```
 Koushol.ai/
 ├── PROJECT.md                    ← this file
+├── public/                        ← static files served as-is (favicon, robots.txt, sitemap.xml)
 ├── docs/
 │   ├── design-system.md
 │   ├── data-model.md
@@ -173,5 +174,9 @@ Phase 1 decisions that were previously open, resolved 2026-07-19:
 - **Phase 1 content source: SQL seed migration** (`supabase/seed.sql`) with two sample courses, so the student flow is testable end to end without a teacher UI.
 
 Still not decided — ask before building: certificate design (Phase 1 doesn't need it yet; the `certificates` table is schema-only with no issuance code).
+
+**Legal pages (`/terms`, `/privacy`, added 2026-07-19) are drafts, not reviewed by a lawyer.** They're grounded in what the code actually does (verified against the real data model and Edge Functions, not generic filler) and carry a visible on-page disclaimer, but do not treat them as final legal protection — get them reviewed before real users/payments depend on them. Update both in the same commit whenever a new third-party processor is added (see PROJECT.md Section 2) or Phase 6 payments ships.
+
+**`public/sitemap.xml` only lists static routes** (`/`, `/courses`, `/terms`, `/privacy`) — individual course pages aren't included because Koushol is a client-side-only SPA with no server rendering, so there's no request-time hook to enumerate published courses into a sitemap. Revisit if/when server rendering lands.
 
 Keep commits scoped to one phase-item at a time; do not bundle unrelated changes.
