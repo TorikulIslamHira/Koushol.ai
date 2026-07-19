@@ -1,7 +1,7 @@
 # Koushol — Interactive Learning Platform
 
-Project Spec & Engineering Rules — v1.3
-Status: Phase 1 and Phase 2 done — see Section 8
+Project Spec & Engineering Rules — v1.4
+Status: Phase 1 and 2 done, Phase 3 code complete pending API key — see Section 8
 Last updated: 2026-07-19
 
 This document is the single source of truth for architecture, folder structure, coding rules, data model, and roadmap. Any AI agent or developer working on this repo must read this file first and follow it strictly. If a decision here needs to change, update this file in the same commit — never let the code and this document drift apart.
@@ -26,7 +26,7 @@ Design identity: dark green (#0C8A4B) + gold (#D4A017) accents, Space Grotesk (d
 |---|---|---|
 | Frontend | React + Tailwind (Vite, TypeScript) | Web-first, installable PWA later |
 | Backend / DB / Auth | Supabase (Postgres) | Already connected; free tier to start |
-| AI course generation | Claude API (Sonnet) | Phase 3 |
+| AI course generation | Claude API (Sonnet), *or possibly Grok (x.ai) — undecided as of 2026-07-19* | Phase 3. The Edge Function (`supabase/functions/generate-course/`) is currently written against Anthropic's Messages API; swapping to Grok's OpenAI-compatible API is a contained change (endpoint + request/response shape) but must be reflected here once decided, not left silently mismatched with the code. |
 | TTS | Sarvam AI (Bulbul V3) | Phase 4, Bengali support |
 | Payments | bKash / Nagad / SSLCommerz | Phase 5→6, no monthly fee, %-based |
 | Hosting | Vercel or Netlify | Free tier to start |
@@ -66,6 +66,8 @@ Koushol.ai/
 │       └── cost-notes.md
 ├── supabase/
 │   ├── migrations/                ← one file per schema change, timestamped
+│   ├── functions/                 ← Edge Functions (Deno) — anything needing a secret
+│   │   └── generate-course/       ← Claude API call for AI course generation (Phase 3)
 │   └── seed.sql                   ← local dev sample data only, never run on prod
 └── src/
     ├── app/                        ← root App.tsx, Layout.tsx, providers/
@@ -136,7 +138,7 @@ All tables get RLS enabled from the first migration — never ship a table witho
 |---|---|---|
 | 1 | Student flow: browse, enroll, chapters, quiz, manual course content, Supabase auth+DB | ✅ Done — migrations + seed applied to the live Supabase project, verified end-to-end locally (signup, browse, enroll, chapter, quiz, unlock) on 2026-07-19 |
 | 2 | Teacher flow: create/edit courses manually, publish, own-course analytics | ✅ Done — verified end-to-end on 2026-07-19 (create → chapter → quiz → publish → shows in student catalog → delete) |
-| 3 | AI course generation: teacher notes → Claude → structured chapters + quiz | Planned |
+| 3 | AI course generation: teacher notes → Claude → structured chapters + quiz | 🚧 Code complete, not yet deployed/verified — needs an LLM API key (Claude or Grok, still undecided) set as a secret, then `supabase functions deploy generate-course` and a real generation run. See `docs/data-model.md` § AI course generation. |
 | 4 | TTS audio player (Sarvam AI) for chapter content | Planned |
 | 5 | Master/Admin dashboard: platform-wide analytics, sales, user management | Planned |
 | 6 | Payment integration (bKash/Nagad/SSLCommerz) | Planned |
@@ -150,8 +152,9 @@ Any code that calls a paid API (Claude, Sarvam AI, Supabase Pro features) must:
 - Log estimated cost per call in a comment or console log during development.
 - Never run in an uncapped loop (e.g. auto-regenerating AI content on every keystroke).
 - Respect the budget ranges documented in `docs/decisions/cost-notes.md`: AI course gen ~৳6–19/course, TTS ~৳43–65/course.
+- **Run server-side, in a Supabase Edge Function (`supabase/functions/`), never in browser code.** A paid API's key is a secret; anything shipped to the client (including Vite env vars prefixed `VITE_`) is readable by anyone who opens dev tools. See `supabase/functions/generate-course/` for the pattern: the frontend calls `supabase.functions.invoke(...)`, which forwards the user's own JWT so the function can re-use existing RLS policies for authorization instead of duplicating them.
 
-No paid API is called anywhere in Phase 1 — this section becomes load-bearing starting Phase 3.
+No paid API was called in Phase 1 or 2 — this section became load-bearing starting Phase 3.
 
 ## 10. Handoff Notes for Claude Code
 

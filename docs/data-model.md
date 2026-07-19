@@ -12,6 +12,7 @@ Applied in order (each file name is timestamp-prefixed, so this is also executio
 6. `20260719010500_create_chapter_progress.sql`
 7. `20260719010600_create_certificates.sql`
 8. `20260719010700_create_sales.sql`
+9. `20260719020000_add_courses_raw_notes.sql`
 
 ## `users`
 
@@ -38,8 +39,11 @@ RLS: own row select/update; admin select/update all; no client insert/delete.
 | `status` | `course_status` enum (`draft`/`published`) | defaults `draft` |
 | `price` | `numeric(10,2)` | `>= 0`, in BDT |
 | `created_at` | `timestamptz` | |
+| `raw_notes` | `text`, nullable | Teacher's original notes, input to AI course generation (Phase 3). Added in `20260719020000_add_courses_raw_notes.sql`. |
 
 RLS: anyone (incl. anonymous) can select `status = 'published'`; owning teacher or admin can select/insert/update/delete regardless of status.
+
+**RLS is row-level, not column-level**: the "published" policy above exposes every column, including `raw_notes`, to any reader of a published course — there's no way to hide one column from an otherwise-permitted row in plain Postgres RLS. The student-facing hooks (`useCourses`, `useCourse` without `includeRawNotes`) work around this by explicitly selecting a public column list (`PUBLIC_COURSE_COLUMNS` in `src/features/courses/hooks/useCourses.ts`) instead of `select('*')`. Keep that in mind before adding another teacher-only column — the DB won't stop it from leaking, only the query will.
 
 **Known Phase 2 simplification**: `PROJECT.md` Section 3 lists teacher publish as "needs admin approval", but the admin approval UI is Phase 5 and doesn't exist yet. `src/features/courses/hooks/useCourseMutations.ts` lets a teacher publish/unpublish their own course directly (RLS already allows this — the owner/admin update policy doesn't distinguish which columns changed). Revisit once Phase 5 lands.
 
@@ -126,6 +130,18 @@ Schema-only placeholder for Phase 6 (bKash/Nagad/SSLCommerz) — no payment prov
 | `created_at` | `timestamptz` | |
 
 RLS: student/teacher/admin can select relevant rows; only admin (or a future service-role webhook handler) can insert.
+
+## AI course generation (Phase 3)
+
+`supabase/functions/generate-course/index.ts` is a Supabase Edge Function (Deno) — the only place `ANTHROPIC_API_KEY` is used. It must never be called with the key from the browser; the frontend (`src/features/courses/hooks/useGenerateCourse.ts`) calls it via `supabase.functions.invoke`, which forwards the signed-in user's JWT instead.
+
+**Auth model**: the function builds a Supabase client from the caller's own JWT (not the service role) and does a plain `select` on `courses` — the existing owner/admin RLS policy is what actually enforces "must be this course's teacher or an admin." No separate authorization check was written; it would just duplicate what RLS already guarantees.
+
+**Contract**: `POST { courseId, rawNotes }` → `{ chapters: [{ title, content, questions: [{ question, options, correct_index }] }] }`. Nothing is written to the DB inside the function — the frontend shows the proposal for review, and only writes it via `useApplyGeneratedChapters` (`src/features/courses/hooks/`) if the teacher clicks "Add to course." Applied chapters get `is_ai_generated = true` and are appended after the course's existing chapters (`order_index` starts at the current chapter count, kept contiguous — same rule as `useChapterMutations`).
+
+**Cost guardrail** (`PROJECT.md` Section 9): one Claude call per invocation, `rawNotes` capped at 20,000 characters, and every call logs estimated token usage + cost (`console.log` in the function, visible via `supabase functions logs generate-course`). See `docs/decisions/cost-notes.md` for the budget this should stay inside.
+
+**Deployment**: this function is not applied via `supabase/migrations/` — it's deployed separately with `supabase functions deploy generate-course`, and `ANTHROPIC_API_KEY` is set with `supabase secrets set ANTHROPIC_API_KEY=...` (dashboard: Edge Functions → generate-course → Secrets). The GitHub↔Supabase integration deploying migrations does not deploy functions.
 
 ## Seed data
 

@@ -49,7 +49,10 @@ export function useCourseMutations() {
   )
 
   const updateCourse = useCallback(
-    async (courseId: string, input: Partial<CourseInput & { status: CourseStatus }>) => {
+    async (
+      courseId: string,
+      input: Partial<CourseInput & { status: CourseStatus; raw_notes: string }>,
+    ) => {
       setSaving(true)
       setError(null)
       try {

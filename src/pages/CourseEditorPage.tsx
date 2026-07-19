@@ -2,17 +2,18 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useCourse } from '@/features/courses/hooks/useCourse'
 import { useCourseMutations } from '@/features/courses/hooks/useCourseMutations'
 import { CourseForm } from '@/features/courses/components/CourseForm'
+import { AIGenerateCourse } from '@/features/courses/components/AIGenerateCourse'
 import { ChapterEditorList } from '@/features/chapters/components/ChapterEditorList'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Spinner } from '@/components/ui/Spinner'
 
-/** Course editor ("/teach/courses/:courseId") — edit metadata, publish/unpublish, manage chapters, delete, and a link to analytics. */
+/** Course editor ("/teach/courses/:courseId") — edit metadata, publish/unpublish, manage chapters (manually or via AI generation), delete, and a link to analytics. */
 export function CourseEditorPage() {
   const { courseId } = useParams<{ courseId: string }>()
   const navigate = useNavigate()
-  const { course, chapters, loading, refetch } = useCourse(courseId)
+  const { course, chapters, loading, refetch } = useCourse(courseId, { includeRawNotes: true })
   const { updateCourse, deleteCourse, saving, error } = useCourseMutations()
 
   if (loading) return <Spinner />
@@ -59,6 +60,13 @@ export function CourseEditorPage() {
       </Card>
 
       <ChapterEditorList courseId={courseId} chapters={chapters} onChanged={refetch} />
+
+      <AIGenerateCourse
+        courseId={courseId}
+        initialNotes={course.raw_notes ?? ''}
+        existingChapterCount={chapters.length}
+        onApplied={refetch}
+      />
 
       <button
         type="button"

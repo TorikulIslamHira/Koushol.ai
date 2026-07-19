@@ -21,6 +21,8 @@ export interface CourseRow {
   status: CourseStatus
   price: number
   created_at: string
+  /** Teacher's raw notes, used as AI course-generation input. Only fetched on teacher-authoring pages — see useCourse's includeRawNotes option. */
+  raw_notes: string | null
 }
 
 export interface ChapterRow {
