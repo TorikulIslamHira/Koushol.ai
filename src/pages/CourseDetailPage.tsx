@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { BookOpen, Lock, CheckCircle2 } from 'lucide-react'
@@ -5,21 +6,54 @@ import { useCourse } from '@/features/courses/hooks/useCourse'
 import { useEnrollment } from '@/features/enrollment/hooks/useEnrollment'
 import { EnrollButton } from '@/features/enrollment/components/EnrollButton'
 import { CertificateDownload } from '@/features/certificates/components/CertificateDownload'
+import { TeacherBadge } from '@/features/verification/components/TeacherBadge'
+import { ReviewForm } from '@/features/reviews/components/ReviewForm'
+import { ReviewList } from '@/features/reviews/components/ReviewList'
+import { useCourseReviews } from '@/features/reviews/hooks/useCourseReviews'
 import { Spinner } from '@/components/ui/Spinner'
+import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/features/auth/hooks/useAuth'
 
-/** Course detail page ("/courses/:courseId") — description, module list, enroll CTA. */
+/** Injects a schema.org Course JSON-LD block into <head> for the lifetime of this page — no react-helmet dependency needed for one script tag. */
+function useCourseStructuredData(course: { title: string; description: string; price: number } | null) {
+  useEffect(() => {
+    if (!course) return
+    const script = document.createElement('script')
+    script.type = 'application/ld+json'
+    script.text = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Course',
+      name: course.title,
+      description: course.description,
+      provider: { '@type': 'Organization', name: 'Koushol', url: 'https://koushol.xyz' },
+      offers: { '@type': 'Offer', price: course.price, priceCurrency: 'BDT' },
+    })
+    document.head.appendChild(script)
+    return () => {
+      document.head.removeChild(script)
+    }
+  }, [course])
+}
+
+/** Course detail page ("/courses/:courseId") — description, module list, enroll CTA, reviews. */
 export function CourseDetailPage() {
   const { courseId } = useParams<{ courseId: string }>()
   const { course, modules, loading, error } = useCourse(courseId)
   const { enrollment } = useEnrollment(courseId)
+  const { session } = useAuth()
+  const { reviews, averageRating, refetch: refetchReviews } = useCourseReviews(courseId)
   const unlockedIndex = enrollment?.unlocked_module_index ?? 0
   const { t } = useTranslation()
+
+  useCourseStructuredData(course)
 
   if (loading) return <Spinner />
   if (error) return <p className="text-danger">{error}</p>
   if (!course) return <p className="text-slate-500">{t('courses.courseNotFound')}</p>
+
+  const myReview = reviews.find((r) => r.student_id === session?.user.id) ?? null
 
   return (
     <div className="flex flex-col gap-6">
@@ -30,6 +64,7 @@ export function CourseDetailPage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-semibold text-brand-ink">{course.title}</h1>
+          <TeacherBadge teacherId={course.teacher_id} />
           <p className="mt-2 max-w-2xl text-slate-600">{course.description}</p>
         </div>
         <div className="flex flex-col items-end gap-2">
@@ -83,6 +118,16 @@ export function CourseDetailPage() {
           })}
         </ol>
       </div>
+
+      <Card className="flex flex-col gap-4">
+        <h2 className="font-display text-lg font-semibold text-brand-ink">{t('reviews.heading')}</h2>
+        <ReviewList reviews={reviews} averageRating={averageRating} />
+        {enrollment && (
+          <div className="border-t border-slate-100 pt-4">
+            <ReviewForm courseId={course.id} existing={myReview} onSaved={refetchReviews} />
+          </div>
+        )}
+      </Card>
     </div>
   )
 }

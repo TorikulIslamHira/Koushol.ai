@@ -21,10 +21,11 @@ export function CourseForm({
   const [title, setTitle] = useState(initial?.title ?? '')
   const [description, setDescription] = useState(initial?.description ?? '')
   const [price, setPrice] = useState(String(initial?.price ?? 0))
+  const [category, setCategory] = useState(initial?.category ?? '')
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    onSubmit({ title, description, price: Number(price) || 0 })
+    onSubmit({ title, description, price: Number(price) || 0, category: category.trim() || null })
   }
 
   return (
@@ -50,6 +51,15 @@ export function CourseForm({
           step="0.01"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
+        />
+      </label>
+      <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
+        {t('courseForm.category')}
+        <Input
+          type="text"
+          placeholder={t('courseForm.categoryPlaceholder')}
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
         />
       </label>
       <Button type="submit" disabled={submitting}>
