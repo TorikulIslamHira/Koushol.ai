@@ -26,6 +26,9 @@ export function AdminDashboardPage() {
           <Link to="/admin/courses" className="text-brand-green hover:underline">
             {t('admin.reviewCourses')}
           </Link>
+          <Link to="/admin/moderation" className="text-brand-green hover:underline">
+            {t('admin.moderationTitle')} →
+          </Link>
         </div>
       </div>
 

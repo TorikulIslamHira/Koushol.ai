@@ -22,6 +22,7 @@ import { CourseAnalyticsPage } from '@/pages/CourseAnalyticsPage'
 import { AdminDashboardPage } from '@/pages/AdminDashboardPage'
 import { AdminUsersPage } from '@/pages/AdminUsersPage'
 import { AdminCourseReviewPage } from '@/pages/AdminCourseReviewPage'
+import { AdminModerationPage } from '@/pages/AdminModerationPage'
 import { TermsPage } from '@/pages/TermsPage'
 import { PrivacyPage } from '@/pages/PrivacyPage'
 import { VerifyCertificatePage } from '@/pages/VerifyCertificatePage'
@@ -123,6 +124,14 @@ export function App() {
               element={
                 <RequireAdmin>
                   <AdminUsersPage />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/moderation"
+              element={
+                <RequireAdmin>
+                  <AdminModerationPage />
                 </RequireAdmin>
               }
             />

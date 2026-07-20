@@ -89,6 +89,8 @@ export interface CourseReviewRow {
   rating: number
   comment: string | null
   created_at: string
+  flagged_at: string | null
+  flag_reason: string | null
 }
 
 export interface TopicNoteRow {
