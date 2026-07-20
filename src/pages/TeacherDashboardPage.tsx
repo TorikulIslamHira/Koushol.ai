@@ -9,6 +9,7 @@ import { Spinner } from '@/components/ui/Spinner'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { formatBDT } from '@/lib/utils'
 import { COURSE_STATUS_BADGE_TONE, COURSE_STATUS_LABEL_KEY } from '@/features/courses/statusDisplay'
+import { OnboardingChecklist } from '@/features/onboarding/components/OnboardingChecklist'
 
 /** Teacher dashboard ("/teach") — list of the signed-in teacher's own courses (draft + published), with a link to create a new one. */
 export function TeacherDashboardPage() {
@@ -28,6 +29,8 @@ export function TeacherDashboardPage() {
           </Button>
         </Link>
       </div>
+
+      {!loading && !error && <OnboardingChecklist courses={courses} />}
 
       {loading && <Spinner />}
       {error && <p className="text-danger">{error}</p>}
