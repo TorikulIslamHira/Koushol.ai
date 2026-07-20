@@ -163,6 +163,12 @@ All tables get RLS enabled from the first migration — never ship a table witho
 | 14 | Content richness: video support per topic (alongside text + TTS audio), downloadable resources/attachments per topic, bulk topic import (paste a long document, assisted split into topics — teacher still reviews/edits, same "AI assists, doesn't replace" principle as Phase 3's quiz generation), offline access (ties into Phase 7's PWA work) | Planned |
 | 15 | Monetization extras (beyond Phase 6's base payment integration): coupon/discount codes, course bundles / multi-course learning paths, corporate/B2B bulk seat purchasing | Planned |
 | 16 | Admin: content moderation queue for flagged reviews/discussion posts (depends on Phase 10's reviews and Phase 11's discussion existing first) | Planned |
+| 17 | Growth & sharing: referral program (invite credit for both sides), certificate social share (depends on Phase 9), public teacher profile page, course preview/trailer on the detail page | Planned |
+| 18 | Quiz enhancements: timed quiz option, full quiz attempt history (not just the latest attempt), randomized question order per attempt | Planned |
+| 19 | AI doubt-solving assistant: in-topic Q&A chatbot for students, extending the existing Groq infrastructure from Phase 3 into a conversational (not one-shot) use case | Planned |
+| 20 | Alternate business models: monthly all-course subscription alongside per-course purchase, time-limited course access windows — depends on Phase 6 | Planned |
+| 21 | Onboarding: first-time student walkthrough tour, step-by-step teacher onboarding checklist (course creation → publish) | Planned |
+| 22 | Teacher productivity: course cloning/templates (deep-copy a course's modules/topics/quiz as a starting point for a new one) | Planned |
 
 Cross-cutting, not numbered as a phase: **UI/UX redesign** (2026-07-19, using the `ui-ux-pro-max` skill) — ✅ done across all five sub-phases (foundation, public pages, student flow, teacher flow, admin flow), verified visually via Playwright at each step. See `docs/design-system.md`.
 
