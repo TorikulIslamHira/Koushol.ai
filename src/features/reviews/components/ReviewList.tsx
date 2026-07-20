@@ -1,6 +1,11 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Star } from 'lucide-react'
+import { Star, Flag } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/features/auth/hooks/useAuth'
+import { useFlagReview } from '@/features/reviews/hooks/useFlagReview'
+import { Input } from '@/components/ui/Input'
+import { Button } from '@/components/ui/Button'
 import type { CourseReviewRow } from '@/types/database'
 
 function StarRow({ rating }: { rating: number }) {
@@ -12,6 +17,56 @@ function StarRow({ rating }: { rating: number }) {
           className={cn('h-3.5 w-3.5', value <= rating ? 'fill-brand-gold text-brand-gold' : 'text-slate-300')}
         />
       ))}
+    </div>
+  )
+}
+
+/** Inline "Report" control for one review — a signed-in visitor can flag it for admin moderation, with an optional reason. */
+function ReportControl({ reviewId }: { reviewId: string }) {
+  const { t } = useTranslation()
+  const { session } = useAuth()
+  const { flagReview, flagging } = useFlagReview()
+  const [open, setOpen] = useState(false)
+  const [reason, setReason] = useState('')
+  const [reported, setReported] = useState(false)
+
+  if (!session) return null
+  if (reported) return <span className="text-xs text-slate-400">{t('reviews.reported')}</span>
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="flex items-center gap-1 text-xs text-slate-400 transition-colors duration-150 hover:text-danger"
+      >
+        <Flag className="h-3 w-3" aria-hidden="true" />
+        {t('reviews.report')}
+      </button>
+    )
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <Input
+        type="text"
+        placeholder={t('reviews.reportReasonPlaceholder')}
+        value={reason}
+        onChange={(e) => setReason(e.target.value)}
+        className="flex-1 py-1 text-xs"
+      />
+      <Button
+        type="button"
+        variant="ghost"
+        disabled={flagging}
+        onClick={async () => {
+          const ok = await flagReview(reviewId, reason)
+          if (ok) setReported(true)
+        }}
+        className="px-2 py-1 text-xs"
+      >
+        {t('reviews.submitReport')}
+      </Button>
     </div>
   )
 }
@@ -43,7 +98,10 @@ export function ReviewList({
       <ul className="flex flex-col gap-3">
         {reviews.map((review) => (
           <li key={review.id} className="flex flex-col gap-1 border-t border-slate-100 pt-3 first:border-t-0 first:pt-0">
-            <StarRow rating={review.rating} />
+            <div className="flex items-center justify-between gap-2">
+              <StarRow rating={review.rating} />
+              <ReportControl reviewId={review.id} />
+            </div>
             {review.comment && <p className="text-sm text-slate-700">{review.comment}</p>}
           </li>
         ))}

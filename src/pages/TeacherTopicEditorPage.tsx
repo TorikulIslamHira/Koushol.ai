@@ -5,6 +5,7 @@ import { useCourse } from '@/features/courses/hooks/useCourse'
 import { useTopicMutations } from '@/features/chapters/hooks/useTopicMutations'
 import { TopicForm } from '@/features/chapters/components/TopicForm'
 import { GenerateAudioPanel } from '@/features/chapters/components/GenerateAudioPanel'
+import { VideoPanel } from '@/features/chapters/components/VideoPanel'
 import { Card } from '@/components/ui/Card'
 import { Spinner } from '@/components/ui/Spinner'
 
@@ -54,6 +55,13 @@ export function TeacherTopicEditorPage() {
           {t('topics.audioHeading')}
         </h2>
         <GenerateAudioPanel topicId={topicId} />
+      </Card>
+
+      <Card>
+        <h2 className="mb-4 font-display text-lg font-semibold text-brand-ink">
+          {t('video.heading')}
+        </h2>
+        <VideoPanel topicId={topicId} videoPath={topic.video_path} onChanged={refetch} />
       </Card>
     </div>
   )

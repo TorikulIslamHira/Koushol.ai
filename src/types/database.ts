@@ -39,6 +39,7 @@ export interface TopicRow {
   order_index: number
   title: string
   content: string
+  video_path: string | null
 }
 
 export interface QuizQuestion {
@@ -89,6 +90,8 @@ export interface CourseReviewRow {
   rating: number
   comment: string | null
   created_at: string
+  flagged_at: string | null
+  flag_reason: string | null
 }
 
 export interface TopicNoteRow {
@@ -97,6 +100,17 @@ export interface TopicNoteRow {
   topic_id: string
   content: string
   updated_at: string
+}
+
+export type ChatMessageRole = 'user' | 'assistant'
+
+export interface TopicChatMessageRow {
+  id: string
+  student_id: string
+  topic_id: string
+  role: ChatMessageRole
+  content: string
+  created_at: string
 }
 
 export interface CertificateRow {

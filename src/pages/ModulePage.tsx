@@ -10,8 +10,10 @@ import { TopicReader } from '@/features/chapters/components/TopicReader'
 import { TopicTabs } from '@/features/chapters/components/TopicTabs'
 import { AudioPlayer } from '@/features/chapters/components/AudioPlayer'
 import { useTopicAudio } from '@/features/chapters/hooks/useTopicAudio'
+import { TopicVideoPlayer } from '@/features/chapters/components/TopicVideoPlayer'
 import { QuizPlayer } from '@/features/quizzes/components/QuizPlayer'
 import { TopicNotes } from '@/features/notes/components/TopicNotes'
+import { TopicDoubtChat } from '@/features/doubts/components/TopicDoubtChat'
 import { Spinner } from '@/components/ui/Spinner'
 import { Card } from '@/components/ui/Card'
 import { ProgressBar } from '@/components/ui/ProgressBar'
@@ -92,8 +94,12 @@ export function ModulePage() {
 
       <div className="flex flex-col gap-8">
         {currentTopic && <TopicReader topic={currentTopic} />}
+        {currentTopic?.video_path && (
+          <TopicVideoPlayer topicId={currentTopic.id} videoPath={currentTopic.video_path} />
+        )}
         {audio && audio.segments.length > 0 && <AudioPlayer segments={audio.segments} />}
         {enrollment && currentTopic && <TopicNotes topicId={currentTopic.id} />}
+        {enrollment && currentTopic && <TopicDoubtChat topicId={currentTopic.id} />}
 
         {quizLoading && <Spinner />}
         {quiz && quiz.questions.length > 0 && (

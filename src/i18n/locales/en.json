@@ -205,6 +205,13 @@
     "untitled": "(untitled)",
     "audioHeading": "Audio"
   },
+  "video": {
+    "heading": "Video",
+    "upload": "Upload video",
+    "replace": "Replace video",
+    "uploading": "Uploading…",
+    "remove": "Remove video"
+  },
   "audioPanel": {
     "generateAudio": "Generate audio",
     "regenerateAudio": "Regenerate audio",
@@ -261,7 +268,12 @@
     "nothingHere": "Nothing here.",
     "approve": "Approve",
     "reject": "Reject",
-    "usersTitle": "Users"
+    "usersTitle": "Users",
+    "moderationTitle": "Moderation",
+    "noFlaggedReviews": "No flagged reviews.",
+    "dismissFlag": "Dismiss",
+    "deleteReview": "Delete review",
+    "flagReason": "Reported: {{reason}}"
   },
   "reviews": {
     "heading": "Reviews",
@@ -271,7 +283,11 @@
     "rateStars": "Rate {{count}} star",
     "submitReview": "Submit review",
     "updateReview": "Update review",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "report": "Report",
+    "reportReasonPlaceholder": "Why are you reporting this? (optional)",
+    "submitReport": "Submit",
+    "reported": "Reported"
   },
   "verification": {
     "instructor": "Instructor",
@@ -282,6 +298,13 @@
     "editBio": "Your bio",
     "editBioHint": "Shown on your public profile page — visible to anyone who views one of your courses.",
     "bioSaved": "Saved."
+  },
+  "doubts": {
+    "heading": "Ask a question about this topic",
+    "empty": "Have a question about this topic? Ask below and get an answer based on its content.",
+    "placeholder": "Type your question…",
+    "ask": "Ask",
+    "asking": "Thinking…"
   },
   "notes": {
     "heading": "My notes",

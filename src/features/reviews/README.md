@@ -11,4 +11,10 @@ cards — avoids one aggregate query per card in the browse grid).
   and delete for the current student's *own* review. RLS requires the student to actually
   be enrolled to insert one (`course_reviews_insert_own`).
 - `components/ReviewForm.tsx` — star rating (1-5) + comment, shown to enrolled students.
-- `components/ReviewList.tsx` — public display of existing reviews + the average rating.
+- `components/ReviewList.tsx` — public display of existing reviews + the average rating,
+  plus an inline "Report" control (any signed-in visitor, not just enrolled students).
+- `hooks/useFlagReview.ts` — flags a review via the `flag_review` security-definer RPC
+  rather than a direct table update, so reporting can't be abused to edit someone else's
+  review — see `supabase/migrations/20260725000000_review_moderation.sql`. The admin-side
+  moderation queue (`src/pages/AdminModerationPage.tsx`, `/admin/moderation`) lives outside
+  this folder since it's a page, not a student-facing feature component.

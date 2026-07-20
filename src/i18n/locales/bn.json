@@ -205,6 +205,13 @@
     "untitled": "(শিরোনামহীন)",
     "audioHeading": "অডিও"
   },
+  "video": {
+    "heading": "ভিডিও",
+    "upload": "ভিডিও আপলোড করুন",
+    "replace": "ভিডিও পরিবর্তন করুন",
+    "uploading": "আপলোড হচ্ছে…",
+    "remove": "ভিডিও মুছুন"
+  },
   "audioPanel": {
     "generateAudio": "অডিও তৈরি করুন",
     "regenerateAudio": "আবার অডিও তৈরি করুন",
@@ -261,7 +268,12 @@
     "nothingHere": "এখানে কিছু নেই।",
     "approve": "অনুমোদন করুন",
     "reject": "প্রত্যাখ্যান করুন",
-    "usersTitle": "ব্যবহারকারী"
+    "usersTitle": "ব্যবহারকারী",
+    "moderationTitle": "মডারেশন",
+    "noFlaggedReviews": "কোনো রিপোর্ট করা রিভিউ নেই।",
+    "dismissFlag": "বাতিল করুন",
+    "deleteReview": "রিভিউ মুছুন",
+    "flagReason": "রিপোর্ট করা হয়েছে: {{reason}}"
   },
   "reviews": {
     "heading": "রিভিউ",
@@ -271,7 +283,11 @@
     "rateStars": "{{count}} তারা রেট করুন",
     "submitReview": "রিভিউ জমা দিন",
     "updateReview": "রিভিউ আপডেট করুন",
-    "saving": "সংরক্ষণ হচ্ছে…"
+    "saving": "সংরক্ষণ হচ্ছে…",
+    "report": "রিপোর্ট করুন",
+    "reportReasonPlaceholder": "কেন রিপোর্ট করছেন? (ঐচ্ছিক)",
+    "submitReport": "জমা দিন",
+    "reported": "রিপোর্ট করা হয়েছে"
   },
   "verification": {
     "instructor": "প্রশিক্ষক",
@@ -282,6 +298,13 @@
     "editBio": "আপনার পরিচিতি",
     "editBioHint": "আপনার পাবলিক প্রোফাইল পেজে দেখানো হয় — আপনার কোনো কোর্স দেখেন এমন কেউই দেখতে পারবেন।",
     "bioSaved": "সংরক্ষিত হয়েছে।"
+  },
+  "doubts": {
+    "heading": "এই টপিক নিয়ে প্রশ্ন করুন",
+    "empty": "এই টপিক নিয়ে কোনো প্রশ্ন আছে? নিচে জিজ্ঞাসা করুন, এর বিষয়বস্তুর ভিত্তিতে উত্তর পাবেন।",
+    "placeholder": "আপনার প্রশ্ন লিখুন…",
+    "ask": "জিজ্ঞাসা করুন",
+    "asking": "ভাবছে…"
   },
   "notes": {
     "heading": "আমার নোট",
