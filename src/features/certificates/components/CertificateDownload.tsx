@@ -1,10 +1,17 @@
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Award } from 'lucide-react'
+import { Award, Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useCertificate } from '@/features/certificates/hooks/useCertificate'
 import type { CourseRow } from '@/types/database'
+
+/** Opens LinkedIn's share dialog pointed at the public verification page — a public, credible landing page rather than a raw PDF link. */
+function shareCertificateOnLinkedIn(certificateId: string) {
+  const verifyUrl = `${window.location.origin}/verify/${certificateId}`
+  const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(verifyUrl)}`
+  window.open(shareUrl, '_blank', 'noopener,noreferrer')
+}
 
 /**
  * Renders a one-page certificate PDF client-side and triggers a browser download. jsPDF is
@@ -67,21 +74,32 @@ export function CertificateDownload({ course }: { course: CourseRow }) {
   if (loading || issuing || !certificate) return null
 
   return (
-    <Button
-      type="button"
-      variant="secondary"
-      className="gap-1.5"
-      onClick={() =>
-        void downloadCertificatePdf(
-          course.title,
-          profile?.name ?? '',
-          certificate.id,
-          certificate.issued_at,
-        )
-      }
-    >
-      <Award className="h-4 w-4" aria-hidden="true" />
-      {t('certificate.download')}
-    </Button>
+    <div className="flex items-center gap-2">
+      <Button
+        type="button"
+        variant="secondary"
+        className="gap-1.5"
+        onClick={() =>
+          void downloadCertificatePdf(
+            course.title,
+            profile?.name ?? '',
+            certificate.id,
+            certificate.issued_at,
+          )
+        }
+      >
+        <Award className="h-4 w-4" aria-hidden="true" />
+        {t('certificate.download')}
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        className="gap-1.5"
+        onClick={() => shareCertificateOnLinkedIn(certificate.id)}
+      >
+        <Share2 className="h-4 w-4" aria-hidden="true" />
+        {t('certificate.shareLinkedIn')}
+      </Button>
+    </div>
   )
 }

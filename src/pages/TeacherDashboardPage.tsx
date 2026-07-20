@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { Plus, FolderOpen, Copy } from 'lucide-react'
 import { useMyCourses } from '@/features/courses/hooks/useMyCourses'
 import { useCloneCourse } from '@/features/courses/hooks/useCloneCourse'
+import { useAuth } from '@/features/auth/hooks/useAuth'
+import { EditBioForm } from '@/features/verification/components/EditBioForm'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -16,6 +18,7 @@ import { OnboardingChecklist } from '@/features/onboarding/components/Onboarding
 export function TeacherDashboardPage() {
   const { courses, loading, error, refetch } = useMyCourses()
   const { cloneCourse, cloning, error: cloneError } = useCloneCourse()
+  const { profile } = useAuth()
   const navigate = useNavigate()
   const { t } = useTranslation()
 
@@ -42,6 +45,7 @@ export function TeacherDashboardPage() {
       </div>
 
       {!loading && !error && <OnboardingChecklist courses={courses} />}
+      {profile && <EditBioForm profile={profile} />}
 
       {loading && <Spinner />}
       {error && <p className="text-danger">{error}</p>}

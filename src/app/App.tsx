@@ -25,6 +25,7 @@ import { AdminCourseReviewPage } from '@/pages/AdminCourseReviewPage'
 import { TermsPage } from '@/pages/TermsPage'
 import { PrivacyPage } from '@/pages/PrivacyPage'
 import { VerifyCertificatePage } from '@/pages/VerifyCertificatePage'
+import { TeacherProfilePage } from '@/pages/TeacherProfilePage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
 /** Root component: wires up auth context, i18n, and Phase 1-5 routes (see PROJECT.md Section 8). */
@@ -136,6 +137,7 @@ export function App() {
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/verify/:certificateId" element={<VerifyCertificatePage />} />
+            <Route path="/teachers/:teacherId" element={<TeacherProfilePage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
