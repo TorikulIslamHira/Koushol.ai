@@ -7,6 +7,7 @@ import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Spinner } from '@/components/ui/Spinner'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Button } from '@/components/ui/Button'
+import { OnboardingTour } from '@/features/onboarding/components/OnboardingTour'
 
 /** Student dashboard ("/dashboard") — enrolled courses with progress. */
 export function DashboardPage() {
@@ -18,6 +19,7 @@ export function DashboardPage() {
   if (enrollments.length === 0) {
     return (
       <div className="flex flex-col gap-4">
+        <OnboardingTour />
         <h1 className="font-display text-2xl font-semibold text-brand-ink">
           {t('dashboard.title')}
         </h1>
@@ -36,6 +38,7 @@ export function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <OnboardingTour />
       <h1 className="font-display text-2xl font-semibold text-brand-ink">
         {t('dashboard.title')}
       </h1>

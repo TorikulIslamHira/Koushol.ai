@@ -167,7 +167,7 @@ All tables get RLS enabled from the first migration — never ship a table witho
 | 18 | Quiz enhancements: timed quiz option, full quiz attempt history (not just the latest attempt), randomized question order per attempt | Planned |
 | 19 | AI doubt-solving assistant: in-topic Q&A chatbot for students, extending the existing Groq infrastructure from Phase 3 into a conversational (not one-shot) use case | Planned |
 | 20 | Alternate business models: monthly all-course subscription alongside per-course purchase, time-limited course access windows — depends on Phase 6 | Planned |
-| 21 | Onboarding: first-time student walkthrough tour, step-by-step teacher onboarding checklist (course creation → publish) | Planned |
+| 21 | Onboarding: first-time student walkthrough tour, step-by-step teacher onboarding checklist (course creation → publish) | ✅ Done — `src/features/onboarding/`. Student tour is a one-time modal sequence on first `/dashboard` visit (localStorage-dismissed). Teacher checklist on `/teach` derives its steps live from real course/module/topic/quiz data (no new table), auto-hides once every step is done. Verified via `tsc -b`, `npm run build`, `npm run lint`. |
 | 22 | Teacher productivity: course cloning/templates (deep-copy a course's modules/topics/quiz as a starting point for a new one) | Planned |
 
 Cross-cutting, not numbered as a phase: **UI/UX redesign** (2026-07-19, using the `ui-ux-pro-max` skill) — ✅ done across all five sub-phases (foundation, public pages, student flow, teacher flow, admin flow), verified visually via Playwright at each step. See `docs/design-system.md`.

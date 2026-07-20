@@ -244,6 +244,26 @@
     "reject": "Reject",
     "usersTitle": "Users"
   },
+  "onboarding": {
+    "tour": {
+      "stepCount": "Step {{current}} of {{total}}",
+      "skip": "Skip",
+      "next": "Next",
+      "getStarted": "Get started",
+      "browse": { "title": "Browse courses", "description": "Explore the catalog — the first topic of every course is free to read, no sign-up needed." },
+      "enroll": { "title": "Enroll and read freely", "description": "Once enrolled, read every topic in an unlocked module in any order — nothing is locked topic by topic." },
+      "quiz": { "title": "Pass the module quiz", "description": "Each module ends with a quiz. Pass it (70%+) to unlock the next module." },
+      "progress": { "title": "Track your progress", "description": "Your dashboard always shows how far you've gotten in every course you're enrolled in." }
+    },
+    "checklist": {
+      "title": "Getting started",
+      "dismiss": "Dismiss",
+      "createCourse": "Create your first course",
+      "addModule": "Add a module with at least one topic",
+      "saveQuiz": "Save a quiz for a module",
+      "submit": "Submit a course for review"
+    }
+  },
   "roles": {
     "student": "student",
     "teacher": "teacher",
