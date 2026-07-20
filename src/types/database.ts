@@ -91,6 +91,14 @@ export interface CourseReviewRow {
   created_at: string
 }
 
+export interface TopicNoteRow {
+  id: string
+  student_id: string
+  topic_id: string
+  content: string
+  updated_at: string
+}
+
 export interface CertificateRow {
   id: string
   student_id: string
