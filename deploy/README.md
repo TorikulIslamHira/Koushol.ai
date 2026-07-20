@@ -1,32 +1,54 @@
 # Deploying Koushol to the VPS
 
-Auto-deploy on every push to `main`: `.github/workflows/deploy.yml` builds the app in CI (so
-Supabase build-time env vars stay in GitHub Secrets, never on the VPS), rsyncs the compiled
-`dist/` into a new timestamped release directory, then SSHes in to atomically swap a `current`
-symlink and reload nginx. Old releases beyond the last 5 are pruned automatically. The VPS only
-ever needs nginx + SSH — no Node/npm/git required there.
+Auto-deploy on every push to `main`: `.github/workflows/deploy.yml` runs on a **self-hosted
+GitHub Actions runner installed directly on the VPS**. The VPS sits on a private network
+(`172.16.x.x`), unreachable from GitHub's cloud-hosted runners, so build and deploy both
+happen locally on the machine instead of over SSH/rsync from the outside — the runner only
+needs an outbound connection to GitHub, nothing needs to reach in.
+
+The workflow builds the app (Supabase build-time env vars come from GitHub Secrets), copies
+the compiled `dist/` into a new timestamped release directory, then `activate-release.sh`
+atomically swaps a `current` symlink and reloads nginx. Old releases beyond the last 5 are
+pruned automatically, and `rollback.sh` can revert instantly if a deploy is bad.
 
 ## One-time VPS setup
 
-Run these once, as a user with sudo (adjust `koushol` to whatever user you want deploys to run as):
+Run as a user with sudo (this same user will run the self-hosted runner):
 
 ```bash
 # 1. Directory layout
 sudo mkdir -p /var/www/koushol/releases
 sudo chown -R $USER:$USER /var/www/koushol
 
-# 2. Copy the two scripts from this folder onto the VPS
-#    (scp deploy/activate-release.sh deploy/rollback.sh you@vps:/var/www/koushol/)
+# 2. Copy the two scripts from this repo's deploy/ folder into place
+#    (e.g. after cloning the repo once: cp deploy/activate-release.sh deploy/rollback.sh /var/www/koushol/)
 chmod +x /var/www/koushol/activate-release.sh /var/www/koushol/rollback.sh
 
 # 3. Let this user reload nginx without a password (needed since activate-release.sh calls sudo)
 echo "$USER ALL=(ALL) NOPASSWD: /bin/systemctl reload nginx" | sudo tee /etc/sudoers.d/koushol-deploy
-
-# 4. Dedicated SSH keypair for GitHub Actions to deploy with
-ssh-keygen -t ed25519 -f ~/.ssh/koushol_deploy -N "" -C "github-actions-deploy"
-cat ~/.ssh/koushol_deploy.pub >> ~/.ssh/authorized_keys
-cat ~/.ssh/koushol_deploy   # copy this private key into the DEPLOY_SSH_KEY GitHub secret, then delete it locally if you like
 ```
+
+## Install the self-hosted runner
+
+1. GitHub repo → **Settings → Actions → Runners → New self-hosted runner**.
+2. Pick **Linux**, then copy-paste the commands GitHub shows you (they include a
+   registration token unique to that moment — don't reuse commands from a screenshot or an
+   old guide, always get fresh ones from that page). It looks like:
+   ```bash
+   mkdir actions-runner && cd actions-runner
+   curl -o actions-runner-linux-x64.tar.gz -L https://github.com/actions/runner/releases/download/vX.Y.Z/actions-runner-linux-x64-X.Y.Z.tar.gz
+   tar xzf ./actions-runner-linux-x64.tar.gz
+   ./config.sh --url https://github.com/<your-org>/Koushol.ai --token <TOKEN_FROM_THE_PAGE>
+   ```
+3. Run it as a persistent service so it survives reboots and SSH disconnects:
+   ```bash
+   sudo ./svc.sh install
+   sudo ./svc.sh start
+   ```
+4. Confirm it shows **Idle** (green) on the same Settings → Actions → Runners page.
+
+The runner needs internet access to reach `github.com` (outbound only — no inbound port
+forwarding, no public IP, and no Cloudflare Tunnel involvement needed for this part at all).
 
 ## nginx config
 
@@ -50,26 +72,25 @@ sudo ln -s /etc/nginx/sites-available/koushol /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
-Cloudflare Tunnel ingress should point at `http://localhost:80` as before — see the earlier
-setup notes. Cloudflare terminates TLS at the edge, so nginx itself stays plain HTTP.
+Cloudflare Tunnel ingress should point at `http://localhost:80` — that part is unaffected by
+the runner change, it's still just serving the built site to the outside world.
 
 ## GitHub repo secrets (Settings → Secrets and variables → Actions)
+
+Only two are needed now — no SSH keys or VPS host/user, since the runner already lives on
+the VPS itself:
 
 | Secret | Value |
 |---|---|
 | `VITE_SUPABASE_URL` | from Supabase dashboard → Project Settings → API |
 | `VITE_SUPABASE_ANON_KEY` | same page |
-| `DEPLOY_HOST` | VPS IP or hostname |
-| `DEPLOY_USER` | the VPS user set up above (e.g. `koushol`) |
-| `DEPLOY_SSH_KEY` | the **private** key from `~/.ssh/koushol_deploy` generated above |
-| `DEPLOY_BASE_PATH` | `/var/www/koushol` |
 
-Once these are set, every push to `main` deploys automatically. You can also trigger a deploy
-manually from the Actions tab (the workflow has `workflow_dispatch` enabled).
+Once these are set and the runner shows **Idle**, every push to `main` deploys automatically.
+You can also trigger a deploy manually from the Actions tab (`workflow_dispatch` is enabled).
 
 ## Rollback
 
-SSH into the VPS and run:
+On the VPS:
 
 ```bash
 /var/www/koushol/rollback.sh            # lists available releases
@@ -78,7 +99,6 @@ SSH into the VPS and run:
 
 ## First deploy
 
-The very first run needs at least one release to exist before `current` has anything to point
-at — either let the first GitHub Actions run create it (the symlink swap in
-`activate-release.sh` creates `current` if it doesn't exist yet), or manually build and rsync
-once by hand before wiring up nginx.
+The very first workflow run creates `current` if it doesn't exist yet (the symlink swap in
+`activate-release.sh` handles that) — no separate manual first-build step needed as long as
+the runner is registered and nginx is pointed at `/var/www/koushol/current` beforehand.

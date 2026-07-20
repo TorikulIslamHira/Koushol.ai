@@ -1,17 +1,20 @@
 name: Deploy
 
-# Builds the SPA in CI (so build-time Supabase env vars never touch the VPS) and ships only
-# the compiled dist/ output via rsync into a timestamped release directory. The VPS-side
-# activate-release.sh script does the atomic symlink switch + nginx reload + old-release
-# pruning — see deploy/README.md for the one-time VPS setup this depends on.
+# Runs on a self-hosted runner installed directly on the VPS — the VPS is on a private
+# network (not reachable from GitHub-hosted runners), so build + deploy both happen locally
+# on the machine instead of over SSH/rsync from GitHub's cloud. See deploy/README.md for the
+# one-time runner + VPS setup this depends on.
 on:
   push:
     branches: [main]
   workflow_dispatch: {}
 
+env:
+  DEPLOY_BASE_PATH: /var/www/koushol
+
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
 
@@ -32,20 +35,11 @@ jobs:
         id: release
         run: echo "id=$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
 
-      - name: Upload dist to a new release directory on the VPS
-        uses: burnett01/rsync-deployments@7.0.2
-        with:
-          switches: -avzr --delete
-          path: dist/
-          remote_path: ${{ secrets.DEPLOY_BASE_PATH }}/releases/${{ steps.release.outputs.id }}/
-          remote_host: ${{ secrets.DEPLOY_HOST }}
-          remote_user: ${{ secrets.DEPLOY_USER }}
-          remote_key: ${{ secrets.DEPLOY_SSH_KEY }}
+      - name: Copy dist into a new release directory
+        run: |
+          RELEASE_DIR="$DEPLOY_BASE_PATH/releases/${{ steps.release.outputs.id }}"
+          mkdir -p "$RELEASE_DIR"
+          cp -r dist/. "$RELEASE_DIR/"
 
       - name: Activate the new release (atomic symlink swap + nginx reload + prune old releases)
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          script: ${{ secrets.DEPLOY_BASE_PATH }}/activate-release.sh ${{ steps.release.outputs.id }}
+        run: "$DEPLOY_BASE_PATH/activate-release.sh ${{ steps.release.outputs.id }}"
