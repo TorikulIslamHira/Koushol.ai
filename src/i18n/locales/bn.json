@@ -165,7 +165,9 @@
     "unpublish": "অপ্রকাশিত করুন",
     "deleteCourse": "কোর্স মুছুন",
     "deleteCourseConfirm": "\"{{title}}\" মুছবেন? এটি ফিরিয়ে আনা যাবে না।",
-    "saving": "সংরক্ষণ হচ্ছে…"
+    "saving": "সংরক্ষণ হচ্ছে…",
+    "cloneCourse": "ক্লোন করুন",
+    "cloning": "ক্লোন হচ্ছে…"
   },
   "courseForm": {
     "title": "শিরোনাম",

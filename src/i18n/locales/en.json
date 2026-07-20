@@ -165,7 +165,9 @@
     "unpublish": "Unpublish",
     "deleteCourse": "Delete course",
     "deleteCourseConfirm": "Delete \"{{title}}\"? This cannot be undone.",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "cloneCourse": "Clone",
+    "cloning": "Cloning…"
   },
   "courseForm": {
     "title": "Title",
