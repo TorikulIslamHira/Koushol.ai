@@ -283,6 +283,13 @@
     "editBioHint": "Shown on your public profile page — visible to anyone who views one of your courses.",
     "bioSaved": "Saved."
   },
+  "notes": {
+    "heading": "My notes",
+    "placeholder": "Jot down anything you want to remember from this topic…",
+    "save": "Save note",
+    "saving": "Saving…",
+    "saved": "Saved"
+  },
   "onboarding": {
     "tour": {
       "stepCount": "Step {{current}} of {{total}}",
