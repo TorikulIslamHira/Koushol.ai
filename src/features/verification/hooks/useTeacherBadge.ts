@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase'
 
 interface TeacherBadgeInfo {
   name: string
+  bio: string | null
   is_verified_teacher: boolean
 }
 

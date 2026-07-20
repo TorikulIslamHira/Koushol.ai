@@ -12,6 +12,7 @@ export interface UserRow {
   email: string
   created_at: string
   is_verified_teacher: boolean
+  bio: string | null
 }
 
 export interface CourseRow {

@@ -165,7 +165,9 @@
     "unpublish": "Unpublish",
     "deleteCourse": "Delete course",
     "deleteCourseConfirm": "Delete \"{{title}}\"? This cannot be undone.",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "cloneCourse": "Clone",
+    "cloning": "Cloning…"
   },
   "courseForm": {
     "title": "Title",
@@ -229,6 +231,7 @@
   },
   "certificate": {
     "download": "Download certificate",
+    "shareLinkedIn": "Share on LinkedIn",
     "verify": {
       "verified": "Certificate verified",
       "statement": "{{name}} has successfully completed {{course}}.",
@@ -271,8 +274,14 @@
     "saving": "Saving…"
   },
   "verification": {
-    "byTeacher": "by {{name}}",
-    "verifiedTeacher": "Verified teacher"
+    "instructor": "Instructor",
+    "verifiedTeacher": "Verified teacher",
+    "teacherNotFound": "Teacher not found.",
+    "publishedCourses": "Published courses",
+    "noPublishedCourses": "No published courses yet.",
+    "editBio": "Your bio",
+    "editBioHint": "Shown on your public profile page — visible to anyone who views one of your courses.",
+    "bioSaved": "Saved."
   },
   "onboarding": {
     "tour": {

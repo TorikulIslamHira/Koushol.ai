@@ -165,7 +165,9 @@
     "unpublish": "অপ্রকাশিত করুন",
     "deleteCourse": "কোর্স মুছুন",
     "deleteCourseConfirm": "\"{{title}}\" মুছবেন? এটি ফিরিয়ে আনা যাবে না।",
-    "saving": "সংরক্ষণ হচ্ছে…"
+    "saving": "সংরক্ষণ হচ্ছে…",
+    "cloneCourse": "ক্লোন করুন",
+    "cloning": "ক্লোন হচ্ছে…"
   },
   "courseForm": {
     "title": "শিরোনাম",
@@ -229,6 +231,7 @@
   },
   "certificate": {
     "download": "সার্টিফিকেট ডাউনলোড করুন",
+    "shareLinkedIn": "LinkedIn-এ শেয়ার করুন",
     "verify": {
       "verified": "সার্টিফিকেট যাচাই সফল",
       "statement": "{{name}} সফলভাবে {{course}} কোর্স সম্পন্ন করেছেন।",
@@ -271,8 +274,14 @@
     "saving": "সংরক্ষণ হচ্ছে…"
   },
   "verification": {
-    "byTeacher": "{{name}} দ্বারা",
-    "verifiedTeacher": "যাচাইকৃত শিক্ষক"
+    "instructor": "প্রশিক্ষক",
+    "verifiedTeacher": "যাচাইকৃত শিক্ষক",
+    "teacherNotFound": "শিক্ষক পাওয়া যায়নি।",
+    "publishedCourses": "প্রকাশিত কোর্স",
+    "noPublishedCourses": "এখনো কোনো প্রকাশিত কোর্স নেই।",
+    "editBio": "আপনার পরিচিতি",
+    "editBioHint": "আপনার পাবলিক প্রোফাইল পেজে দেখানো হয় — আপনার কোনো কোর্স দেখেন এমন কেউই দেখতে পারবেন।",
+    "bioSaved": "সংরক্ষিত হয়েছে।"
   },
   "onboarding": {
     "tour": {
