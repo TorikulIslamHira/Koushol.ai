@@ -102,6 +102,17 @@ export interface TopicNoteRow {
   updated_at: string
 }
 
+export type ChatMessageRole = 'user' | 'assistant'
+
+export interface TopicChatMessageRow {
+  id: string
+  student_id: string
+  topic_id: string
+  role: ChatMessageRole
+  content: string
+  created_at: string
+}
+
 export interface CertificateRow {
   id: string
   student_id: string
