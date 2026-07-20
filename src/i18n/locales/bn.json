@@ -220,6 +220,15 @@
     "totalEnrollments": "মোট ভর্তি",
     "completed": "{{count}}টি সম্পন্ন"
   },
+  "certificate": {
+    "download": "সার্টিফিকেট ডাউনলোড করুন",
+    "verify": {
+      "verified": "সার্টিফিকেট যাচাই সফল",
+      "statement": "{{name}} সফলভাবে {{course}} কোর্স সম্পন্ন করেছেন।",
+      "issuedOn": "প্রদান করা হয়েছে {{date}}",
+      "notFound": "সার্টিফিকেট পাওয়া যায়নি"
+    }
+  },
   "admin": {
     "title": "অ্যাডমিন",
     "manageUsers": "ব্যবহারকারী ম্যানেজ করুন →",

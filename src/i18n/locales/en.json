@@ -220,6 +220,15 @@
     "totalEnrollments": "Total enrollments",
     "completed": "{{count}} completed"
   },
+  "certificate": {
+    "download": "Download certificate",
+    "verify": {
+      "verified": "Certificate verified",
+      "statement": "{{name}} has successfully completed {{course}}.",
+      "issuedOn": "Issued on {{date}}",
+      "notFound": "Certificate not found"
+    }
+  },
   "admin": {
     "title": "Admin",
     "manageUsers": "Manage users →",

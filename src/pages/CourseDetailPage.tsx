@@ -4,6 +4,7 @@ import { BookOpen, Lock, CheckCircle2 } from 'lucide-react'
 import { useCourse } from '@/features/courses/hooks/useCourse'
 import { useEnrollment } from '@/features/enrollment/hooks/useEnrollment'
 import { EnrollButton } from '@/features/enrollment/components/EnrollButton'
+import { CertificateDownload } from '@/features/certificates/components/CertificateDownload'
 import { Spinner } from '@/components/ui/Spinner'
 import { Badge } from '@/components/ui/Badge'
 import { cn } from '@/lib/utils'
@@ -31,7 +32,12 @@ export function CourseDetailPage() {
           <h1 className="font-display text-2xl font-semibold text-brand-ink">{course.title}</h1>
           <p className="mt-2 max-w-2xl text-slate-600">{course.description}</p>
         </div>
-        <EnrollButton course={course} modules={modules} />
+        <div className="flex flex-col items-end gap-2">
+          <EnrollButton course={course} modules={modules} />
+          {enrollment && modules.length > 0 && unlockedIndex >= modules.length && (
+            <CertificateDownload course={course} />
+          )}
+        </div>
       </div>
 
       <div>
