@@ -205,6 +205,13 @@
     "untitled": "(untitled)",
     "audioHeading": "Audio"
   },
+  "video": {
+    "heading": "Video",
+    "upload": "Upload video",
+    "replace": "Replace video",
+    "uploading": "Uploading…",
+    "remove": "Remove video"
+  },
   "audioPanel": {
     "generateAudio": "Generate audio",
     "regenerateAudio": "Regenerate audio",

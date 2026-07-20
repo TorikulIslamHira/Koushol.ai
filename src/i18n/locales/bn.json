@@ -205,6 +205,13 @@
     "untitled": "(শিরোনামহীন)",
     "audioHeading": "অডিও"
   },
+  "video": {
+    "heading": "ভিডিও",
+    "upload": "ভিডিও আপলোড করুন",
+    "replace": "ভিডিও পরিবর্তন করুন",
+    "uploading": "আপলোড হচ্ছে…",
+    "remove": "ভিডিও মুছুন"
+  },
   "audioPanel": {
     "generateAudio": "অডিও তৈরি করুন",
     "regenerateAudio": "আবার অডিও তৈরি করুন",

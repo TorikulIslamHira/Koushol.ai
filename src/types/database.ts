@@ -39,6 +39,7 @@ export interface TopicRow {
   order_index: number
   title: string
   content: string
+  video_path: string | null
 }
 
 export interface QuizQuestion {
