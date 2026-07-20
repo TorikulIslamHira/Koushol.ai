@@ -110,7 +110,12 @@
     "title": "কোর্স",
     "emptyState": "এখনো কোনো প্রকাশিত কোর্স নেই — শীঘ্রই আবার দেখুন।",
     "freePreview": "বিনামূল্যে প্রিভিউ",
-    "courseNotFound": "কোর্স পাওয়া যায়নি।"
+    "courseNotFound": "কোর্স পাওয়া যায়নি।",
+    "searchPlaceholder": "কোর্স খুঁজুন…",
+    "allCategories": "সব ক্যাটাগরি",
+    "sortDefault": "সাজান",
+    "sortPriceLowHigh": "দাম: কম থেকে বেশি",
+    "sortPriceHighLow": "দাম: বেশি থেকে কম"
   },
   "enroll": {
     "continueLearning": "শেখা চালিয়ে যান",
@@ -165,7 +170,9 @@
   "courseForm": {
     "title": "শিরোনাম",
     "description": "বিবরণ",
-    "price": "দাম (৳)"
+    "price": "দাম (৳)",
+    "category": "ক্যাটাগরি",
+    "categoryPlaceholder": "যেমন: আইটি, মার্কেটিং, ফিনান্স"
   },
   "modules": {
     "heading": "মডিউল",
@@ -220,6 +227,15 @@
     "totalEnrollments": "মোট ভর্তি",
     "completed": "{{count}}টি সম্পন্ন"
   },
+  "certificate": {
+    "download": "সার্টিফিকেট ডাউনলোড করুন",
+    "verify": {
+      "verified": "সার্টিফিকেট যাচাই সফল",
+      "statement": "{{name}} সফলভাবে {{course}} কোর্স সম্পন্ন করেছেন।",
+      "issuedOn": "প্রদান করা হয়েছে {{date}}",
+      "notFound": "সার্টিফিকেট পাওয়া যায়নি"
+    }
+  },
   "admin": {
     "title": "অ্যাডমিন",
     "manageUsers": "ব্যবহারকারী ম্যানেজ করুন →",
@@ -243,6 +259,20 @@
     "approve": "অনুমোদন করুন",
     "reject": "প্রত্যাখ্যান করুন",
     "usersTitle": "ব্যবহারকারী"
+  },
+  "reviews": {
+    "heading": "রিভিউ",
+    "noReviewsYet": "এখনো কোনো রিভিউ নেই।",
+    "averageRating": "{{rating}} গড় ({{count}}টি রিভিউ)",
+    "commentPlaceholder": "এই কোর্স নিয়ে আপনার অভিজ্ঞতা শেয়ার করুন (ঐচ্ছিক)…",
+    "rateStars": "{{count}} তারা রেট করুন",
+    "submitReview": "রিভিউ জমা দিন",
+    "updateReview": "রিভিউ আপডেট করুন",
+    "saving": "সংরক্ষণ হচ্ছে…"
+  },
+  "verification": {
+    "byTeacher": "{{name}} দ্বারা",
+    "verifiedTeacher": "যাচাইকৃত শিক্ষক"
   },
   "onboarding": {
     "tour": {

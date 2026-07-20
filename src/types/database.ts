@@ -11,6 +11,7 @@ export interface UserRow {
   name: string
   email: string
   created_at: string
+  is_verified_teacher: boolean
 }
 
 export interface CourseRow {
@@ -21,6 +22,7 @@ export interface CourseRow {
   status: CourseStatus
   price: number
   created_at: string
+  category: string | null
 }
 
 export interface ModuleRow {
@@ -77,6 +79,15 @@ export interface ModuleProgressRow {
   module_id: string
   quiz_score: number | null
   completed_at: string | null
+}
+
+export interface CourseReviewRow {
+  id: string
+  student_id: string
+  course_id: string
+  rating: number
+  comment: string | null
+  created_at: string
 }
 
 export interface CertificateRow {

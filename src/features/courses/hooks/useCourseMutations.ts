@@ -7,6 +7,7 @@ export interface CourseInput {
   title: string
   description: string
   price: number
+  category: string | null
 }
 
 /**
@@ -49,10 +50,7 @@ export function useCourseMutations() {
   )
 
   const updateCourse = useCallback(
-    async (
-      courseId: string,
-      input: Partial<CourseInput & { status: CourseStatus; raw_notes: string }>,
-    ) => {
+    async (courseId: string, input: Partial<CourseInput & { status: CourseStatus }>) => {
       setSaving(true)
       setError(null)
       try {

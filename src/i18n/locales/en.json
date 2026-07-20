@@ -110,7 +110,12 @@
     "title": "Courses",
     "emptyState": "No published courses yet — check back soon.",
     "freePreview": "Free preview",
-    "courseNotFound": "Course not found."
+    "courseNotFound": "Course not found.",
+    "searchPlaceholder": "Search courses…",
+    "allCategories": "All categories",
+    "sortDefault": "Sort",
+    "sortPriceLowHigh": "Price: low to high",
+    "sortPriceHighLow": "Price: high to low"
   },
   "enroll": {
     "continueLearning": "Continue learning",
@@ -165,7 +170,9 @@
   "courseForm": {
     "title": "Title",
     "description": "Description",
-    "price": "Price (৳)"
+    "price": "Price (৳)",
+    "category": "Category",
+    "categoryPlaceholder": "e.g. IT, Marketing, Finance"
   },
   "modules": {
     "heading": "Modules",
@@ -220,6 +227,15 @@
     "totalEnrollments": "Total enrollments",
     "completed": "{{count}} completed"
   },
+  "certificate": {
+    "download": "Download certificate",
+    "verify": {
+      "verified": "Certificate verified",
+      "statement": "{{name}} has successfully completed {{course}}.",
+      "issuedOn": "Issued on {{date}}",
+      "notFound": "Certificate not found"
+    }
+  },
   "admin": {
     "title": "Admin",
     "manageUsers": "Manage users →",
@@ -243,6 +259,20 @@
     "approve": "Approve",
     "reject": "Reject",
     "usersTitle": "Users"
+  },
+  "reviews": {
+    "heading": "Reviews",
+    "noReviewsYet": "No reviews yet.",
+    "averageRating": "{{rating}} average ({{count}} reviews)",
+    "commentPlaceholder": "Share your experience with this course (optional)…",
+    "rateStars": "Rate {{count}} star",
+    "submitReview": "Submit review",
+    "updateReview": "Update review",
+    "saving": "Saving…"
+  },
+  "verification": {
+    "byTeacher": "by {{name}}",
+    "verifiedTeacher": "Verified teacher"
   },
   "onboarding": {
     "tour": {

@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next'
+import { BadgeCheck } from 'lucide-react'
 import { useAllUsers } from '@/features/admin/hooks/useAllUsers'
 import { useUpdateUserRole } from '@/features/admin/hooks/useUpdateUserRole'
+import { useUpdateVerifiedTeacher } from '@/features/admin/hooks/useUpdateVerifiedTeacher'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
@@ -19,6 +21,7 @@ const ROLE_BADGE_TONE: Record<UserRole, 'neutral' | 'green' | 'gold'> = {
 export function AdminUsersPage() {
   const { users, loading, error, refetch } = useAllUsers()
   const { updateRole, saving } = useUpdateUserRole()
+  const { updateVerifiedTeacher, saving: savingVerified } = useUpdateVerifiedTeacher()
   const { session } = useAuth()
   const { t } = useTranslation()
 
@@ -38,21 +41,38 @@ export function AdminUsersPage() {
               </div>
               <Badge tone={ROLE_BADGE_TONE[user.role]}>{t(`roles.${user.role}`)}</Badge>
             </div>
-            <Select
-              value={user.role}
-              disabled={saving || user.id === session?.user.id}
-              onChange={async (e) => {
-                const ok = await updateRole(user.id, e.target.value as UserRole)
-                if (ok) refetch()
-              }}
-              className="text-sm"
-            >
-              {ROLES.map((role) => (
-                <option key={role} value={role}>
-                  {t(`roles.${role}`)}
-                </option>
-              ))}
-            </Select>
+            <div className="flex items-center gap-3">
+              {user.role === 'teacher' && (
+                <label className="flex items-center gap-1.5 text-sm text-slate-600">
+                  <input
+                    type="checkbox"
+                    checked={user.is_verified_teacher}
+                    disabled={savingVerified}
+                    onChange={async (e) => {
+                      const ok = await updateVerifiedTeacher(user.id, e.target.checked)
+                      if (ok) refetch()
+                    }}
+                  />
+                  <BadgeCheck className="h-4 w-4 text-brand-green" aria-hidden="true" />
+                  {t('verification.verifiedTeacher')}
+                </label>
+              )}
+              <Select
+                value={user.role}
+                disabled={saving || user.id === session?.user.id}
+                onChange={async (e) => {
+                  const ok = await updateRole(user.id, e.target.value as UserRole)
+                  if (ok) refetch()
+                }}
+                className="text-sm"
+              >
+                {ROLES.map((role) => (
+                  <option key={role} value={role}>
+                    {t(`roles.${role}`)}
+                  </option>
+                ))}
+              </Select>
+            </div>
           </Card>
         ))}
       </div>
