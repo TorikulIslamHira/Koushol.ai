@@ -70,6 +70,7 @@ without updating that file.
 | TTS | Sarvam AI (Bulbul, speaker `anushka` by default, model configurable via `SARVAM_MODEL` secret) | Phase 4. Language is an explicit per-generation teacher choice, not hardcoded to Bengali — see `docs/data-model.md` § TTS audio. |
 | File storage | Supabase Storage | Phase 14. Private buckets only, RLS mirroring the same free-preview/enrolled/owner-admin visibility every other topic-scoped table uses — never a public bucket, which would bypass RLS entirely. |
 | PDF generation | `jspdf` | Phase 9. Client-side, dynamically imported so its ~400KB isn't in the main bundle. |
+| Decorative UI effects | `rough-notation`, `three` | Added for `src/components/ui/Highlighter.tsx`, `InteractiveGridPattern.tsx`, `ModernLoginSignup.tsx` — not yet themed to Koushol's palette or wired into any real page (see that folder's README). Both are unused-so-far in the shipped bundle (nothing imports them yet), so they add no build-time weight until actually used. |
 | PWA | `vite-plugin-pwa` (Workbox) | Phase 7. Build-time only — generates the manifest + service worker, precaches just the app shell (never Supabase API responses, which are cross-origin anyway). |
 | Payments | bKash / Nagad / SSLCommerz | Phase 6 (not started — needs real merchant/sandbox credentials), no monthly fee, %-based |
 | Hosting | Self-hosted VPS, GitHub Actions self-hosted runner, Cloudflare Tunnel | Auto-deploys on merge to `main` — see `deploy/README.md` |
