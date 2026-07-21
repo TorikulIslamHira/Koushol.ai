@@ -1,46 +1,68 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import * as THREE from 'three'
+import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { useAuth } from '@/features/auth/hooks/useAuth'
+
+interface ModernLoginSignupProps {
+  mode: 'login' | 'signup'
+}
+
+const inputClasses =
+  'w-full rounded-lg border border-brand-green-light/20 bg-white/5 px-3.5 py-2.5 text-sm text-white placeholder:text-white/35 outline-none transition-colors duration-150 focus:border-brand-green-light'
 
 /**
- * A WebGL animated-dot-grid login/signup card. Generic UI chrome — no Koushol business
- * logic wired up yet (the Google/GitHub/Apple buttons and the email form are decorative
- * placeholders, not connected to Supabase auth; `src/features/auth/components/LoginForm.tsx`
- * / `SignupForm.tsx` hold the real logic). Not yet themed to Koushol's palette (dark
- * green/gold) — this is the as-given dark/monochrome version, to be restyled in a follow-up
- * pass rather than wired in as-is.
+ * WebGL animated-dot-grid card handling real email/password sign-in and sign-up (via
+ * `useAuth`), themed to Koushol's brand palette (see `src/styles/globals.css`'s
+ * `@theme` block). Dot colors and the dark card use `brand-green`/`brand-gold`; there's no
+ * OAuth in this app (email/password only, see `useAuth`), so the reference design's
+ * Google/GitHub/Apple buttons were dropped rather than left as non-functional decoration.
  */
-export function ModernLoginSignup() {
+export function ModernLoginSignup({ mode }: ModernLoginSignupProps) {
+  const isLogin = mode === 'login'
+  const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [isLogin, setIsLogin] = useState(true)
+  const { signIn, signUp } = useAuth()
+  const navigate = useNavigate()
+  const { t } = useTranslation()
+
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    if (!canvasRef.current) return
+    if (!canvasRef.current || !containerRef.current) return
     const canvas = canvasRef.current
+    const container = containerRef.current
 
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false })
     renderer.setPixelRatio(window.devicePixelRatio)
-    renderer.setSize(window.innerWidth, window.innerHeight)
+    renderer.setSize(container.clientWidth, container.clientHeight)
 
     const scene = new THREE.Scene()
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
 
+    // Brand palette, 0-1 normalized: brand-green, brand-green-light, brand-gold, brand-gold-light
     const uniforms = {
       u_time: { value: 0 },
-      u_resolution: { value: new THREE.Vector2(window.innerWidth * 2, window.innerHeight * 2) },
+      u_resolution: {
+        value: new THREE.Vector2(container.clientWidth * 2, container.clientHeight * 2),
+      },
       u_opacities: { value: [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.8, 0.8, 0.8, 1.0] },
       u_colors: {
         value: [
-          new THREE.Vector3(1, 1, 1),
-          new THREE.Vector3(1, 1, 1),
-          new THREE.Vector3(1, 1, 1),
-          new THREE.Vector3(1, 1, 1),
-          new THREE.Vector3(1, 1, 1),
-          new THREE.Vector3(1, 1, 1),
+          new THREE.Vector3(0.047, 0.541, 0.294), // brand-green
+          new THREE.Vector3(0.071, 0.659, 0.361), // brand-green-light
+          new THREE.Vector3(0.831, 0.627, 0.09), // brand-gold
+          new THREE.Vector3(0.902, 0.725, 0.227), // brand-gold-light
+          new THREE.Vector3(0.047, 0.541, 0.294),
+          new THREE.Vector3(0.831, 0.627, 0.09),
         ],
       },
       u_total_size: { value: 20.0 },
       u_dot_size: { value: 6.0 },
-      u_reverse: { value: 0 },
     }
 
     const material = new THREE.ShaderMaterial({
@@ -64,7 +86,6 @@ export function ModernLoginSignup() {
         uniform float u_total_size;
         uniform float u_dot_size;
         uniform vec2 u_resolution;
-        uniform int u_reverse;
 
         out vec4 fragColor;
 
@@ -126,14 +147,16 @@ export function ModernLoginSignup() {
     }
     animate()
 
-    const handleResize = () => {
-      renderer.setSize(window.innerWidth, window.innerHeight)
-      uniforms.u_resolution.value.set(window.innerWidth * 2, window.innerHeight * 2)
-    }
-    window.addEventListener('resize', handleResize)
+    // Sized to the card's own container, not the viewport — this component sits inside
+    // Koushol's normal page chrome (header/footer via Layout), not a full-bleed page.
+    const resizeObserver = new ResizeObserver(() => {
+      renderer.setSize(container.clientWidth, container.clientHeight)
+      uniforms.u_resolution.value.set(container.clientWidth * 2, container.clientHeight * 2)
+    })
+    resizeObserver.observe(container)
 
     return () => {
-      window.removeEventListener('resize', handleResize)
+      resizeObserver.disconnect()
       cancelAnimationFrame(animationId)
       renderer.dispose()
       geometry.dispose()
@@ -141,222 +164,103 @@ export function ModernLoginSignup() {
     }
   }, [])
 
-  const socialBtn: CSSProperties = {
-    width: '100%',
-    padding: '0.65rem',
-    borderRadius: 6,
-    border: '1px solid #333',
-    background: 'transparent',
-    color: '#fff',
-    fontWeight: 500,
-    fontSize: '0.875rem',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.5rem',
-    marginBottom: '0.4rem',
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    setSubmitting(true)
+    setError(null)
+    const { error } = isLogin ? await signIn(email, password) : await signUp(email, password, name)
+    setSubmitting(false)
+    if (error) {
+      setError(error)
+      return
+    }
+    navigate('/courses')
   }
-  const input: CSSProperties = {
-    width: '100%',
-    padding: '0.65rem 0.85rem',
-    borderRadius: 6,
-    border: '1px solid #333',
-    background: '#000',
-    color: '#fff',
-    fontSize: '0.875rem',
-    outline: 'none',
-  }
-
-  const GoogleIcon = (
-    <svg viewBox="0 0 24 24" style={{ width: 16, height: 16, flexShrink: 0 }}>
-      <path
-        fill="#4285F4"
-        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-      />
-      <path
-        fill="#34A853"
-        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-      />
-      <path
-        fill="#EA4335"
-        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-      />
-    </svg>
-  )
-  const GitHubIcon = (
-    <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: 16, height: 16, flexShrink: 0 }}>
-      <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.699-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.379.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.577.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z" />
-    </svg>
-  )
-  const AppleIcon = (
-    <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: 16, height: 16, flexShrink: 0 }}>
-      <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.04 2.26-.79 3.59-.76 1.56.04 2.88.75 3.65 1.89-3.08 1.75-2.58 5.61.35 6.75-1.01 2.37-2.39 4.39-4.29 4.29zM12.03 7.25c-.15-2.23 1.66-4.07 3.72-4.25.36 2.38-1.92 4.34-3.72 4.25z" />
-    </svg>
-  )
-
-  const logo = (
-    <div
-      style={{
-        background: '#111',
-        width: 44,
-        height: 44,
-        borderRadius: '50%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontWeight: 700,
-        fontSize: '1.15rem',
-        marginBottom: '0.75rem',
-        border: '1px solid #333',
-      }}
-    >
-      K
-    </div>
-  )
-  const footer = (
-    <div style={{ marginTop: '0.85rem', fontSize: '0.75rem', color: '#666', lineHeight: 1.5, textAlign: 'center' }}>
-      By proceeding, you agree to Koushol&apos;s{' '}
-      <a href="/terms" style={{ color: '#888' }}>
-        Terms of Service
-      </a>{' '}
-      and{' '}
-      <a href="/privacy" style={{ color: '#888' }}>
-        Privacy Policy
-      </a>
-      .
-    </div>
-  )
 
   return (
     <div
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        background: '#000',
-        color: '#fff',
-        fontFamily: "'Inter',-apple-system,sans-serif",
-      }}
+      ref={containerRef}
+      className="relative flex min-h-[640px] w-full items-center justify-center overflow-hidden rounded-2xl bg-brand-ink"
     >
-      <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
-
+      <canvas ref={canvasRef} className="absolute inset-0" />
       <div
+        className="pointer-events-none absolute inset-0"
         style={{
-          position: 'absolute',
-          inset: 0,
-          zIndex: 1,
-          background: 'radial-gradient(circle at center,rgba(0,0,0,0.75) 0%,rgba(0,0,0,0) 100%)',
-          pointerEvents: 'none',
+          background: 'radial-gradient(circle at center, rgba(11,18,16,0.75) 0%, rgba(11,18,16,0) 100%)',
         }}
       />
 
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 2,
-          background: '#121212',
-          borderRadius: 12,
-          padding: '2rem',
-          width: '100%',
-          maxWidth: 400,
-          boxShadow: '0 10px 40px rgba(0,0,0,0.8)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          border: '1px solid #222',
-        }}
-      >
-        {isLogin ? (
-          <div style={{ width: '100%', maxWidth: 360, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-            {logo}
-            <h1 style={{ fontSize: '1.35rem', fontWeight: 600, marginBottom: '0.25rem', letterSpacing: '-0.025em' }}>Sign in to Koushol</h1>
-            <p style={{ fontSize: '0.85rem', color: '#888', marginBottom: '0.85rem', lineHeight: 1.5 }}>Sign in to continue learning.</p>
+      <div className="relative z-10 flex w-full max-w-sm flex-col items-center rounded-xl border border-white/10 bg-black/40 p-8 text-center backdrop-blur-sm">
+        <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full border border-brand-green-light/30 bg-brand-green font-display text-lg font-bold text-white">
+          K
+        </div>
+        <h1 className="font-display text-xl font-semibold tracking-tight text-white">
+          {isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}
+        </h1>
+        <p className="mb-5 mt-1 text-sm text-white/60">
+          {isLogin ? t('auth.signInSubtitle') : t('auth.createAccountSubtitle')}
+        </p>
 
-            <form onSubmit={(e) => e.preventDefault()} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-              <input style={input} type="email" placeholder="name@example.com" required />
-              <button
-                type="submit"
-                style={{ width: '100%', padding: '0.65rem', borderRadius: 6, border: 'none', background: '#ededed', color: '#000', fontWeight: 500, fontSize: '0.875rem', cursor: 'pointer' }}
-              >
-                Continue with Email
-              </button>
-            </form>
+        <form onSubmit={handleSubmit} className="flex w-full flex-col gap-3 text-left">
+          {!isLogin && (
+            <input
+              className={inputClasses}
+              type="text"
+              required
+              placeholder={t('auth.name')}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          )}
+          <input
+            className={inputClasses}
+            type="email"
+            required
+            placeholder={t('auth.email')}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            className={inputClasses}
+            type="password"
+            required
+            minLength={isLogin ? undefined : 6}
+            placeholder={t('auth.password')}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {error && <p className="text-sm text-red-400">{error}</p>}
+          <button
+            type="submit"
+            disabled={submitting}
+            className="mt-1 w-full rounded-lg bg-brand-green px-4 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-green-dark disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {submitting
+              ? isLogin
+                ? t('auth.signingIn')
+                : t('auth.creatingAccount')
+              : isLogin
+                ? t('nav.signIn')
+                : t('auth.createAccount')}
+          </button>
+        </form>
 
-            <div style={{ height: 1, background: '#222', width: '100%', margin: '0.85rem 0' }} />
+        <div className="mt-5 text-sm text-white/60">
+          {isLogin ? t('auth.noAccount') : t('auth.alreadyHaveAccount')}{' '}
+          <Link to={isLogin ? '/signup' : '/login'} className="font-medium text-white hover:underline">
+            {isLogin ? t('nav.signUp') : t('nav.signIn')}
+          </Link>
+        </div>
 
-            <button style={socialBtn}>
-              {GoogleIcon}Continue with Google
-            </button>
-            <button style={socialBtn}>
-              {GitHubIcon}Continue with GitHub
-            </button>
-            <button style={{ ...socialBtn, marginBottom: 0 }}>
-              {AppleIcon}Continue with Apple
-            </button>
-
-            <div style={{ marginTop: '1.25rem', fontSize: '0.875rem', color: '#888' }}>
-              Don&apos;t have an account?{' '}
-              <button
-                type="button"
-                onClick={() => setIsLogin(false)}
-                style={{ color: '#fff', fontWeight: 500, background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit' }}
-              >
-                Sign Up
-              </button>
-            </div>
-            {footer}
-          </div>
-        ) : (
-          <div style={{ width: '100%', maxWidth: 360, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-            {logo}
-            <h1 style={{ fontSize: '1.35rem', fontWeight: 600, marginBottom: '0.25rem', letterSpacing: '-0.025em' }}>Create your account</h1>
-            <p style={{ fontSize: '0.85rem', color: '#888', marginBottom: '0.85rem', lineHeight: 1.5 }}>Free to browse, free to start learning.</p>
-
-            <form onSubmit={(e) => e.preventDefault()} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-              <input style={input} type="text" placeholder="Full Name" required />
-              <input style={input} type="email" placeholder="name@example.com" required />
-              <button
-                type="submit"
-                style={{ width: '100%', padding: '0.65rem', borderRadius: 6, border: 'none', background: '#ededed', color: '#000', fontWeight: 500, fontSize: '0.875rem', cursor: 'pointer' }}
-              >
-                Sign Up with Email
-              </button>
-            </form>
-
-            <div style={{ height: 1, background: '#222', width: '100%', margin: '0.85rem 0' }} />
-
-            <button style={socialBtn}>
-              {GoogleIcon}Sign up with Google
-            </button>
-            <button style={socialBtn}>
-              {GitHubIcon}Sign up with GitHub
-            </button>
-            <button style={{ ...socialBtn, marginBottom: 0 }}>
-              {AppleIcon}Sign up with Apple
-            </button>
-
-            <div style={{ marginTop: '1.25rem', fontSize: '0.875rem', color: '#888' }}>
-              Already have an account?{' '}
-              <button
-                type="button"
-                onClick={() => setIsLogin(true)}
-                style={{ color: '#fff', fontWeight: 500, background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit' }}
-              >
-                Sign In
-              </button>
-            </div>
-            {footer}
-          </div>
-        )}
+        <div className="mt-4 text-xs leading-relaxed text-white/40">
+          <Link to="/terms" className="hover:text-white/70">
+            {t('footer.terms')}
+          </Link>{' '}
+          &middot;{' '}
+          <Link to="/privacy" className="hover:text-white/70">
+            {t('footer.privacy')}
+          </Link>
+        </div>
       </div>
     </div>
   )

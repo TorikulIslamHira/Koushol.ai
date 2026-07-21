@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { BookOpenCheck, Sparkles, Volume2, GraduationCap, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { Highlighter } from '@/components/ui/Highlighter'
 
 const STEP_KEYS = ['read', 'quiz', 'unlock'] as const
 const FEATURE_ICONS = {
@@ -23,7 +24,10 @@ export function HomePage() {
           {t('home.badge')}
         </span>
         <h1 className="font-display text-4xl font-bold text-brand-ink sm:text-5xl">
-          {t('home.heading1')} <span className="text-brand-green">{t('home.headingHighlight')}</span>
+          {t('home.heading1')}{' '}
+          <Highlighter action="highlight" color="rgba(212, 160, 23, 0.35)">
+            <span className="text-brand-green">{t('home.headingHighlight')}</span>
+          </Highlighter>
         </h1>
         <p className="max-w-xl text-lg text-slate-600">{t('home.subheading')}</p>
         <Link to="/courses">

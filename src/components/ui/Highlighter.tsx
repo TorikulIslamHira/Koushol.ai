@@ -16,13 +16,15 @@ interface HighlighterProps {
 /**
  * Draws a hand-drawn-style annotation (underline, highlight, circle, box, etc. — see
  * rough-notation's RoughAnnotationType) around its children, animated in once on mount.
- * Generic — no business logic, safe to reuse anywhere. Not yet themed to Koushol's
- * palette; the default `color` prop is a placeholder until that pass.
+ * Generic — no business logic, safe to reuse anywhere. Default color is Koushol's brand
+ * gold at low opacity (see `src/styles/globals.css`'s `@theme` block), since `highlight`
+ * draws behind the text and a solid brand-green would fight with the text color used
+ * everywhere else on the site.
  */
 export function Highlighter({
   children,
   action = 'highlight',
-  color = '#ffd1dc',
+  color = 'rgba(212, 160, 23, 0.35)',
   strokeWidth = 1.5,
   animationDuration = 600,
   iterations = 2,
