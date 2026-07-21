@@ -1,5 +1,6 @@
 {
   "nav": {
+    "dashboard": "Dashboard",
     "courses": "Courses",
     "teach": "Teach",
     "admin": "Admin",
@@ -10,7 +11,8 @@
   "footer": {
     "terms": "Terms",
     "privacy": "Privacy",
-    "copyright": "© {{year}} Koushol"
+    "copyright": "© {{year}} Koushol",
+    "tagline": "Interactive chapters, quizzes, and certificates — learn career skills at your own pace, in Bangla or English."
   },
   "common": {
     "loading": "Loading…",
@@ -38,7 +40,11 @@
       "teachers": { "title": "Built for teachers too", "description": "Publish courses, track student progress, and see quiz performance per chapter." }
     },
     "ctaTitle": "Ready to start learning?",
-    "ctaSubtitle": "Browse the catalog — the first chapter of every course is free to read."
+    "ctaSubtitle": "Browse the catalog — the first chapter of every course is free to read.",
+    "featured": {
+      "title": "Featured courses",
+      "subtitle": "Recently published, ready to start today."
+    }
   },
   "auth": {
     "welcomeBack": "Welcome back",
@@ -115,7 +121,20 @@
     "allCategories": "All categories",
     "sortDefault": "Sort",
     "sortPriceLowHigh": "Price: low to high",
-    "sortPriceHighLow": "Price: high to low"
+    "sortPriceHighLow": "Price: high to low",
+    "viewCourse": "View course",
+    "count_one": "{{count}} course",
+    "count_other": "{{count}} courses"
+  },
+  "courseDetail": {
+    "overview": "Course overview",
+    "categoryLabel": "Category",
+    "certificateLabel": "Certificate",
+    "certificateIncluded": "Included on completion",
+    "moduleCount_one": "{{count}} module",
+    "moduleCount_other": "{{count}} modules",
+    "reviewCount_one": "({{count}} review)",
+    "reviewCount_other": "({{count}} reviews)"
   },
   "enroll": {
     "continueLearning": "Continue learning",
@@ -147,6 +166,26 @@
     "emptyState": "You haven't enrolled in a course yet.",
     "browseCourses": "Browse courses →",
     "chaptersUnlocked": "{{unlocked}} / {{total}} modules unlocked"
+  },
+  "accountNav": {
+    "dashboard": "Dashboard",
+    "certificates": "Certificates",
+    "notes": "Notes",
+    "doubts": "Doubts"
+  },
+  "certificatesPage": {
+    "title": "Certificates",
+    "emptyState": "Finish a course to earn your first certificate."
+  },
+  "notesPage": {
+    "title": "Notes",
+    "emptyState": "Notes you save while reading a chapter will show up here."
+  },
+  "doubtsPage": {
+    "title": "Doubts",
+    "emptyState": "Questions you ask while reading a chapter will show up here.",
+    "messageCount_one": "{{count}} message",
+    "messageCount_other": "{{count}} messages"
   },
   "courseStatus": {
     "draft": "draft",

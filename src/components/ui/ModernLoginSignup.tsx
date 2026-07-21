@@ -3,24 +3,25 @@ import * as THREE from 'three'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/features/auth/hooks/useAuth'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
 
 interface ModernLoginSignupProps {
   mode: 'login' | 'signup'
 }
 
-const inputClasses =
-  'w-full rounded-lg border border-brand-green-light/20 bg-white/5 px-3.5 py-2.5 text-sm text-white placeholder:text-white/35 outline-none transition-colors duration-150 focus:border-brand-green-light'
-
 /**
- * WebGL animated-dot-grid card handling real email/password sign-in and sign-up (via
- * `useAuth`), themed to Koushol's brand palette (see `src/styles/globals.css`'s
- * `@theme` block). Dot colors and the dark card use `brand-green`/`brand-gold`; there's no
- * OAuth in this app (email/password only, see `useAuth`), so the reference design's
- * Google/GitHub/Apple buttons were dropped rather than left as non-functional decoration.
+ * Login/signup card matching Koushol's actual light `Card` styling (white, slate-200
+ * border — see `src/components/ui/Card.tsx`), with a WebGL animated-dot-grid (`three`)
+ * confined to a short banner strip that fades to white at its base, rather than a full
+ * dark card — this app's site chrome is light, so a full black card read as a foreign
+ * floating box (see the folder README's git history for the earlier dark version this
+ * replaced). Dots are tinted brand-green/brand-gold (`src/styles/globals.css`'s `@theme`).
+ * Handles real Supabase email/password auth via `useAuth` — no OAuth in this app.
  */
 export function ModernLoginSignup({ mode }: ModernLoginSignupProps) {
   const isLogin = mode === 'login'
-  const containerRef = useRef<HTMLDivElement>(null)
+  const bannerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { signIn, signUp } = useAuth()
   const navigate = useNavigate()
@@ -33,9 +34,9 @@ export function ModernLoginSignup({ mode }: ModernLoginSignupProps) {
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    if (!canvasRef.current || !containerRef.current) return
+    if (!canvasRef.current || !bannerRef.current) return
     const canvas = canvasRef.current
-    const container = containerRef.current
+    const container = bannerRef.current
 
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false })
     renderer.setPixelRatio(window.devicePixelRatio)
@@ -61,8 +62,8 @@ export function ModernLoginSignup({ mode }: ModernLoginSignupProps) {
           new THREE.Vector3(0.831, 0.627, 0.09),
         ],
       },
-      u_total_size: { value: 20.0 },
-      u_dot_size: { value: 6.0 },
+      u_total_size: { value: 16.0 },
+      u_dot_size: { value: 5.0 },
     }
 
     const material = new THREE.ShaderMaterial({
@@ -122,7 +123,7 @@ export function ModernLoginSignup({ mode }: ModernLoginSignupProps) {
             opacity *= step(current_timing_offset, u_time * animation_speed_factor);
             opacity *= clamp((1.0 - step(current_timing_offset + 0.1, u_time * animation_speed_factor)) * 1.25, 1.0, 1.25);
 
-            fragColor = vec4(color, opacity);
+            fragColor = vec4(color, opacity * 0.6);
             fragColor.rgb *= fragColor.a;
         }
       `,
@@ -147,8 +148,8 @@ export function ModernLoginSignup({ mode }: ModernLoginSignupProps) {
     }
     animate()
 
-    // Sized to the card's own container, not the viewport — this component sits inside
-    // Koushol's normal page chrome (header/footer via Layout), not a full-bleed page.
+    // Sized to the banner strip, not the viewport — this is a decorative accent inside a
+    // normal light Card, not a full-bleed page.
     const resizeObserver = new ResizeObserver(() => {
       renderer.setSize(container.clientWidth, container.clientHeight)
       uniforms.u_resolution.value.set(container.clientWidth * 2, container.clientHeight * 2)
@@ -174,67 +175,53 @@ export function ModernLoginSignup({ mode }: ModernLoginSignupProps) {
       setError(error)
       return
     }
-    navigate('/courses')
+    navigate('/dashboard')
   }
 
   return (
-    <div
-      ref={containerRef}
-      className="relative flex min-h-[640px] w-full items-center justify-center overflow-hidden rounded-2xl bg-brand-ink"
-    >
-      <canvas ref={canvasRef} className="absolute inset-0" />
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: 'radial-gradient(circle at center, rgba(11,18,16,0.75) 0%, rgba(11,18,16,0) 100%)',
-        }}
-      />
-
-      <div className="relative z-10 flex w-full max-w-sm flex-col items-center rounded-xl border border-white/10 bg-black/40 p-8 text-center backdrop-blur-sm">
-        <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full border border-brand-green-light/30 bg-brand-green font-display text-lg font-bold text-white">
+    <div className="w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div ref={bannerRef} className="relative h-24 w-full bg-brand-green/5">
+        <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0) 40%, rgba(255,255,255,1) 100%)' }}
+        />
+        <div className="absolute bottom-0 left-1/2 z-10 flex h-12 w-12 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border-4 border-white bg-brand-green font-display text-lg font-bold text-white shadow-sm">
           K
         </div>
-        <h1 className="font-display text-xl font-semibold tracking-tight text-white">
+      </div>
+
+      <div className="flex flex-col items-center px-8 pb-8 pt-9 text-center">
+        <h1 className="font-display text-xl font-semibold tracking-tight text-brand-ink">
           {isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}
         </h1>
-        <p className="mb-5 mt-1 text-sm text-white/60">
+        <p className="mb-5 mt-1 text-sm text-slate-500">
           {isLogin ? t('auth.signInSubtitle') : t('auth.createAccountSubtitle')}
         </p>
 
-        <form onSubmit={handleSubmit} className="flex w-full flex-col gap-3 text-left">
+        <form onSubmit={handleSubmit} className="flex w-full flex-col gap-3.5 text-left">
           {!isLogin && (
-            <input
-              className={inputClasses}
-              type="text"
-              required
-              placeholder={t('auth.name')}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
+              {t('auth.name')}
+              <Input type="text" required value={name} onChange={(e) => setName(e.target.value)} />
+            </label>
           )}
-          <input
-            className={inputClasses}
-            type="email"
-            required
-            placeholder={t('auth.email')}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            className={inputClasses}
-            type="password"
-            required
-            minLength={isLogin ? undefined : 6}
-            placeholder={t('auth.password')}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          {error && <p className="text-sm text-red-400">{error}</p>}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="mt-1 w-full rounded-lg bg-brand-green px-4 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-green-dark disabled:cursor-not-allowed disabled:opacity-50"
-          >
+          <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
+            {t('auth.email')}
+            <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          </label>
+          <label className="flex flex-col gap-1 text-sm font-medium text-brand-ink">
+            {t('auth.password')}
+            <Input
+              type="password"
+              required
+              minLength={isLogin ? undefined : 6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
+          {error && <p className="text-sm text-danger">{error}</p>}
+          <Button type="submit" disabled={submitting} className="mt-1 w-full">
             {submitting
               ? isLogin
                 ? t('auth.signingIn')
@@ -242,22 +229,22 @@ export function ModernLoginSignup({ mode }: ModernLoginSignupProps) {
               : isLogin
                 ? t('nav.signIn')
                 : t('auth.createAccount')}
-          </button>
+          </Button>
         </form>
 
-        <div className="mt-5 text-sm text-white/60">
+        <div className="mt-5 text-sm text-slate-500">
           {isLogin ? t('auth.noAccount') : t('auth.alreadyHaveAccount')}{' '}
-          <Link to={isLogin ? '/signup' : '/login'} className="font-medium text-white hover:underline">
+          <Link to={isLogin ? '/signup' : '/login'} className="font-medium text-brand-green hover:underline">
             {isLogin ? t('nav.signUp') : t('nav.signIn')}
           </Link>
         </div>
 
-        <div className="mt-4 text-xs leading-relaxed text-white/40">
-          <Link to="/terms" className="hover:text-white/70">
+        <div className="mt-4 text-xs leading-relaxed text-slate-400">
+          <Link to="/terms" className="hover:text-brand-green">
             {t('footer.terms')}
           </Link>{' '}
           &middot;{' '}
-          <Link to="/privacy" className="hover:text-white/70">
+          <Link to="/privacy" className="hover:text-brand-green">
             {t('footer.privacy')}
           </Link>
         </div>

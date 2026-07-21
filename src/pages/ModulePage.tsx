@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, Navigate, Link } from 'react-router-dom'
+import { useParams, useSearchParams, Navigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft } from 'lucide-react'
 import { useCourse } from '@/features/courses/hooks/useCourse'
@@ -30,7 +30,9 @@ export function ModulePage() {
   const { t } = useTranslation()
 
   const module = modules.find((m) => m.id === moduleId)
-  const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>(undefined)
+  const [searchParams] = useSearchParams()
+  const topicFromUrl = searchParams.get('topic') ?? undefined
+  const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>(topicFromUrl)
   const { audio } = useTopicAudio(selectedTopicId ?? module?.topics[0]?.id)
 
   if (courseLoading) return <Spinner />

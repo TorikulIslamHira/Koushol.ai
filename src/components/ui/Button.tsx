@@ -20,7 +20,7 @@ export function Button({ variant = 'primary', className, disabled, ...rest }: Bu
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors duration-150 outline-offset-2 focus-visible:outline focus-visible:outline-2 disabled:cursor-not-allowed disabled:opacity-50',
+        'inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors duration-150 outline-offset-2 focus-visible:outline focus-visible:outline-2 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50',
         variantClasses[variant],
         className,
       )}

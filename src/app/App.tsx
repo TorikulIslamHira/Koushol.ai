@@ -13,6 +13,9 @@ import { CoursesPage } from '@/pages/CoursesPage'
 import { CourseDetailPage } from '@/pages/CourseDetailPage'
 import { ModulePage } from '@/pages/ModulePage'
 import { DashboardPage } from '@/pages/DashboardPage'
+import { CertificatesPage } from '@/pages/CertificatesPage'
+import { NotesPage } from '@/pages/NotesPage'
+import { DoubtsPage } from '@/pages/DoubtsPage'
 import { TeacherDashboardPage } from '@/pages/TeacherDashboardPage'
 import { NewCoursePage } from '@/pages/NewCoursePage'
 import { CourseEditorPage } from '@/pages/CourseEditorPage'
@@ -60,6 +63,30 @@ export function App() {
               element={
                 <RequireAuth>
                   <DashboardPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/certificates"
+              element={
+                <RequireAuth>
+                  <CertificatesPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/notes"
+              element={
+                <RequireAuth>
+                  <NotesPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/doubts"
+              element={
+                <RequireAuth>
+                  <DoubtsPage />
                 </RequireAuth>
               }
             />

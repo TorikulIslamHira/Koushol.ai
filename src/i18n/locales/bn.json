@@ -1,5 +1,6 @@
 {
   "nav": {
+    "dashboard": "ড্যাশবোর্ড",
     "courses": "কোর্স",
     "teach": "শেখান",
     "admin": "অ্যাডমিন",
@@ -10,7 +11,8 @@
   "footer": {
     "terms": "শর্তাবলী",
     "privacy": "গোপনীয়তা",
-    "copyright": "© {{year}} কৌশল"
+    "copyright": "© {{year}} কৌশল",
+    "tagline": "ইন্টারেক্টিভ চ্যাপ্টার, কুইজ ও সার্টিফিকেট — নিজের গতিতে ক্যারিয়ার-স্কিল শিখুন, বাংলা বা ইংরেজিতে।"
   },
   "common": {
     "loading": "লোড হচ্ছে…",
@@ -38,7 +40,11 @@
       "teachers": { "title": "শিক্ষকদের জন্যও তৈরি", "description": "কোর্স প্রকাশ করুন, শিক্ষার্থীর অগ্রগতি দেখুন, এবং প্রতি চ্যাপ্টারে কুইজের ফলাফল দেখুন।" }
     },
     "ctaTitle": "শেখা শুরু করতে প্রস্তুত?",
-    "ctaSubtitle": "কোর্স ক্যাটালগ দেখুন — প্রতিটি কোর্সের প্রথম চ্যাপ্টার বিনামূল্যে পড়া যায়।"
+    "ctaSubtitle": "কোর্স ক্যাটালগ দেখুন — প্রতিটি কোর্সের প্রথম চ্যাপ্টার বিনামূল্যে পড়া যায়।",
+    "featured": {
+      "title": "বাছাই করা কোর্স",
+      "subtitle": "সম্প্রতি প্রকাশিত, আজই শুরু করার জন্য প্রস্তুত।"
+    }
   },
   "auth": {
     "welcomeBack": "আবার স্বাগতম",
@@ -115,7 +121,20 @@
     "allCategories": "সব ক্যাটাগরি",
     "sortDefault": "সাজান",
     "sortPriceLowHigh": "দাম: কম থেকে বেশি",
-    "sortPriceHighLow": "দাম: বেশি থেকে কম"
+    "sortPriceHighLow": "দাম: বেশি থেকে কম",
+    "viewCourse": "কোর্স দেখুন",
+    "count_one": "{{count}}টি কোর্স",
+    "count_other": "{{count}}টি কোর্স"
+  },
+  "courseDetail": {
+    "overview": "কোর্স ওভারভিউ",
+    "categoryLabel": "ক্যাটাগরি",
+    "certificateLabel": "সার্টিফিকেট",
+    "certificateIncluded": "কোর্স শেষে অন্তর্ভুক্ত",
+    "moduleCount_one": "{{count}}টি মডিউল",
+    "moduleCount_other": "{{count}}টি মডিউল",
+    "reviewCount_one": "({{count}}টি রিভিউ)",
+    "reviewCount_other": "({{count}}টি রিভিউ)"
   },
   "enroll": {
     "continueLearning": "শেখা চালিয়ে যান",
@@ -147,6 +166,26 @@
     "emptyState": "আপনি এখনো কোনো কোর্সে ভর্তি হননি।",
     "browseCourses": "কোর্স দেখুন →",
     "chaptersUnlocked": "{{unlocked}} / {{total}} মডিউল আনলক করা হয়েছে"
+  },
+  "accountNav": {
+    "dashboard": "ড্যাশবোর্ড",
+    "certificates": "সার্টিফিকেট",
+    "notes": "নোট",
+    "doubts": "প্রশ্ন"
+  },
+  "certificatesPage": {
+    "title": "সার্টিফিকেট",
+    "emptyState": "প্রথম সার্টিফিকেট পেতে একটি কোর্স শেষ করুন।"
+  },
+  "notesPage": {
+    "title": "নোট",
+    "emptyState": "চ্যাপ্টার পড়ার সময় সংরক্ষণ করা নোট এখানে দেখা যাবে।"
+  },
+  "doubtsPage": {
+    "title": "প্রশ্ন",
+    "emptyState": "চ্যাপ্টার পড়ার সময় করা প্রশ্ন এখানে দেখা যাবে।",
+    "messageCount_one": "{{count}}টি বার্তা",
+    "messageCount_other": "{{count}}টি বার্তা"
   },
   "courseStatus": {
     "draft": "খসড়া",

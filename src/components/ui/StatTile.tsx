@@ -4,8 +4,8 @@ import { Card } from '@/components/ui/Card'
 export function StatTile({ label, value }: { label: string; value: number | string }) {
   return (
     <Card>
-      <p className="text-sm text-slate-500">{label}</p>
-      <p className="font-display text-3xl font-semibold text-brand-ink">{value}</p>
+      <p className="text-xs font-medium tracking-wider text-slate-500 uppercase">{label}</p>
+      <p className="mt-1 font-display text-3xl font-semibold text-brand-ink">{value}</p>
     </Card>
   )
 }

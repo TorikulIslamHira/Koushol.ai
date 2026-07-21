@@ -41,7 +41,14 @@ export function CoursesPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-2xl font-semibold">{t('courses.title')}</h1>
+      <div>
+        <h1 className="font-display text-3xl font-bold text-brand-ink">{t('courses.title')}</h1>
+        {!loading && !error && (
+          <p className="mt-1 text-sm text-slate-500">
+            {t('courses.count', { count: filteredCourses.length })}
+          </p>
+        )}
+      </div>
 
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[200px]">
