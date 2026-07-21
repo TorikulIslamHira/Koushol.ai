@@ -308,6 +308,8 @@
     "approve": "Approve",
     "reject": "Reject",
     "usersTitle": "Users",
+    "userCount_one": "{{count}} user",
+    "userCount_other": "{{count}} users",
     "moderationTitle": "Moderation",
     "noFlaggedReviews": "No flagged reviews.",
     "dismissFlag": "Dismiss",

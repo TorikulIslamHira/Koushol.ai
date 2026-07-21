@@ -35,7 +35,18 @@ All three families are loaded via Google Fonts `<link>` tags in `index.html`. If
 
 ## Components
 
-Generic, brand-styled primitives live in `src/components/ui/`: `Button` (primary/secondary/ghost/danger variants), `Card`, `Badge` (green/gold/neutral/danger tones), `Spinner`, `ProgressBar`, `Input`, `Textarea`, `Select`, `EmptyState`, `StatTile`, `LanguageSwitcher`. Extend these rather than one-off styling a business component — see `PROJECT.md` Section 4 for the `ui/` vs `features/` split.
+Generic, brand-styled primitives live in `src/components/ui/`: `Button` (primary/secondary/ghost/danger variants), `Card`, `Badge` (green/gold/neutral/danger tones), `Spinner`, `ProgressBar`, `Input`, `Textarea`, `Select`, `EmptyState`, `StatTile`, `PageHeader`, `LanguageSwitcher`. Extend these rather than one-off styling a business component — see `PROJECT.md` Section 4 for the `ui/` vs `features/` split.
+
+## Layout patterns (2026-07-21 redesign)
+
+Signature patterns every page should follow — established in the sitewide Swiss-modernist pass:
+
+- **Page titles**: use `PageHeader` (uppercase green overline → `text-3xl font-bold` display title → slate subtitle → right-aligned actions). Don't hand-roll `<h1 className="text-2xl …">` headers anymore.
+- **Interactive-card hover**: `hover:border-brand-ink/30 hover:shadow-[4px_4px_0_0_rgba(11,18,16,0.08)]` — the offset "print" shadow is the signature hover for anything clickable that's card-shaped. Non-clickable cards get no hover treatment.
+- **Numbered squares**: ordered content (modules, steps, analytics rows) uses `h-8 w-8` rounded squares with `font-display` two-digit numbers (`01`), green-tinted (`bg-brand-green/10 text-brand-green`) when the item is completed/active, `bg-slate-100` otherwise.
+- **Overline micro-labels**: `text-xs font-medium tracking-wider uppercase` slate for metadata labels (StatTile labels, sidebar row labels, count captions) — green variant for section overlines.
+- **Segmented filters**: filter/tab pills sit in a white bordered container (`rounded-lg border p-1`), active pill is solid `bg-brand-green text-white`.
+- **Avatars**: no user photos exist in the schema — initials via `getInitials()` on a `bg-brand-green` (emphasis) or `bg-brand-green/10 text-brand-green` (list row) circle.
 
 ## Language
 

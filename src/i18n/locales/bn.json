@@ -308,6 +308,8 @@
     "approve": "অনুমোদন করুন",
     "reject": "প্রত্যাখ্যান করুন",
     "usersTitle": "ব্যবহারকারী",
+    "userCount_one": "{{count}} জন ব্যবহারকারী",
+    "userCount_other": "{{count}} জন ব্যবহারকারী",
     "moderationTitle": "মডারেশন",
     "noFlaggedReviews": "কোনো রিপোর্ট করা রিভিউ নেই।",
     "dismissFlag": "বাতিল করুন",

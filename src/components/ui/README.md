@@ -5,7 +5,9 @@ different app unchanged. If a component needs to know anything about courses, mo
 students, or Koushol's data model, it belongs in `features/<domain>/components/` instead.
 
 **Form/layout primitives**: `Button`, `Input` (also exports `Textarea`), `Select`, `Card`,
-`Badge`, `Spinner`, `ProgressBar`, `StatTile`, `EmptyState`, `LanguageSwitcher`.
+`Badge`, `Spinner`, `ProgressBar`, `StatTile`, `EmptyState`, `PageHeader`,
+`LanguageSwitcher`. Layout conventions (offset-shadow hover, numbered squares, overlines)
+are documented in `docs/design-system.md` § Layout patterns.
 
 **Decorative/effect primitives** (themed to Koushol's brand-green/brand-gold palette,
 see `src/styles/globals.css`'s `@theme` block):

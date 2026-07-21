@@ -13,19 +13,32 @@ export function TopicTabs({
 }) {
   return (
     <nav className="flex flex-col gap-1">
-      {topics.map((topic) => (
-        <button
-          key={topic.id}
-          type="button"
-          onClick={() => onSelect(topic.id)}
-          className={cn(
-            'rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors duration-150 hover:bg-brand-green/10',
-            topic.id === currentTopicId && 'bg-brand-green/10 font-medium text-brand-green',
-          )}
-        >
-          <span className="text-xs text-slate-400">{topic.order_index + 1}.</span> {topic.title}
-        </button>
-      ))}
+      {topics.map((topic) => {
+        const isActive = topic.id === currentTopicId
+        return (
+          <button
+            key={topic.id}
+            type="button"
+            onClick={() => onSelect(topic.id)}
+            className={cn(
+              'flex cursor-pointer items-center gap-2.5 rounded-lg border-l-2 px-3 py-2 text-left text-sm transition-colors duration-150',
+              isActive
+                ? 'border-brand-green bg-brand-green/10 font-medium text-brand-green'
+                : 'border-transparent text-slate-600 hover:bg-slate-100 hover:text-brand-ink',
+            )}
+          >
+            <span
+              className={cn(
+                'flex h-5 w-5 shrink-0 items-center justify-center rounded font-display text-[10px] font-semibold',
+                isActive ? 'bg-brand-green text-white' : 'bg-slate-100 text-slate-500',
+              )}
+            >
+              {topic.order_index + 1}
+            </span>
+            <span className="min-w-0 truncate">{topic.title}</span>
+          </button>
+        )
+      })}
     </nav>
   )
 }

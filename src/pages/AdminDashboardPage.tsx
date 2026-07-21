@@ -1,10 +1,21 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Users, BookOpen, GraduationCap, Wallet } from 'lucide-react'
+import { Users, BookOpen, GraduationCap, Wallet, ArrowRight } from 'lucide-react'
 import { useAdminStats } from '@/features/admin/hooks/useAdminStats'
 import { Card } from '@/components/ui/Card'
 import { Spinner } from '@/components/ui/Spinner'
 import { StatTile } from '@/components/ui/StatTile'
+import { PageHeader } from '@/components/ui/PageHeader'
+
+/** Section heading inside the admin dashboard: icon + title with the divider treatment. */
+function SectionHeading({ icon: Icon, children }: { icon: typeof Users; children: string }) {
+  return (
+    <h2 className="mb-3 flex items-center gap-2 border-b border-slate-200 pb-2 font-display text-lg font-semibold text-brand-ink">
+      <Icon className="h-5 w-5 text-brand-green" aria-hidden="true" strokeWidth={1.75} />
+      {children}
+    </h2>
+  )
+}
 
 /** Admin dashboard ("/admin") — platform-wide stats overview + links to user/course management. */
 export function AdminDashboardPage() {
@@ -15,28 +26,34 @@ export function AdminDashboardPage() {
   if (error) return <p className="text-danger">{error}</p>
   if (!stats) return null
 
+  const quickLinks = [
+    { to: '/admin/users', label: t('admin.manageUsers') },
+    { to: '/admin/courses', label: t('admin.reviewCourses') },
+    { to: '/admin/moderation', label: t('admin.moderationTitle') },
+  ]
+
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl font-semibold text-brand-ink">{t('admin.title')}</h1>
-        <div className="flex gap-4 text-sm">
-          <Link to="/admin/users" className="text-brand-green hover:underline">
-            {t('admin.manageUsers')}
+    <div className="flex flex-col gap-8">
+      <PageHeader overline={t('nav.admin')} title={t('admin.title')} />
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {quickLinks.map(({ to, label }) => (
+          <Link key={to} to={to} className="group">
+            <Card className="flex items-center justify-between gap-2 py-4 group-hover:border-brand-ink/30 group-hover:shadow-[4px_4px_0_0_rgba(11,18,16,0.08)]">
+              <span className="text-sm font-medium text-brand-ink transition-colors duration-150 group-hover:text-brand-green">
+                {label.replace(/\s*→\s*$/, '')}
+              </span>
+              <ArrowRight
+                className="h-4 w-4 text-brand-green transition-transform duration-200 group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
+            </Card>
           </Link>
-          <Link to="/admin/courses" className="text-brand-green hover:underline">
-            {t('admin.reviewCourses')}
-          </Link>
-          <Link to="/admin/moderation" className="text-brand-green hover:underline">
-            {t('admin.moderationTitle')} →
-          </Link>
-        </div>
+        ))}
       </div>
 
       <div>
-        <h2 className="mb-2 flex items-center gap-2 font-display text-lg font-semibold text-brand-ink">
-          <Users className="h-5 w-5 text-slate-400" aria-hidden="true" />
-          {t('admin.users')}
-        </h2>
+        <SectionHeading icon={Users}>{t('admin.users')}</SectionHeading>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <StatTile label={t('admin.total')} value={stats.totalUsers} />
           <StatTile label={t('admin.students')} value={stats.studentCount} />
@@ -46,10 +63,7 @@ export function AdminDashboardPage() {
       </div>
 
       <div>
-        <h2 className="mb-2 flex items-center gap-2 font-display text-lg font-semibold text-brand-ink">
-          <BookOpen className="h-5 w-5 text-slate-400" aria-hidden="true" />
-          {t('admin.courses')}
-        </h2>
+        <SectionHeading icon={BookOpen}>{t('admin.courses')}</SectionHeading>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <StatTile label={t('admin.total')} value={stats.totalCourses} />
           <StatTile label={t('admin.draft')} value={stats.draftCount} />
@@ -59,20 +73,14 @@ export function AdminDashboardPage() {
       </div>
 
       <div>
-        <h2 className="mb-2 flex items-center gap-2 font-display text-lg font-semibold text-brand-ink">
-          <GraduationCap className="h-5 w-5 text-slate-400" aria-hidden="true" />
-          {t('admin.enrollments')}
-        </h2>
+        <SectionHeading icon={GraduationCap}>{t('admin.enrollments')}</SectionHeading>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <StatTile label={t('admin.total')} value={stats.totalEnrollments} />
         </div>
       </div>
 
       <div>
-        <h2 className="mb-2 flex items-center gap-2 font-display text-lg font-semibold text-brand-ink">
-          <Wallet className="h-5 w-5 text-slate-400" aria-hidden="true" />
-          {t('admin.sales')}
-        </h2>
+        <SectionHeading icon={Wallet}>{t('admin.sales')}</SectionHeading>
         <Card>
           <p
             className="text-sm text-slate-500"

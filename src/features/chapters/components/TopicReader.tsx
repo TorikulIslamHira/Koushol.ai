@@ -4,8 +4,10 @@ import type { TopicRow } from '@/types/database'
 export function TopicReader({ topic }: { topic: TopicRow }) {
   return (
     <article>
-      <h2 className="font-display text-2xl font-semibold text-brand-ink">{topic.title}</h2>
-      <div className="mt-4 max-w-[68ch] whitespace-pre-line leading-[1.7] text-slate-700">
+      <h2 className="border-b border-slate-100 pb-4 font-display text-2xl font-bold text-brand-ink sm:text-3xl">
+        {topic.title}
+      </h2>
+      <div className="mt-5 max-w-[68ch] text-[17px] whitespace-pre-line leading-[1.8] text-slate-700">
         {topic.content}
       </div>
     </article>

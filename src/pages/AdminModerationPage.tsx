@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { PageHeader } from '@/components/ui/PageHeader'
 
 /** Admin moderation queue ("/admin/moderation") — flagged reviews, dismiss the flag or delete the review. */
 export function AdminModerationPage() {
@@ -19,7 +20,7 @@ export function AdminModerationPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-2xl font-semibold text-brand-ink">{t('admin.moderationTitle')}</h1>
+      <PageHeader overline={t('nav.admin')} title={t('admin.moderationTitle')} />
 
       {reviews.length === 0 && (
         <EmptyState icon={ShieldAlert} title={t('admin.noFlaggedReviews')} />

@@ -64,38 +64,53 @@ export function ModulePage() {
     modules.length > 0 ? Math.min(100, (unlockedIndex / modules.length) * 100) : 0
 
   return (
-    <div className="grid grid-cols-1 gap-8 md:grid-cols-[220px_1fr]">
-      <aside>
+    <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[250px_1fr]">
+      <aside className="md:sticky md:top-20">
         <Link
           to={`/courses/${courseId}`}
-          className="mb-4 flex items-center gap-1 text-sm text-brand-green transition-colors duration-150 hover:underline"
+          className="mb-3 flex items-center gap-1 text-sm text-brand-green transition-colors duration-150 hover:underline"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
           {course.title}
         </Link>
-        {enrollment && (
-          <div className="mb-4">
-            <ProgressBar percent={progressPercent} />
-            <p className="mt-1 text-xs text-slate-400">
-              {t('chapter.unlockedCount', {
-                unlocked: Math.min(unlockedIndex, modules.length),
-                total: modules.length,
-              })}
-            </p>
+        <Card className="flex flex-col gap-4 p-4">
+          {enrollment && (
+            <div>
+              <div className="mb-1.5 flex items-baseline justify-between">
+                <span className="text-xs font-medium tracking-wider text-slate-400 uppercase">
+                  {t('chapter.unlockedCount', {
+                    unlocked: Math.min(unlockedIndex, modules.length),
+                    total: modules.length,
+                  })}
+                </span>
+                <span className="font-display text-xs font-semibold text-brand-green">
+                  {Math.round(progressPercent)}%
+                </span>
+              </div>
+              <ProgressBar percent={progressPercent} />
+            </div>
+          )}
+          <div>
+            <h2 className="mb-2 border-b border-slate-100 pb-2 font-display text-sm font-semibold text-brand-ink">
+              {module.title}
+            </h2>
+            {currentTopic && (
+              <TopicTabs
+                topics={module.topics}
+                currentTopicId={currentTopic.id}
+                onSelect={setSelectedTopicId}
+              />
+            )}
           </div>
-        )}
-        <h2 className="mb-2 font-display text-sm font-semibold text-brand-ink">{module.title}</h2>
-        {currentTopic && (
-          <TopicTabs
-            topics={module.topics}
-            currentTopicId={currentTopic.id}
-            onSelect={setSelectedTopicId}
-          />
-        )}
+        </Card>
       </aside>
 
-      <div className="flex flex-col gap-8">
-        {currentTopic && <TopicReader topic={currentTopic} />}
+      <div className="flex flex-col gap-6">
+        {currentTopic && (
+          <Card className="p-6 sm:p-8">
+            <TopicReader topic={currentTopic} />
+          </Card>
+        )}
         {currentTopic?.video_path && (
           <TopicVideoPlayer topicId={currentTopic.id} videoPath={currentTopic.video_path} />
         )}

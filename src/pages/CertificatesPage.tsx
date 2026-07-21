@@ -16,7 +16,7 @@ export function CertificatesPage() {
   return (
     <div className="flex flex-col gap-6">
       <AccountNav />
-      <h1 className="font-display text-xl font-semibold text-brand-ink">
+      <h1 className="font-display text-3xl font-bold text-brand-ink">
         {t('certificatesPage.title')}
       </h1>
 

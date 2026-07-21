@@ -6,6 +6,8 @@ import { useCourseAnalytics } from '@/features/courses/hooks/useCourseAnalytics'
 import { Card } from '@/components/ui/Card'
 import { Spinner } from '@/components/ui/Spinner'
 import { StatTile } from '@/components/ui/StatTile'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { ProgressBar } from '@/components/ui/ProgressBar'
 
 /** Own-course analytics page ("/teach/courses/:courseId/analytics") — enrollment count and per-module completion/quiz averages. */
 export function CourseAnalyticsPage() {
@@ -27,22 +29,36 @@ export function CourseAnalyticsPage() {
         <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
         {course.title}
       </Link>
-      <h1 className="font-display text-2xl font-semibold text-brand-ink">{t('analytics.title')}</h1>
+      <PageHeader overline={course.title} title={t('analytics.title')} />
 
-      <StatTile label={t('analytics.totalEnrollments')} value={analytics.enrollmentCount} />
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <StatTile label={t('analytics.totalEnrollments')} value={analytics.enrollmentCount} />
+      </div>
 
       <div className="flex flex-col gap-3">
-        {analytics.moduleStats.map(({ module, completedCount, averageScore }) => (
-          <Card key={module.id} className="flex items-center justify-between gap-4">
-            <span className="font-medium text-brand-ink">
-              {module.order_index + 1}. {module.title}
-            </span>
-            <div className="flex gap-6 text-sm text-slate-500">
-              <span>{t('analytics.completed', { count: completedCount })}</span>
-              <span>{averageScore === null ? '—' : `${Math.round(averageScore)}% avg`}</span>
-            </div>
-          </Card>
-        ))}
+        {analytics.moduleStats.map(({ module, completedCount, averageScore }) => {
+          const completionPercent =
+            analytics.enrollmentCount > 0 ? (completedCount / analytics.enrollmentCount) * 100 : 0
+          return (
+            <Card key={module.id} className="flex flex-col gap-3">
+              <div className="flex items-center justify-between gap-4">
+                <span className="flex items-center gap-3 font-medium text-brand-ink">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 font-display text-xs font-semibold">
+                    {String(module.order_index + 1).padStart(2, '0')}
+                  </span>
+                  {module.title}
+                </span>
+                <div className="flex shrink-0 gap-6 text-sm text-slate-500">
+                  <span>{t('analytics.completed', { count: completedCount })}</span>
+                  <span className="font-display font-semibold text-brand-ink">
+                    {averageScore === null ? '—' : `${Math.round(averageScore)}%`}
+                  </span>
+                </div>
+              </div>
+              <ProgressBar percent={completionPercent} />
+            </Card>
+          )
+        })}
         {analytics.moduleStats.length === 0 && (
           <p className="text-sm text-slate-500">{t('modules.noModulesYet')}</p>
         )}

@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { formatBDT, cn } from '@/lib/utils'
 import type { CourseStatus } from '@/types/database'
 
@@ -27,19 +28,19 @@ export function AdminCourseReviewPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-2xl font-semibold text-brand-ink">{t('admin.courseReview')}</h1>
+      <PageHeader overline={t('nav.admin')} title={t('admin.courseReview')} />
 
-      <div className="flex gap-2">
+      <div className="flex w-fit gap-1 rounded-lg border border-slate-200 bg-white p-1">
         {FILTERS.map((f) => (
           <button
             key={f.labelKey}
             type="button"
             onClick={() => setFilter(f.value)}
             className={cn(
-              'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150',
+              'cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-colors duration-150',
               filter === f.value
-                ? 'bg-brand-green/10 text-brand-green'
-                : 'text-slate-500 hover:bg-slate-100',
+                ? 'bg-brand-green text-white'
+                : 'text-slate-500 hover:bg-slate-100 hover:text-brand-ink',
             )}
           >
             {t(f.labelKey)}

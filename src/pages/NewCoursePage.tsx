@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { CourseForm } from '@/features/courses/components/CourseForm'
 import { useCourseMutations } from '@/features/courses/hooks/useCourseMutations'
 import { Card } from '@/components/ui/Card'
+import { PageHeader } from '@/components/ui/PageHeader'
 
 /** Course creation page ("/teach/courses/new") — new courses start as drafts (see useCourseMutations). */
 export function NewCoursePage() {
@@ -12,10 +13,8 @@ export function NewCoursePage() {
 
   return (
     <div className="mx-auto max-w-lg">
-      <h1 className="mb-6 font-display text-2xl font-semibold text-brand-ink">
-        {t('teacher.newCourse')}
-      </h1>
-      <Card>
+      <PageHeader overline={t('nav.teach')} title={t('teacher.newCourse')} className="mb-6" />
+      <Card className="p-6">
         <CourseForm
           submitLabel={t('teacher.createCourse')}
           submitting={saving}

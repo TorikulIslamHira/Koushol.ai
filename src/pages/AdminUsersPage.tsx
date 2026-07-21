@@ -8,6 +8,8 @@ import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Select } from '@/components/ui/Select'
 import { Spinner } from '@/components/ui/Spinner'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { getInitials } from '@/lib/utils'
 import type { UserRole } from '@/types/database'
 
 const ROLES: UserRole[] = ['student', 'teacher', 'admin']
@@ -30,11 +32,18 @@ export function AdminUsersPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-2xl font-semibold text-brand-ink">{t('admin.usersTitle')}</h1>
+      <PageHeader
+        overline={t('nav.admin')}
+        title={t('admin.usersTitle')}
+        subtitle={t('admin.userCount', { count: users.length })}
+      />
       <div className="flex flex-col gap-2">
         {users.map((user) => (
           <Card key={user.id} className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-green/10 font-display text-sm font-semibold text-brand-green">
+                {getInitials(user.name)}
+              </div>
               <div>
                 <p className="font-medium text-brand-ink">{user.name}</p>
                 <p className="text-sm text-slate-500">{user.email}</p>

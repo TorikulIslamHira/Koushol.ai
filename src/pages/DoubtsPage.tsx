@@ -16,7 +16,7 @@ export function DoubtsPage() {
   return (
     <div className="flex flex-col gap-6">
       <AccountNav />
-      <h1 className="font-display text-xl font-semibold text-brand-ink">{t('doubtsPage.title')}</h1>
+      <h1 className="font-display text-3xl font-bold text-brand-ink">{t('doubtsPage.title')}</h1>
 
       {loading ? (
         <Spinner />

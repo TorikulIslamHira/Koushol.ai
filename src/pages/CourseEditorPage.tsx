@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Spinner } from '@/components/ui/Spinner'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { COURSE_STATUS_BADGE_TONE, COURSE_STATUS_LABEL_KEY } from '@/features/courses/statusDisplay'
 
 /** Course editor ("/teach/courses/:courseId") — edit metadata, submit for admin approval, manage modules, delete, and a link to analytics. Publishing isn't self-service — see useCourseMutations. */
@@ -24,14 +25,18 @@ export function CourseEditorPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h1 className="font-display text-2xl font-semibold text-brand-ink">{course.title}</h1>
-          <Badge tone={COURSE_STATUS_BADGE_TONE[course.status]}>
-            {t(COURSE_STATUS_LABEL_KEY[course.status])}
-          </Badge>
-        </div>
-        <div className="flex gap-2">
+      <PageHeader
+        overline={t('nav.teach')}
+        title={
+          <span className="flex flex-wrap items-center gap-3">
+            {course.title}
+            <Badge tone={COURSE_STATUS_BADGE_TONE[course.status]}>
+              {t(COURSE_STATUS_LABEL_KEY[course.status])}
+            </Badge>
+          </span>
+        }
+        actions={
+          <div className="flex gap-2">
           <Link to={`/teach/courses/${courseId}/analytics`}>
             <Button variant="ghost" className="gap-1.5">
               <BarChart3 className="h-4 w-4" aria-hidden="true" />
@@ -74,10 +79,11 @@ export function CourseEditorPage() {
               {t('teacher.unpublish')}
             </Button>
           )}
-        </div>
-      </div>
+          </div>
+        }
+      />
 
-      <Card>
+      <Card className="p-6">
         <CourseForm
           initial={course}
           submitting={saving}

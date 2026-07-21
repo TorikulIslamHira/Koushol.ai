@@ -40,7 +40,7 @@ export function TeacherModuleEditorPage() {
         <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
         {course.title}
       </Link>
-      <h1 className="font-display text-2xl font-semibold text-brand-ink">
+      <h1 className="font-display text-3xl font-bold text-brand-ink">
         {module.title || t('modules.untitled')}
       </h1>
 
